@@ -1,0 +1,6 @@
+{
+  "name": "Farsi & Dari to British English Refugee Voice Interpreter",
+  "description": "An embeddable voice and text interpreter widget tailored for UK asylum seekers and refugees, translating Farsi and Dari (any dialect) to British English with spoken British voice output.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

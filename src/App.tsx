@@ -1,0 +1,854 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { TranslationDirection, InterpretationResult, EmbedSettings, QuickPhrase, SavedPhrase, AppTab, UserLanguage } from './types';
+import { Header } from './components/Header';
+import { NavigationTabs } from './components/NavigationTabs';
+import { PrivacyBanner } from './components/PrivacyBanner';
+import { FormCompanion } from './components/FormCompanion';
+import { MessageWriterView } from './components/MessageWriterView';
+import { SayItForMeModal } from './components/SayItForMeModal';
+import { UkTerminologyView } from './components/UkTerminologyView';
+import { DocumentOrganiserView } from './components/DocumentOrganiserView';
+import { AudioVoiceInput } from './components/AudioVoiceInput';
+import { TextInputSection } from './components/TextInputSection';
+import { InterpretationCard } from './components/InterpretationCard';
+import { ConversationHistory } from './components/ConversationHistory';
+import { QuickPhrasesDrawer } from './components/QuickPhrasesDrawer';
+import { RefugeeLexiconModal } from './components/RefugeeLexiconModal';
+import { SettingsModal } from './components/SettingsModal';
+import { AnalyticsModal } from './components/AnalyticsModal';
+import { SavedPhrasesModal } from './components/SavedPhrasesModal';
+import { ConversationSummaryModal } from './components/ConversationSummaryModal';
+import { PinnedDetailsBar } from './components/PinnedDetailsBar';
+import { LetterScannerModal } from './components/LetterScannerModal';
+import { FormUploadModal } from './components/FormUploadModal';
+import { playSpokenAudio, ensureVoicesLoaded, primeAudioPlayback, preCacheCommonPhrases } from './utils/audioHelper';
+import { extractKeyDetails } from './utils/detailExtractor';
+import { QUICK_PHRASES } from './data/quickPhrases';
+import { 
+  Mic, 
+  Keyboard, 
+  Sparkles, 
+  ShieldCheck, 
+  Lock,
+  Camera,
+  Edit3,
+  Scale,
+  Home,
+  HeartPulse,
+  Wallet,
+  Briefcase,
+  GraduationCap,
+  Siren,
+  FileText,
+  Volume2,
+  AlertTriangle,
+  Heart,
+  Info,
+  Star,
+  ArrowRight,
+  CheckSquare,
+  BookOpen,
+  FolderLock
+} from 'lucide-react';
+
+export default function App() {
+  const [activeTab, setActiveTab] = useState<AppTab>('home');
+  const [direction, setDirection] = useState<TranslationDirection>('farsi_to_english');
+  const [inputMode, setInputMode] = useState<'voice' | 'text'>('voice');
+  const [dialectHint, setDialectHint] = useState<string>('all');
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [currentResult, setCurrentResult] = useState<InterpretationResult | null>(null);
+  const [history, setHistory] = useState<InterpretationResult[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // New features state
+  const [savedPhrases, setSavedPhrases] = useState<SavedPhrase[]>([]);
+  const [pinnedDetails, setPinnedDetails] = useState<string[]>([]);
+  const [isSayItForMeOpen, setIsSayItForMeOpen] = useState<boolean>(false);
+
+  // Modals state
+  const [isQuickPhrasesOpen, setIsQuickPhrasesOpen] = useState<boolean>(false);
+  const [isLexiconOpen, setIsLexiconOpen] = useState<boolean>(false);
+  const [isAnalyticsOpen, setIsAnalyticsOpen] = useState<boolean>(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+  const [isSavedPhrasesOpen, setIsSavedPhrasesOpen] = useState<boolean>(false);
+  const [isSummaryOpen, setIsSummaryOpen] = useState<boolean>(false);
+  const [isLetterScannerOpen, setIsLetterScannerOpen] = useState<boolean>(false);
+  const [isFormUploadOpen, setIsFormUploadOpen] = useState<boolean>(false);
+  const [selectedFormForCompanion, setSelectedFormForCompanion] = useState<string | null>(null);
+  const [customUploadedForm, setCustomUploadedForm] = useState<any | null>(null);
+
+  // App / Embed settings
+  const [settings, setSettings] = useState<EmbedSettings>({
+    theme: 'teal',
+    compactMode: false,
+    autoSpeak: true,
+    voiceSpeed: 0.95,
+    defaultDialect: 'all',
+    targetAudience: 'refugee_first',
+    fontSize: 'normal',
+    userLanguage: 'farsi',
+  });
+
+  const [isEmbedParam, setIsEmbedParam] = useState<boolean>(false);
+  const mainInputRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    ensureVoicesLoaded().catch((e) => console.warn('Voice pre-load note:', e));
+    preCacheCommonPhrases(QUICK_PHRASES);
+
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const isEmbed = params.get('embed') === 'true' || window.self !== window.top;
+      setIsEmbedParam(isEmbed);
+
+      const savedHistory = localStorage.getItem('refugee_interpreter_history');
+      if (savedHistory) {
+        setHistory(JSON.parse(savedHistory));
+      }
+
+      const savedList = localStorage.getItem('refugee_saved_phrases');
+      if (savedList) {
+        setSavedPhrases(JSON.parse(savedList));
+      }
+
+      const savedPins = localStorage.getItem('refugee_pinned_details');
+      if (savedPins) {
+        setPinnedDetails(JSON.parse(savedPins));
+      }
+    } catch (e) {
+      console.warn('LocalStorage access note:', e);
+    }
+  }, []);
+
+  const saveToHistory = (newResult: InterpretationResult) => {
+    setHistory((prev) => {
+      const updated = [newResult, ...prev.slice(0, 29)];
+      try {
+        localStorage.setItem('refugee_interpreter_history', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+
+    const extracted = extractKeyDetails(newResult.sourceText).concat(
+      extractKeyDetails(newResult.translatedText)
+    );
+    if (extracted.length > 0) {
+      setPinnedDetails((prev) => {
+        const next = Array.from(new Set([...prev, ...extracted]));
+        try {
+          localStorage.setItem('refugee_pinned_details', JSON.stringify(next));
+        } catch (e) {}
+        return next;
+      });
+    }
+  };
+
+  const handleClearHistory = () => {
+    setHistory([]);
+    try {
+      localStorage.removeItem('refugee_interpreter_history');
+    } catch (e) {}
+  };
+
+  const handleAddSavedPhrase = (phrase: { farsiText: string; englishText: string; label: string }) => {
+    const newItem: SavedPhrase = {
+      id: `sp_${Date.now()}`,
+      createdAt: Date.now(),
+      ...phrase,
+    };
+    setSavedPhrases((prev) => {
+      const updated = [newItem, ...prev];
+      try {
+        localStorage.setItem('refugee_saved_phrases', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+  };
+
+  const handleDeleteSavedPhrase = (id: string) => {
+    setSavedPhrases((prev) => {
+      const updated = prev.filter((p) => p.id !== id);
+      try {
+        localStorage.setItem('refugee_saved_phrases', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+  };
+
+  const handleNotWhatIMeant = (id: string, dir: TranslationDirection) => {
+    setHistory((prev) => prev.filter((item) => item.id !== id));
+    if (currentResult?.id === id) {
+      setCurrentResult(null);
+    }
+    setDirection(dir);
+    setInputMode('voice');
+  };
+
+  const handleRateResult = (id: string, rating: 'up' | 'down') => {
+    setHistory((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, rating } : item))
+    );
+    if (currentResult?.id === id) {
+      setCurrentResult((prev) => (prev ? { ...prev, rating } : null));
+    }
+  };
+
+  const handleRemovePinnedDetail = (detail: string) => {
+    setPinnedDetails((prev) => {
+      const next = prev.filter((d) => d !== detail);
+      try {
+        localStorage.setItem('refugee_pinned_details', JSON.stringify(next));
+      } catch (e) {}
+      return next;
+    });
+  };
+
+  const handleClearPinnedDetails = () => {
+    setPinnedDetails([]);
+    try {
+      localStorage.removeItem('refugee_pinned_details');
+    } catch (e) {}
+  };
+
+  const triggerAutoSpeech = async (result: InterpretationResult) => {
+    if (!settings.autoSpeak) return;
+    try {
+      if (result.direction === 'farsi_to_english') {
+        await playSpokenAudio(result.britishPhrasing || result.translatedText, 'en-GB', {
+          rate: settings.voiceSpeed,
+        });
+      } else {
+        await playSpokenAudio(result.translatedText, 'fa-IR', {
+          rate: settings.voiceSpeed,
+        });
+      }
+    } catch (err) {
+      console.warn('Auto speech error:', err);
+    }
+  };
+
+  const formatErrorMessage = (rawError: any): string => {
+    if (!rawError) return 'An unexpected error occurred. Please try again.';
+    const msg = typeof rawError === 'string' ? rawError : rawError.message || String(rawError);
+    return msg;
+  };
+
+  const handleAudioReady = async (base64Audio: string, mimeType: string, overrideDirection?: TranslationDirection) => {
+    primeAudioPlayback();
+    setIsProcessing(true);
+    setErrorMessage(null);
+    const activeDir = overrideDirection || direction;
+    if (activeDir !== direction) {
+      setDirection(activeDir);
+    }
+
+    try {
+      const res = await fetch('/api/interpret', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        signal: AbortSignal.timeout(20000),
+        body: JSON.stringify({
+          audio: base64Audio,
+          mimeType,
+          direction: activeDir,
+          dialectHint: dialectHint !== 'all' ? dialectHint : undefined,
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'Server error while interpreting audio');
+      }
+
+      const data: InterpretationResult = await res.json();
+      setCurrentResult(data);
+      saveToHistory(data);
+      triggerAutoSpeech(data);
+    } catch (err: any) {
+      console.warn('Audio interpretation issue:', err?.message || err);
+      setErrorMessage(
+        formatErrorMessage(err) || 'Could not interpret audio. Please check your microphone or try typing.'
+      );
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleTextSubmit = async (text: string, overrideDirection?: TranslationDirection) => {
+    primeAudioPlayback();
+    setIsProcessing(true);
+    setErrorMessage(null);
+    const activeDir = overrideDirection || direction;
+    if (activeDir !== direction) {
+      setDirection(activeDir);
+    }
+
+    try {
+      const res = await fetch('/api/interpret', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        signal: AbortSignal.timeout(20000),
+        body: JSON.stringify({
+          text,
+          direction: activeDir,
+          dialectHint: dialectHint !== 'all' ? dialectHint : undefined,
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'Server error while interpreting text');
+      }
+
+      const data: InterpretationResult = await res.json();
+      setCurrentResult(data);
+      saveToHistory(data);
+      triggerAutoSpeech(data);
+    } catch (err: any) {
+      console.warn('Text interpretation issue:', err?.message || err);
+      const matched = QUICK_PHRASES.find(
+        (p) =>
+          p.farsiText.trim() === text.trim() ||
+          p.englishText.toLowerCase() === text.trim().toLowerCase()
+      );
+
+      if (matched) {
+        const fallbackResult: InterpretationResult = {
+          id: `res_local_${Date.now()}`,
+          timestamp: Date.now(),
+          direction: activeDir,
+          sourceText: text,
+          translatedText: activeDir === 'farsi_to_english' ? matched.englishText : matched.farsiText,
+          britishPhrasing: activeDir === 'farsi_to_english' ? matched.englishText : undefined,
+          phoneticSpelling: matched.phonetic,
+        };
+        setCurrentResult(fallbackResult);
+        saveToHistory(fallbackResult);
+        triggerAutoSpeech(fallbackResult);
+      } else {
+        setErrorMessage(formatErrorMessage(err) || 'Could not interpret text. Please try again or use Quick Phrases.');
+      }
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleSelectQuickPhrase = (phrase: QuickPhrase) => {
+    primeAudioPlayback();
+    handleTextSubmit(phrase.farsiText);
+  };
+
+  const scrollToInput = (mode: 'voice' | 'text') => {
+    setActiveTab('interpreter');
+    setInputMode(mode);
+    if (mainInputRef.current) {
+      mainInputRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleSpeakQuickPhrase = async (englishText: string, farsiText: string) => {
+    primeAudioPlayback();
+    playSpokenAudio(farsiText, 'fa-IR');
+    handleTextSubmit(farsiText);
+  };
+
+  const userLang = settings.userLanguage || 'farsi';
+
+  return (
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-teal-600 selection:text-white pb-16 print:bg-white print:p-0 print:pb-0 print:text-black w-full max-w-full overflow-x-hidden">
+      {/* Header */}
+      <Header
+        direction={direction}
+        onToggleDirection={() =>
+          setDirection((d) => (d === 'farsi_to_english' ? 'english_to_farsi' : 'farsi_to_english'))
+        }
+        settings={settings}
+        onUpdateSettings={(newVals) => setSettings((prev) => ({ ...prev, ...newVals }))}
+        onOpenQuickPhrases={() => setIsQuickPhrasesOpen(true)}
+        onOpenSettings={() => setIsSettingsOpen(true)}
+        selectedDialectHint={dialectHint}
+        onSelectDialectHint={setDialectHint}
+      />
+
+      {/* Navigation Tabs */}
+      <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />
+
+      {/* Main Container */}
+      <main className="flex-1 max-w-6xl w-full mx-auto p-3.5 sm:p-6 space-y-6 sm:space-y-7 min-w-0">
+        
+        {/* TAB 1: HOME HUB */}
+        {activeTab === 'home' && (
+          <div className="space-y-6 sm:space-y-7 w-full min-w-0">
+            {/* Privacy & Trust Banner */}
+            <PrivacyBanner />
+
+            {/* HEADING SECTION */}
+            <div className="text-center space-y-1.5 pt-1 w-full min-w-0 px-2">
+              <h2 className="text-lg xs:text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight break-words">
+                How can we help you today?
+              </h2>
+              <p dir="rtl" className="font-farsi font-semibold text-slate-700 text-sm sm:text-base md:text-lg break-words">
+                امروز چگونه می‌توانیم کمک کنیم؟
+              </p>
+              <div className="w-12 h-1 bg-teal-500 rounded-full mx-auto mt-2"></div>
+            </div>
+
+            {/* 4 PRIMARY ACTION CARDS GRID */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 w-full min-w-0">
+              {/* Card 1: Talk to someone */}
+              <div
+                onClick={() => setActiveTab('interpreter')}
+                className="group bg-gradient-to-b from-teal-50/70 to-emerald-50/40 border-2 border-teal-200/90 hover:border-teal-500 rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
+              >
+                <div className="space-y-4">
+                  <div className="w-12 h-12 rounded-2xl bg-teal-600 flex items-center justify-center text-white shadow-md shadow-teal-600/20 group-hover:scale-105 transition">
+                    <Mic className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-slate-900 break-words">Talk to someone</h3>
+                    <p className="text-xs text-slate-500 font-medium break-words">Live audio interpretation</p>
+                    <h4 dir="rtl" className="font-farsi font-bold text-teal-800 text-base mt-2 break-words">صحبت با کسی</h4>
+                    <p dir="rtl" className="font-farsi text-xs text-slate-500 break-words">ترجمه زنده و همزمان</p>
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-teal-200/60 flex items-center justify-between text-xs font-bold text-teal-800">
+                  <span>Start live interpreter →</span>
+                  <span className="font-farsi">شروع گفتگو</span>
+                </div>
+              </div>
+
+              {/* Card 2: Understand a letter */}
+              <div
+                onClick={() => setIsLetterScannerOpen(true)}
+                className="group bg-gradient-to-b from-indigo-50/70 to-slate-50/40 border-2 border-indigo-200/90 hover:border-indigo-500 rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
+              >
+                <div className="space-y-4">
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/20 group-hover:scale-105 transition">
+                    <Camera className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-slate-900 break-words">Understand a letter</h3>
+                    <p className="text-xs text-slate-500 font-medium break-words">Photo analysis & deadlines</p>
+                    <h4 dir="rtl" className="font-farsi font-bold text-indigo-900 text-base mt-2 break-words">فهمیدن یک نامه</h4>
+                    <p dir="rtl" className="font-farsi text-xs text-slate-500 break-words">عکس نامه و خلاصه فارسی</p>
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-indigo-200/60 flex items-center justify-between text-xs font-bold text-indigo-800">
+                  <span>Scan letter now →</span>
+                  <span className="font-farsi">اسکن نامه</span>
+                </div>
+              </div>
+
+              {/* Card 3: Fill in a form */}
+              <div
+                onClick={() => {
+                  setSelectedFormForCompanion(null);
+                  setCustomUploadedForm(null);
+                  setActiveTab('form_companion');
+                }}
+                className="group bg-gradient-to-b from-indigo-50/70 to-slate-50/40 border-2 border-indigo-300 hover:border-indigo-600 rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
+              >
+                <div className="space-y-4">
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-700 flex items-center justify-center text-white shadow-md shadow-indigo-700/20 group-hover:scale-105 transition">
+                    <CheckSquare className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-slate-900 break-words">Fill in a form</h3>
+                    <p className="text-xs text-slate-500 font-medium break-words">Guided question-by-question</p>
+                    <h4 dir="rtl" className="font-farsi font-bold text-indigo-950 text-base mt-2 break-words">تکمیـل فرم</h4>
+                    <p dir="rtl" className="font-farsi text-xs text-slate-500 break-words">پاسخ صوتی و بررسی پاسخ‌ها</p>
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-indigo-300/60 flex items-center justify-between text-xs font-bold text-indigo-900">
+                  <span>Start form guide →</span>
+                  <span className="font-farsi">تکمیل فرم</span>
+                </div>
+              </div>
+
+              {/* Card 4: Write a message */}
+              <div
+                onClick={() => setActiveTab('message_writer')}
+                className="group bg-gradient-to-b from-amber-50/70 to-slate-50/40 border-2 border-amber-300 hover:border-amber-600 rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
+              >
+                <div className="space-y-4">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-600 flex items-center justify-center text-white shadow-md shadow-amber-600/20 group-hover:scale-105 transition">
+                    <Edit3 className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-slate-900 break-words">Write a message</h3>
+                    <p className="text-xs text-slate-500 font-medium break-words">Polite UK English messages</p>
+                    <h4 dir="rtl" className="font-farsi font-bold text-amber-900 text-base mt-2 break-words">نوشتن یک پیام</h4>
+                    <p dir="rtl" className="font-farsi text-xs text-slate-500 break-words">ارسال پیام به مسئول پرونده</p>
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-amber-300/60 flex items-center justify-between text-xs font-bold text-amber-900">
+                  <span>Write message →</span>
+                  <span className="font-farsi">نوشتن پیام</span>
+                </div>
+              </div>
+            </div>
+
+            {/* LINK TO OFFICIAL FORMS & COMPANION */}
+            <div 
+              onClick={() => {
+                setSelectedFormForCompanion(null);
+                setCustomUploadedForm(null);
+                setActiveTab('form_companion');
+              }}
+              className="bg-slate-900 text-white rounded-3xl p-4 sm:p-6 border border-slate-800 shadow-sm hover:border-slate-700 transition cursor-pointer flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-farsi dir-rtl group w-full min-w-0"
+            >
+              <div className="flex items-start gap-3 sm:gap-3.5 min-w-0 flex-1">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-teal-950/80 border border-teal-700/60 flex items-center justify-center text-teal-400 shrink-0 mt-0.5">
+                  <FileText className="w-5 h-5 sm:w-6 sm:h-6" />
+                </div>
+                <div className="space-y-1 min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                    <h3 className="font-bold text-sm sm:text-base md:text-lg text-white group-hover:text-amber-200 transition break-words">
+                      همراه تکمیل فرم‌های رسمی (NHS, Home Office, Council)
+                    </h3>
+                    <span className="text-[10px] font-bold text-emerald-300 bg-emerald-950/90 px-2 py-0.5 rounded-md border border-emerald-800/80 shrink-0">
+                      آرشیو رسمی و آپلود
+                    </span>
+                  </div>
+                  <p className="text-[11px] sm:text-xs text-slate-300 leading-relaxed break-words">
+                    راهنمای خانه‌به‌خانه، ترجمه پرسش‌ها به فارسی و دری، و بررسی خط‌به‌خط مدارک کاغذی.
+                  </p>
+                </div>
+              </div>
+
+              <div className="w-full sm:w-auto shrink-0 flex justify-end">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedFormForCompanion(null);
+                    setCustomUploadedForm(null);
+                    setActiveTab('form_companion');
+                  }}
+                  className="min-h-[48px] w-full sm:w-auto px-4 sm:px-5 py-2.5 bg-teal-700 hover:bg-teal-600 text-white rounded-2xl text-xs sm:text-sm font-bold transition shadow-xs flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>مشاهده آرشیو فرم‌ها</span>
+                  <ArrowRight className="w-4 h-4 rotate-180" />
+                </button>
+              </div>
+            </div>
+
+            {/* QUICK INTERPRETER INLINE PREVIEW */}
+            <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-200 shadow-2xs space-y-4 w-full min-w-0">
+              <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                <div className="min-w-0">
+                  <h3 className="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
+                    <Mic className="w-5 h-5 text-teal-600 shrink-0" />
+                    <span>Quick Speech / Text Interpreter</span>
+                  </h3>
+                  <p className="text-xs text-slate-500">Fast translation for immediate conversations</p>
+                </div>
+                <button
+                  onClick={() => setIsSayItForMeOpen(true)}
+                  className="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs rounded-xl transition shadow-2xs flex items-center gap-1.5 shrink-0 cursor-pointer"
+                >
+                  <Volume2 className="w-4 h-4" />
+                  <span>SAY IT FOR ME 🔊</span>
+                </button>
+              </div>
+
+              {/* Input section */}
+              <TextInputSection
+                direction={direction}
+                dialectHint={dialectHint}
+                isProcessing={isProcessing}
+                onTextSubmit={handleTextSubmit}
+                onChangeDirection={(dir) => setDirection(dir)}
+                onSwitchToVoice={() => setActiveTab('interpreter')}
+              />
+
+              {currentResult && (
+                <InterpretationCard
+                  result={currentResult}
+                  settings={settings}
+                  onNotWhatIMeant={handleNotWhatIMeant}
+                  onSavePhrase={handleAddSavedPhrase}
+                  onRateResult={handleRateResult}
+                />
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 2: LIVE INTERPRETER */}
+        {activeTab === 'interpreter' && (
+          <div className="space-y-6">
+            <div className="bg-teal-900 text-white p-6 rounded-3xl shadow-sm border border-teal-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-800 text-teal-200 text-xs font-semibold mb-1">
+                  <Mic className="w-3.5 h-3.5" />
+                  <span>Live Voice Interpreter</span>
+                </div>
+                <h2 className="text-xl sm:text-2xl font-bold">Talk to someone / گفتگو با کسی</h2>
+                <p className="text-xs text-teal-100 mt-1">
+                  Speak in Farsi or Dari. We translate your words aloud into natural British English.
+                </p>
+              </div>
+              <button
+                onClick={() => setIsSayItForMeOpen(true)}
+                className="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1.5 shrink-0"
+              >
+                <Volume2 className="w-4 h-4" />
+                <span>Say It For Me</span>
+              </button>
+            </div>
+
+            {/* NHS Notice */}
+            <div className="p-4 bg-amber-50 border border-amber-300 rounded-2xl text-xs text-amber-950 space-y-1">
+              <p className="font-bold">⚠️ NHS & Official Appointments Notice:</p>
+              <p>NHS interpreters are free. Always request an official interpreter for medical or Home Office interviews.</p>
+            </div>
+
+            {inputMode === 'voice' ? (
+              <AudioVoiceInput
+                direction={direction}
+                dialectHint={dialectHint}
+                isProcessing={isProcessing}
+                onAudioReady={handleAudioReady}
+                onChangeDirection={(dir) => setDirection(dir)}
+                onSwitchToText={() => setInputMode('text')}
+              />
+            ) : (
+              <TextInputSection
+                direction={direction}
+                dialectHint={dialectHint}
+                isProcessing={isProcessing}
+                onTextSubmit={handleTextSubmit}
+                onChangeDirection={(dir) => setDirection(dir)}
+                onSwitchToVoice={() => setInputMode('voice')}
+              />
+            )}
+
+            {currentResult && (
+              <InterpretationCard
+                result={currentResult}
+                settings={settings}
+                onNotWhatIMeant={handleNotWhatIMeant}
+                onSavePhrase={handleAddSavedPhrase}
+                onRateResult={handleRateResult}
+              />
+            )}
+
+            <ConversationHistory
+              history={history}
+              settings={settings}
+              onClearHistory={handleClearHistory}
+            />
+          </div>
+        )}
+
+        {/* TAB 3: LETTER SCANNER */}
+        {activeTab === 'letter_scanner' && (
+          <div className="space-y-6">
+            <div className="bg-indigo-900 text-white p-6 rounded-3xl border border-indigo-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-bold">Understand a letter / فهمیدن یک نامه</h2>
+                <p className="text-xs text-indigo-200 mt-1">Take a photo or upload a document to get an instant breakdown in plain English and Farsi.</p>
+              </div>
+              <button
+                onClick={() => setIsLetterScannerOpen(true)}
+                className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-400 text-white rounded-xl text-xs font-bold transition shadow-xs"
+              >
+                Launch Scanner Modal
+              </button>
+            </div>
+
+            <div className="bg-white rounded-3xl p-8 text-center border border-slate-200 space-y-4">
+              <Camera className="w-12 h-12 text-indigo-600 mx-auto" />
+              <h3 className="font-bold text-slate-900 text-base">Scan or Upload Official Document</h3>
+              <p className="text-xs text-slate-500 max-w-md mx-auto">
+                We analyze official UK documents (Home Office, NHS, Housing, GP, Council) and explain what it is, what it says, what you must do, and key dates.
+              </p>
+              <button
+                onClick={() => setIsLetterScannerOpen(true)}
+                className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-2xl shadow-xs"
+              >
+                Open Camera / Upload PDF
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: FORM COMPANION */}
+        {activeTab === 'form_companion' && (
+          <FormCompanion
+            userLanguage={userLang}
+            onGoBackToHome={() => setActiveTab('home')}
+            onPlayAudio={(txt, lang) => playSpokenAudio(txt, lang)}
+            onOpenUploadModal={() => setIsFormUploadOpen(true)}
+            onClearCustomForm={() => {
+              setCustomUploadedForm(null);
+              setSelectedFormForCompanion(null);
+            }}
+            initialFormId={selectedFormForCompanion}
+            customUploadedForm={customUploadedForm}
+          />
+        )}
+
+        {/* TAB 5: MESSAGE WRITER */}
+        {activeTab === 'message_writer' && (
+          <MessageWriterView
+            userLanguage={userLang}
+            onPlayAudio={(txt, lang) => playSpokenAudio(txt, lang)}
+          />
+        )}
+
+        {/* TAB 6: UK TERMS & PHRASES */}
+        {activeTab === 'phrases' && (
+          <UkTerminologyView
+            userLanguage={userLang}
+            onPlayAudio={(txt, lang) => playSpokenAudio(txt, lang)}
+          />
+        )}
+
+        {/* TAB 7: MY DOCUMENTS */}
+        {activeTab === 'documents' && (
+          <DocumentOrganiserView userLanguage={userLang} />
+        )}
+
+        {/* TAB 8: MORE */}
+        {activeTab === 'more' && (
+          <div className="max-w-2xl mx-auto space-y-4">
+            <div className="bg-white rounded-3xl p-6 border border-slate-200 space-y-3">
+              <h3 className="font-bold text-slate-900 text-base">More Settings & Resources</h3>
+              <div className="space-y-2 text-xs">
+                <button
+                  onClick={() => setIsSettingsOpen(true)}
+                  className="w-full p-3.5 bg-slate-50 hover:bg-slate-100 rounded-2xl text-left font-bold text-slate-800 flex items-center justify-between"
+                >
+                  <span>⚙️ App Settings & Voice Preferences</span>
+                  <span>→</span>
+                </button>
+                <button
+                  onClick={() => setIsSavedPhrasesOpen(true)}
+                  className="w-full p-3.5 bg-slate-50 hover:bg-slate-100 rounded-2xl text-left font-bold text-slate-800 flex items-center justify-between"
+                >
+                  <span>⭐ Saved Phrases ({savedPhrases.length})</span>
+                  <span>→</span>
+                </button>
+                <button
+                  onClick={() => setIsLexiconOpen(true)}
+                  className="w-full p-3.5 bg-slate-50 hover:bg-slate-100 rounded-2xl text-left font-bold text-slate-800 flex items-center justify-between"
+                >
+                  <span>📖 Refugee Lexicon Modal</span>
+                  <span>→</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </main>
+
+      {/* SAY IT FOR ME FLOATING ACTION BUTTON (Moved/hidden appropriately when on form companion to never block bottom next buttons) */}
+      {activeTab !== 'form_companion' && (
+        <button
+          onClick={() => setIsSayItForMeOpen(true)}
+          className="fixed right-5 bottom-20 z-40 px-4 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-full shadow-lg border border-amber-300 flex items-center gap-2 transition hover:scale-105"
+          title="Say It For Me"
+        >
+          <Volume2 className="w-4 h-4" />
+          <span className="hidden sm:inline">SAY IT FOR ME 🔊</span>
+        </button>
+      )}
+
+      {/* Pinned Details Bar at Bottom */}
+      <PinnedDetailsBar
+        details={pinnedDetails}
+        onClearDetails={handleClearPinnedDetails}
+        onRemoveDetail={handleRemovePinnedDetail}
+      />
+
+      {/* Footer Disclaimer */}
+      <footer className="mt-auto border-t border-slate-200 bg-white/90 py-4 px-4 text-center text-xs text-slate-500 print:hidden w-full max-w-full overflow-hidden">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-600 w-full min-w-0">
+          <div className="flex items-center gap-2 text-left min-w-0">
+            <Info className="w-4 h-4 text-slate-400 shrink-0" />
+            <p className="text-[11px] leading-tight break-words">
+              This app provides translation and general information only. It is not a solicitor and does not replace legal advice.
+            </p>
+          </div>
+          <p dir="rtl" className="font-farsi text-[11px] text-right break-words min-w-0">
+            این برنامه فقط ترجمه و اطلاعات عمومی ارائه می‌دهد و جایگزین مشاوره حقوقی نیست.
+          </p>
+        </div>
+      </footer>
+
+      {/* Modals & Drawers */}
+      <SayItForMeModal
+        isOpen={isSayItForMeOpen}
+        onClose={() => setIsSayItForMeOpen(false)}
+        onPlayAudio={(txt, lang) => playSpokenAudio(txt, lang)}
+      />
+
+      <QuickPhrasesDrawer
+        isOpen={isQuickPhrasesOpen}
+        onClose={() => setIsQuickPhrasesOpen(false)}
+        onSelectPhrase={handleSelectQuickPhrase}
+        onSpeakPhrase={(en, fa) => handleSpeakQuickPhrase(en, fa)}
+      />
+
+      <RefugeeLexiconModal
+        isOpen={isLexiconOpen}
+        onClose={() => setIsLexiconOpen(false)}
+      />
+
+      <AnalyticsModal
+        isOpen={isAnalyticsOpen}
+        onClose={() => setIsAnalyticsOpen(false)}
+      />
+
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        settings={settings}
+        onUpdateSettings={(newVals) => setSettings((prev) => ({ ...prev, ...newVals }))}
+        onClearHistory={handleClearHistory}
+        historyCount={history.length}
+        onOpenLexicon={() => setIsLexiconOpen(true)}
+        onOpenAnalytics={() => setIsAnalyticsOpen(true)}
+      />
+
+      <SavedPhrasesModal
+        isOpen={isSavedPhrasesOpen}
+        onClose={() => setIsSavedPhrasesOpen(false)}
+        savedPhrases={savedPhrases}
+        onAddPhrase={handleAddSavedPhrase}
+        onDeletePhrase={handleDeleteSavedPhrase}
+        onSelectPhrase={(farsi, english) => handleTextSubmit(farsi)}
+      />
+
+      <ConversationSummaryModal
+        isOpen={isSummaryOpen}
+        onClose={() => setIsSummaryOpen(false)}
+        results={history}
+      />
+
+      <LetterScannerModal
+        isOpen={isLetterScannerOpen}
+        onClose={() => setIsLetterScannerOpen(false)}
+      />
+
+      <FormUploadModal
+        isOpen={isFormUploadOpen}
+        onClose={() => setIsFormUploadOpen(false)}
+        onStartPresetForm={(formId, customFormData) => {
+          setIsFormUploadOpen(false);
+          setCustomUploadedForm(customFormData || null);
+          setSelectedFormForCompanion(formId || null);
+          setActiveTab('form_companion');
+        }}
+      />
+    </div>
+  );
+}
