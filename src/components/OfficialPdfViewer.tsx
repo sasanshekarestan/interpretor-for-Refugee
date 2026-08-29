@@ -14,6 +14,14 @@ interface OfficialPdfViewerProps {
   pageCount: number;
   currentPageIndex: number;
   onSelectPage: (pageIndex: number) => void;
+  /** Hide the built-in toolbar when the surrounding shell provides its own controls. */
+  hideToolbar?: boolean;
+  /** Controlled zoom, so page controls can live outside this component. */
+  zoom?: number;
+  onZoomChange?: (zoom: number) => void;
+  /** Let the viewer fill its parent instead of reserving 600px. */
+  fill?: boolean;
+  onPageCountChange?: (count: number) => void;
 }
 
 export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
@@ -24,8 +32,19 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
   pageCount,
   currentPageIndex,
   onSelectPage,
+  hideToolbar = false,
+  zoom: zoomProp,
+  onZoomChange,
+  fill = false,
+  onPageCountChange,
 }) => {
-  const [zoom, setZoom] = useState<number>(100);
+  const [internalZoom, setInternalZoom] = useState<number>(100);
+  const zoom = zoomProp ?? internalZoom;
+  const setZoom = (next: number | ((prev: number) => number)) => {
+    const value = typeof next === 'function' ? (next as (p: number) => number)(zoom) : next;
+    if (onZoomChange) onZoomChange(value);
+    else setInternalZoom(value);
+  };
   const [docStatus, setDocStatus] = useState<'loading' | 'loaded' | 'missing' | 'error'>('loading');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [pageRendering, setPageRendering] = useState<boolean>(false);
@@ -60,6 +79,7 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
         if (isCancelled) return;
         setPdfDoc(doc);
         setTotalPdfPages(doc.numPages || pageCount);
+        onPageCountChange?.(doc.numPages || pageCount);
         setDocStatus('loaded');
       })
       .catch((err) => {
@@ -174,9 +194,9 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
   const displayTotalPages = pdfDoc?.numPages || totalPdfPages || pageCount;
 
   return (
-    <div className="space-y-4 font-sans">
+    <div className={fill ? 'font-sans h-full flex flex-col' : 'space-y-4 font-sans'}>
       {/* Viewer Toolbar */}
-      <div className="bg-slate-900 text-white p-3 sm:p-4 rounded-2xl border border-slate-800 shadow-lg flex flex-wrap items-center justify-between gap-3 text-xs">
+      <div className={`${hideToolbar ? 'hidden' : ''} bg-slate-900 text-white p-3 sm:p-4 rounded-2xl border border-slate-800 shadow-lg flex flex-wrap items-center justify-between gap-3 text-xs`}>
         {/* Left: Document Info */}
         <div className="flex items-center gap-3">
           <div className="p-2 bg-[#005EB8] text-white rounded-xl shadow-xs shrink-0">
@@ -277,7 +297,11 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
       {/* Main Document Display Canvas Container */}
       <div
         ref={containerRef}
-        className="relative w-full min-h-[600px] bg-slate-950 rounded-2xl border border-slate-800 overflow-auto shadow-inner flex flex-col items-center justify-start p-2 sm:p-4"
+        className={`relative w-full bg-slate-950 overflow-auto flex flex-col items-center justify-start ${
+          fill
+            ? 'flex-1 min-h-0 p-2'
+            : 'min-h-[600px] rounded-2xl border border-slate-800 shadow-inner p-2 sm:p-4'
+        }`}
       >
         {/* Document Loading State */}
         {docStatus === 'loading' && (

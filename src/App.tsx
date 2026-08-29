@@ -3,7 +3,7 @@ import { TranslationDirection, InterpretationResult, EmbedSettings, QuickPhrase,
 import { Header } from './components/Header';
 import { NavigationTabs } from './components/NavigationTabs';
 import { PrivacyBanner } from './components/PrivacyBanner';
-import { FormCompanion } from './components/FormCompanion';
+import { FormCompanion } from './formCompanion/FormCompanion';
 import { MessageWriterView } from './components/MessageWriterView';
 import { SayItForMeModal } from './components/SayItForMeModal';
 import { UkTerminologyView } from './components/UkTerminologyView';
@@ -77,6 +77,9 @@ export default function App() {
   const [isFormUploadOpen, setIsFormUploadOpen] = useState<boolean>(false);
   const [selectedFormForCompanion, setSelectedFormForCompanion] = useState<string | null>(null);
   const [customUploadedForm, setCustomUploadedForm] = useState<any | null>(null);
+  // True while a form is open: the document owns the screen, so the app header,
+  // tab strip and footer stand down rather than pushing it below the fold.
+  const [isFormImmersive, setIsFormImmersive] = useState<boolean>(false);
 
   // App / Embed settings
   const [settings, setSettings] = useState<EmbedSettings>({
@@ -356,8 +359,9 @@ export default function App() {
   const userLang = settings.userLanguage || 'farsi';
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-teal-600 selection:text-white pb-16 print:bg-white print:p-0 print:pb-0 print:text-black w-full max-w-full overflow-x-hidden">
+    <div className={`min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-teal-600 selection:text-white print:bg-white print:p-0 print:pb-0 print:text-black w-full max-w-full overflow-x-hidden ${isFormImmersive ? '' : 'pb-16'}`}>
       {/* Header */}
+      {!isFormImmersive && (
       <Header
         direction={direction}
         onToggleDirection={() =>
@@ -370,12 +374,19 @@ export default function App() {
         selectedDialectHint={dialectHint}
         onSelectDialectHint={setDialectHint}
       />
+      )}
 
       {/* Navigation Tabs */}
-      <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />
+      {!isFormImmersive && <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />}
 
       {/* Main Container */}
-      <main className="flex-1 max-w-6xl w-full mx-auto p-3.5 sm:p-6 space-y-6 sm:space-y-7 min-w-0">
+      <main
+        className={
+          isFormImmersive
+            ? 'flex-1 w-full min-w-0'
+            : 'flex-1 max-w-6xl w-full mx-auto p-3.5 sm:p-6 space-y-6 sm:space-y-7 min-w-0'
+        }
+      >
         
         {/* TAB 1: HOME HUB */}
         {activeTab === 'home' && (
@@ -692,6 +703,7 @@ export default function App() {
             }}
             initialFormId={selectedFormForCompanion}
             customUploadedForm={customUploadedForm}
+            onImmersiveChange={setIsFormImmersive}
           />
         )}
 
@@ -763,14 +775,16 @@ export default function App() {
       )}
 
       {/* Pinned Details Bar at Bottom */}
-      <PinnedDetailsBar
-        details={pinnedDetails}
-        onClearDetails={handleClearPinnedDetails}
-        onRemoveDetail={handleRemovePinnedDetail}
-      />
+      {!isFormImmersive && (
+        <PinnedDetailsBar
+          details={pinnedDetails}
+          onClearDetails={handleClearPinnedDetails}
+          onRemoveDetail={handleRemovePinnedDetail}
+        />
+      )}
 
       {/* Footer Disclaimer */}
-      <footer className="mt-auto border-t border-slate-200 bg-white/90 py-4 px-4 text-center text-xs text-slate-500 print:hidden w-full max-w-full overflow-hidden">
+      <footer className={`mt-auto border-t border-slate-200 bg-white/90 py-4 px-4 text-center text-xs text-slate-500 print:hidden w-full max-w-full overflow-hidden ${isFormImmersive ? 'hidden' : ''}`}>
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-600 w-full min-w-0">
           <div className="flex items-center gap-2 text-left min-w-0">
             <Info className="w-4 h-4 text-slate-400 shrink-0" />
