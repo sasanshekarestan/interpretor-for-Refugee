@@ -2,7 +2,6 @@ import express from 'express';
 import path from 'path';
 import dotenv from 'dotenv';
 import { GoogleGenAI, Type } from '@google/genai';
-import { createServer as createViteServer } from 'vite';
 
 dotenv.config();
 
@@ -22,7 +21,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// Simple memory & file-safe analytics counter for website evaluation tracking
+// Simple in-memory analytics counter for website evaluation tracking.
+// NOTE: this lives in the process, so on a serverless host (Vercel) it resets
+// whenever a new instance starts and is not shared between instances. The
+// numbers are indicative there, not a record. Real usage evidence - the kind a
+// funding bid would rest on - needs a store behind it.
 let analyticsData = {
   totalVisits: 0,
   uniqueVisitors: new Set<string>(),
@@ -1296,9 +1299,19 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', time: new Date().toISOString() });
 });
 
-// Setup Vite or static serving
+/**
+ * Serving the front end.
+ *
+ * On Vercel this never runs: the built site is served from the CDN and only
+ * /api/* is rewritten to this app, which arrives as a serverless function via
+ * api/index.ts. Everywhere else - local development, or a plain Node host -
+ * this process serves the front end itself, as it always has.
+ */
 async function start() {
   if (process.env.NODE_ENV !== 'production') {
+    // Imported here rather than at the top of the file so that Vite, a build
+    // dependency, is never pulled into the deployed function bundle.
+    const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
@@ -1317,4 +1330,10 @@ async function start() {
   });
 }
 
-start();
+// A serverless platform imports this app and handles the listening itself;
+// starting a listener there would hold the function open for nothing.
+if (!process.env.VERCEL) {
+  start();
+}
+
+export default app;
