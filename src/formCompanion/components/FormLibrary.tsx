@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowLeft, Camera, Check } from 'lucide-react';
-import { OFFICIAL_FORMS } from '../../data/officialForms';
+import { OFFICIAL_FORMS, paperForms } from '../../data/officialForms';
 import { savedAnswerCount } from '../useFormSession';
 import { Button, Pill } from './Primitives';
 import { t } from '../tokens';
@@ -23,8 +23,10 @@ export const FormLibrary: React.FC<FormLibraryProps> = ({ isDari, onSelect, onUp
       </p>
     </div>
 
+    {/* Only forms that exist as a document. An online application has nothing
+        to show beside a guide, so it is not offered here. */}
     <ul className="space-y-3">
-      {OFFICIAL_FORMS.map((form) => {
+      {paperForms(OFFICIAL_FORMS).map((form) => {
         const answered = savedAnswerCount(form.id);
         const total = form.questions.length;
         const complete = total > 0 && answered >= total;
