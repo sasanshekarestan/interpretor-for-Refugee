@@ -662,29 +662,46 @@ export default function App() {
         {activeTab === 'letter_scanner' && (
           <div className="space-y-6">
             <div className="bg-indigo-900 text-white p-6 rounded-3xl border border-indigo-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div>
-                <h2 className="text-xl font-bold">Understand a letter / فهمیدن یک نامه</h2>
-                <p className="text-xs text-indigo-200 mt-1">Take a photo or upload a document to get an instant breakdown in plain English and Farsi.</p>
+              <div className="space-y-1">
+                <h2 className="text-xl font-bold">Understand a letter</h2>
+                <p className="text-lg font-bold font-farsi" dir="rtl">فهمیدن یک نامه</p>
+                <p className="text-xs text-indigo-200 font-farsi leading-relaxed" dir="rtl">
+                  از نامه عکس بگیرید یا فایل PDF آن را اضافه کنید تا به زبان ساده برایتان توضیح دهیم.
+                </p>
+                <p className="text-xs text-indigo-200/90">
+                  Take a photo or add a PDF, and get it explained in plain English and Farsi.
+                </p>
               </div>
               <button
                 onClick={() => setIsLetterScannerOpen(true)}
-                className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-400 text-white rounded-xl text-xs font-bold transition shadow-xs"
+                className="px-5 py-3 bg-indigo-500 hover:bg-indigo-400 text-white rounded-xl text-xs font-bold transition shadow-xs shrink-0 flex items-center gap-2"
               >
-                Launch Scanner Modal
+                <span>Start</span>
+                <span className="font-farsi">| شروع</span>
               </button>
             </div>
 
             <div className="bg-white rounded-3xl p-8 text-center border border-slate-200 space-y-4">
               <Camera className="w-12 h-12 text-indigo-600 mx-auto" />
-              <h3 className="font-bold text-slate-900 text-base">Scan or Upload Official Document</h3>
+              <div className="space-y-1">
+                <h3 className="font-bold text-slate-900 text-base">Add an official letter</h3>
+                <p className="font-bold text-slate-900 text-base font-farsi" dir="rtl">نامه رسمی خود را اضافه کنید</p>
+              </div>
+              <p className="text-xs text-slate-600 max-w-md mx-auto font-farsi leading-relaxed" dir="rtl">
+                نامه‌های هوم آفیس، NHS، شورای شهر، مسکن و مطب دکتر را می‌خوانیم و می‌گوییم این نامه چیست، چه نوشته،
+                چه کاری باید انجام دهید و تاریخ‌های مهم آن کدام است.
+              </p>
               <p className="text-xs text-slate-500 max-w-md mx-auto">
-                We analyze official UK documents (Home Office, NHS, Housing, GP, Council) and explain what it is, what it says, what you must do, and key dates.
+                We read official UK letters (Home Office, NHS, Housing, GP, Council) and explain what it is, what it
+                says, what you must do, and the dates that matter.
               </p>
               <button
                 onClick={() => setIsLetterScannerOpen(true)}
-                className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-2xl shadow-xs"
+                className="px-6 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-2xl shadow-xs inline-flex items-center gap-2"
               >
-                Open Camera / Upload PDF
+                <Camera className="w-4 h-4" />
+                <span>Take a photo or add a PDF</span>
+                <span className="font-farsi">| عکس بگیرید یا PDF اضافه کنید</span>
               </button>
             </div>
           </div>

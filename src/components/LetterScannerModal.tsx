@@ -1,6 +1,14 @@
 import React, { useState, useRef } from 'react';
-import { X, Camera, Upload, FileText, Check, AlertTriangle, Calendar, ArrowRight, Volume2, Sparkles, Copy } from 'lucide-react';
+import { X, Camera, Upload, FileText, Check, AlertTriangle, Calendar, ArrowRight, Volume2, Sparkles, Copy, Loader2 } from 'lucide-react';
+import * as pdfjsLib from 'pdfjs-dist';
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import { playSpokenAudio } from '../utils/audioHelper';
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+
+/** Letters arrive as photos and as PDFs. Both are accepted. */
+const ACCEPTED = 'image/*,application/pdf,.pdf';
+const MAX_FILE_BYTES = 12 * 1024 * 1024;
 
 interface LetterAnalysisResult {
   id: string;
@@ -26,26 +34,100 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
   const [result, setResult] = useState<LetterAnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copiedResponse, setCopiedResponse] = useState<boolean>(false);
+  /** What was picked: a photo shows itself, a PDF shows its first page. */
+  const [fileName, setFileName] = useState<string | null>(null);
+  const [isPdf, setIsPdf] = useState<boolean>(false);
+  const [pdfPageCount, setPdfPageCount] = useState<number>(0);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isPreparing, setIsPreparing] = useState<boolean>(false);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   if (!isOpen) return null;
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const clearSelection = () => {
+    setSelectedImage(null);
+    setPreviewUrl(null);
+    setFileName(null);
+    setIsPdf(false);
+    setPdfPageCount(0);
+  };
+
+  /** Draw page one of a PDF, so the person can see they picked the right file. */
+  const renderPdfPreview = async (dataUrl: string) => {
+    const base64 = dataUrl.includes('base64,') ? dataUrl.split('base64,')[1] : '';
+    const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+    const doc = await pdfjsLib.getDocument({ data: bytes }).promise;
+    setPdfPageCount(doc.numPages);
+
+    const page = await doc.getPage(1);
+    const unscaled = page.getViewport({ scale: 1 });
+    const viewport = page.getViewport({ scale: Math.min(2, 520 / unscaled.width) });
+
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.floor(viewport.width);
+    canvas.height = Math.floor(viewport.height);
+    const context = canvas.getContext('2d');
+    if (!context) return;
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    await page.render({ canvas, canvasContext: context, viewport }).promise;
+    setPreviewUrl(canvas.toDataURL('image/png'));
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setSelectedImage(event.target?.result as string);
-        setResult(null);
-        setError(null);
-      };
-      reader.readAsDataURL(file);
+    e.target.value = '';
+    if (!file) return;
+
+    const pdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+    const image = file.type.startsWith('image/');
+
+    if (!pdf && !image) {
+      setError('This file type is not supported. Use a photo or a PDF. | این نوع فایل پشتیبانی نمی‌شود. عکس یا فایل PDF انتخاب کنید.');
+      return;
+    }
+
+    if (file.size > MAX_FILE_BYTES) {
+      setError('This file is too large (over 12 MB). Try a photo of the page instead. | این فایل خیلی بزرگ است (بیش از ۱۲ مگابایت). به جای آن از صفحه عکس بگیرید.');
+      return;
+    }
+
+    setError(null);
+    setResult(null);
+    setIsPreparing(true);
+    clearSelection();
+
+    try {
+      const dataUrl: string = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (event) => resolve(event.target?.result as string);
+        reader.onerror = () => reject(new Error('read failed'));
+        reader.readAsDataURL(file);
+      });
+
+      setSelectedImage(dataUrl);
+      setFileName(file.name);
+      setIsPdf(pdf);
+
+      if (pdf) {
+        await renderPdfPreview(dataUrl);
+      } else {
+        setPreviewUrl(dataUrl);
+      }
+    } catch (_) {
+      clearSelection();
+      setError('This file could not be opened. Try another file or a photo. | این فایل باز نشد. فایل دیگری انتخاب کنید یا عکس بگیرید.');
+    } finally {
+      setIsPreparing(false);
     }
   };
 
   const handleAnalyze = async () => {
     if (!selectedImage && !typedText.trim()) {
-      setError('Please take a photo, upload an image, or type text from your letter.');
+      setError('Add a photo, a PDF, or type some text from your letter. | یک عکس یا فایل PDF اضافه کنید، یا متن نامه را بنویسید.');
       return;
     }
 
@@ -63,14 +145,18 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
       });
 
       if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.error || 'Failed to analyze letter. Please check image quality and try again.');
+        throw new Error(
+          'The letter could not be read. Check the photo is clear and try again. | نامه خوانده نشد. مطمئن شوید عکس واضح است و دوباره تلاش کنید.'
+        );
       }
 
       const data = await response.json();
       setResult(data);
     } catch (err: any) {
-      setError(err.message || 'An error occurred while reading the document.');
+      setError(
+        err?.message ||
+          'Something went wrong while reading the document. | هنگام خواندن سند مشکلی پیش آمد.'
+      );
     } finally {
       setIsAnalyzing(false);
     }
@@ -123,70 +209,132 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
           {!result && (
             <div className="space-y-4">
               {/* Photo Upload Box */}
-              <div className="border-2 border-dashed border-indigo-200 hover:border-indigo-400 rounded-2xl p-6 bg-indigo-50/20 text-center transition">
+              <div className="border-2 border-dashed border-indigo-200 rounded-2xl p-5 bg-indigo-50/20 text-center transition">
+                {/* Photos and PDFs both, and a camera that is offered rather
+                    than forced - `capture` on the only input used to stop
+                    people choosing a file they already have. */}
                 <input
                   type="file"
-                  accept="image/*"
-                  capture="environment"
+                  accept={ACCEPTED}
                   ref={fileInputRef}
                   onChange={handleFileChange}
                   className="hidden"
                 />
+                <input
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  ref={cameraInputRef}
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
 
-                {selectedImage ? (
+                {isPreparing ? (
+                  <div className="py-8 space-y-2 text-indigo-800">
+                    <Loader2 className="w-7 h-7 mx-auto animate-spin" />
+                    <p className="text-xs font-semibold">Opening your file…</p>
+                    <p className="text-xs font-farsi" dir="rtl">در حال باز کردن فایل شما…</p>
+                  </div>
+                ) : previewUrl ? (
                   <div className="space-y-3">
                     <img
-                      src={selectedImage}
-                      alt="Letter scan preview"
-                      className="max-h-56 mx-auto rounded-xl border border-indigo-200 shadow-sm object-contain"
+                      src={previewUrl}
+                      alt={isPdf ? 'First page of the PDF you chose' : 'The photo of the letter you chose'}
+                      className="max-h-56 mx-auto rounded-xl border border-indigo-200 shadow-sm object-contain bg-white"
                     />
+
+                    <div className="flex items-center justify-center gap-2 text-[11px] text-slate-600">
+                      {isPdf ? <FileText className="w-3.5 h-3.5 text-indigo-600" /> : <Camera className="w-3.5 h-3.5 text-indigo-600" />}
+                      <span className="font-mono truncate max-w-[220px]">{fileName}</span>
+                      {isPdf && pdfPageCount > 0 && (
+                        <span className="font-semibold">
+                          {pdfPageCount} {pdfPageCount === 1 ? 'page' : 'pages'}
+                        </span>
+                      )}
+                    </div>
+
+                    {isPdf && pdfPageCount > 1 && (
+                      <p className="text-[11px] text-slate-500 font-farsi" dir="rtl">
+                        همه {pdfPageCount} صفحه خوانده می‌شود. اینجا فقط صفحه اول را می‌بینید.
+                      </p>
+                    )}
+
                     <div className="flex items-center justify-center gap-2">
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
                         className="px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50"
                       >
-                        Change Photo / تغییر عکس
+                        Change file <span className="font-farsi">| تغییر فایل</span>
                       </button>
                       <button
                         type="button"
-                        onClick={() => setSelectedImage(null)}
+                        onClick={clearSelection}
                         className="px-3 py-1.5 bg-rose-50 border border-rose-200 rounded-lg text-xs font-semibold text-rose-700 hover:bg-rose-100"
                       >
-                        Remove / حذف
+                        Remove <span className="font-farsi">| حذف</span>
                       </button>
                     </div>
                   </div>
                 ) : (
-                  <div
-                    onClick={() => fileInputRef.current?.click()}
-                    className="cursor-pointer space-y-3 py-4"
-                  >
-                    <div className="w-14 h-14 mx-auto rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700">
-                      <Camera className="w-7 h-7" />
-                    </div>
-                    <div>
+                  <div className="space-y-4 py-2">
+                    <div className="space-y-1">
                       <p className="font-bold text-indigo-950 text-sm sm:text-base">
-                        Take a photo or upload letter scan
+                        Add your letter
                       </p>
-                      <p className="text-xs text-indigo-700 font-farsi mt-1">
-                        عکس نامه را بگیرید یا فایل آن را از گوشی انتخاب کنید
+                      <p className="text-sm text-indigo-900 font-farsi font-bold" dir="rtl">
+                        نامه خود را اضافه کنید
+                      </p>
+                      <p className="text-xs text-indigo-700 font-farsi" dir="rtl">
+                        از نامه عکس بگیرید، یا فایل عکس یا PDF آن را انتخاب کنید.
+                      </p>
+                      <p className="text-[11px] text-indigo-700/80">
+                        Take a photo, or choose an image or PDF file.
                       </p>
                     </div>
+
+                    <div className="flex flex-col sm:flex-row items-stretch justify-center gap-2.5">
+                      <button
+                        type="button"
+                        onClick={() => cameraInputRef.current?.click()}
+                        className="flex-1 min-h-[52px] px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition"
+                      >
+                        <Camera className="w-4 h-4 shrink-0" />
+                        <span>Take a photo</span>
+                        <span className="font-farsi font-semibold text-indigo-100">| عکس گرفتن</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="flex-1 min-h-[52px] px-4 rounded-xl bg-white border border-indigo-300 hover:bg-indigo-50 text-indigo-800 font-bold text-xs flex items-center justify-center gap-2 transition"
+                      >
+                        <Upload className="w-4 h-4 shrink-0" />
+                        <span>Choose a file</span>
+                        <span className="font-farsi font-semibold text-indigo-600">| انتخاب فایل</span>
+                      </button>
+                    </div>
+
+                    {/* bdi keeps the Latin "PDF" from jumping to the wrong
+                        end of the Persian phrase */}
+                    <p className="text-[11px] text-slate-500">
+                      JPG, PNG or PDF · <bdi dir="rtl" className="font-farsi">عکس یا فایل PDF</bdi>
+                    </p>
                   </div>
                 )}
               </div>
 
               {/* Or Type Letter Text */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
-                  <span>Or paste / type key text from the letter:</span>
-                  <span className="font-farsi text-slate-500 font-normal">یا متن نامه را وارد کنید</span>
+                <label htmlFor="letter-text" className="text-xs font-bold text-slate-700 flex items-center justify-between gap-3">
+                  <span>Or type the text from your letter:</span>
+                  <span className="font-farsi text-slate-600 font-semibold" dir="rtl">یا متن نامه را اینجا بنویسید</span>
                 </label>
                 <textarea
+                  id="letter-text"
                   value={typedText}
                   onChange={(e) => setTypedText(e.target.value)}
-                  placeholder="e.g. Dear applicant, your Home Office interview is scheduled on 14th October at 10:30 AM at Croydon..."
+                  placeholder="متن نامه را اینجا بنویسید — Dear applicant, your Home Office interview is on 14 October at 10:30am in Croydon…"
                   rows={3}
                   className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none"
                 />
