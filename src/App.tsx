@@ -51,6 +51,14 @@ import {
   FolderLock
 } from 'lucide-react';
 
+/** A failure the person needs to see, in both languages. */
+interface AppError {
+  fa: string;
+  en: string;
+  /** Technical cause, shown small, for whoever is running the site. */
+  detail?: string;
+}
+
 export default function App() {
   const [activeTab, setActiveTab] = useState<AppTab>('home');
   const [direction, setDirection] = useState<TranslationDirection>('farsi_to_english');
@@ -59,7 +67,7 @@ export default function App() {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [currentResult, setCurrentResult] = useState<InterpretationResult | null>(null);
   const [history, setHistory] = useState<InterpretationResult[]>([]);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<AppError | null>(null);
 
   // New features state
   const [savedPhrases, setSavedPhrases] = useState<SavedPhrase[]>([]);
@@ -231,10 +239,36 @@ export default function App() {
     }
   };
 
-  const formatErrorMessage = (rawError: any): string => {
-    if (!rawError) return 'An unexpected error occurred. Please try again.';
-    const msg = typeof rawError === 'string' ? rawError : rawError.message || String(rawError);
-    return msg;
+  /**
+   * Turn a failure into something a person can act on, in both languages.
+   * Server wording like "GEMINI_API_KEY is missing" means nothing to someone
+   * holding a letter, so it is kept as a technical detail underneath rather
+   * than shown as the message.
+   */
+  const describeError = (rawError: any): AppError => {
+    const msg =
+      typeof rawError === 'string' ? rawError : rawError?.message || String(rawError || '');
+
+    if (/GEMINI_API_KEY|API key/i.test(msg)) {
+      return {
+        fa: 'سرویس ترجمه در حال حاضر در دسترس نیست. لطفاً کمی بعد دوباره تلاش کنید.',
+        en: 'The translation service is not available right now. Please try again shortly.',
+        detail: 'The server has no GEMINI_API_KEY set.',
+      };
+    }
+
+    if (rawError?.name === 'TimeoutError' || rawError?.name === 'AbortError' || /timeout|aborted/i.test(msg)) {
+      return {
+        fa: 'پاسخ خیلی طول کشید. اتصال اینترنت خود را بررسی کنید و دوباره تلاش کنید.',
+        en: 'That took too long. Check your connection and try again.',
+      };
+    }
+
+    return {
+      fa: 'ترجمه انجام نشد. دوباره تلاش کنید یا به جای صدا، متن خود را تایپ کنید.',
+      en: 'The translation did not go through. Try again, or type your message instead.',
+      detail: msg || undefined,
+    };
   };
 
   const handleAudioReady = async (base64Audio: string, mimeType: string, overrideDirection?: TranslationDirection) => {
@@ -270,9 +304,7 @@ export default function App() {
       triggerAutoSpeech(data);
     } catch (err: any) {
       console.warn('Audio interpretation issue:', err?.message || err);
-      setErrorMessage(
-        formatErrorMessage(err) || 'Could not interpret audio. Please check your microphone or try typing.'
-      );
+      setErrorMessage(describeError(err));
     } finally {
       setIsProcessing(false);
     }
@@ -330,7 +362,7 @@ export default function App() {
         saveToHistory(fallbackResult);
         triggerAutoSpeech(fallbackResult);
       } else {
-        setErrorMessage(formatErrorMessage(err) || 'Could not interpret text. Please try again or use Quick Phrases.');
+        setErrorMessage(describeError(err));
       }
     } finally {
       setIsProcessing(false);
@@ -387,7 +419,37 @@ export default function App() {
             : 'flex-1 max-w-6xl w-full mx-auto p-3.5 sm:p-6 space-y-6 sm:space-y-7 min-w-0'
         }
       >
-        
+        {/* A failed interpretation used to leave the screen silent: the error
+            was recorded in state and never rendered anywhere, so a recording
+            that did not come back simply vanished. It is shown here, above
+            whichever tab is open, because both the home and the interpreter
+            inputs set it. */}
+        {errorMessage && !isFormImmersive && (
+          <div
+            role="alert"
+            className="bg-rose-50 border border-rose-200 rounded-2xl p-4 flex items-start gap-3"
+          >
+            <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+            <div className="flex-1 min-w-0 space-y-1">
+              <p className="font-farsi text-sm font-bold text-rose-900 leading-relaxed" dir="rtl">
+                {errorMessage.fa}
+              </p>
+              <p className="text-xs text-rose-800 leading-relaxed">{errorMessage.en}</p>
+              {errorMessage.detail && (
+                <p className="text-[11px] text-rose-500 font-mono break-words pt-0.5">
+                  {errorMessage.detail}
+                </p>
+              )}
+            </div>
+            <button
+              onClick={() => setErrorMessage(null)}
+              className="shrink-0 text-xs font-bold text-rose-700 hover:text-rose-900 underline underline-offset-2 cursor-pointer font-farsi"
+            >
+              بستن
+            </button>
+          </div>
+        )}
+
         {/* TAB 1: HOME HUB */}
         {activeTab === 'home' && (
           <div className="space-y-6 sm:space-y-7 w-full min-w-0">
