@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ArrowRight, ArrowLeft, ListChecks, Hand } from 'lucide-react';
 import { UserLanguage } from '../types';
+import { RenderedField } from '../components/OfficialPdfViewer';
 import { useFormSession } from './useFormSession';
+import { useFieldExplanation } from './fieldGuide';
 import { CustomFormObject } from './types';
 import { AppBar } from './components/AppBar';
 import { BottomBar } from './components/BottomBar';
 import { DocumentSurface } from './components/DocumentSurface';
 import { QuestionCard } from './components/QuestionCard';
 import { AnswerField } from './components/AnswerField';
-import { AssistantSheet } from './components/AssistantSheet';
+import { AssistantPanel } from './components/AssistantPanel';
+import { FieldGuide } from './components/FieldGuide';
 import { FormLibrary } from './components/FormLibrary';
 import { AnswerSheet } from './components/AnswerSheet';
 import { Button, Notice } from './components/Primitives';
@@ -46,6 +49,58 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
   const s = useFormSession({ userLanguage, initialFormId, customUploadedForm, onClearCustomForm });
   const [confirmReset, setConfirmReset] = useState(false);
 
+  // The boxes on the page in front of the person, and the one they touched.
+  const [pageFields, setPageFields] = useState<RenderedField[]>([]);
+  const [pageText, setPageText] = useState('');
+  const [activeField, setActiveField] = useState<RenderedField | null>(null);
+  /**
+   * Following the paper form is the way in. The step-by-step list is still
+   * there for anyone who wants to be led through it, but it is opt-in - it
+   * was a second journey running alongside the document, and it only ever
+   * covered 9 of the form's boxes.
+   */
+  const [guideMode, setGuideMode] = useState(true);
+
+  const handleFieldsRendered = useCallback(
+    (info: { pageIndex: number; fields: RenderedField[]; pageText: string }) => {
+      setPageFields(info.fields);
+      setPageText(info.pageText);
+    },
+    []
+  );
+
+  const { explanation, status: explanationStatus } = useFieldExplanation({
+    formId: s.selectedFormId || '',
+    formTitle: s.selectedForm?.titleEn || '',
+    field: activeField,
+    pageText,
+    questions: s.questions,
+    userLanguage,
+  });
+
+  const { setChatFieldContext } = s;
+
+  const handleSelectField = useCallback(
+    (field: RenderedField) => {
+      setActiveField(field);
+      setGuideMode(true);
+      setChatFieldContext(field.name);
+      s.setPhoneView('questions');
+    },
+    [setChatFieldContext, s.setPhoneView]
+  );
+
+  const clearActiveField = useCallback(() => {
+    setActiveField(null);
+    setChatFieldContext(null);
+  }, [setChatFieldContext]);
+
+  // A different page, or a different form, means a different set of boxes.
+  useEffect(() => {
+    setActiveField(null);
+    setChatFieldContext(null);
+  }, [s.documentPageIndex, s.selectedFormId, setChatFieldContext]);
+
   const hasForm = !!s.selectedFormId && !!s.selectedForm;
 
   useEffect(() => {
@@ -72,6 +127,26 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
       customPages={s.customPages}
       pageIndex={s.documentPageIndex}
       onSelectPage={s.setDocumentPageIndex}
+      fields={pageFields}
+      activeFieldId={activeField?.id ?? null}
+      onSelectField={handleSelectField}
+      onFieldsRendered={handleFieldsRendered}
+    />
+  );
+
+  const assistant = (
+    <AssistantPanel
+      messages={s.chatMessages}
+      input={s.chatInput}
+      onInputChange={s.setChatInput}
+      onSend={(m) => s.sendChatMessage(m)}
+      isProcessing={s.isChatProcessing}
+      onUseSuggestion={guideMode ? undefined : s.useSuggestion}
+      contextFa={
+        guideMode
+          ? explanation?.labelFa || (activeField ? 'قسمت انتخاب‌شده فرم' : undefined)
+          : question?.farsiTranslation
+      }
     />
   );
 
@@ -80,7 +155,45 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
     !!s.inputText.trim() &&
     s.inputText.trim() !== (answer?.userRawInput || '').trim();
 
-  const questionPane = question ? (
+  /**
+   * Following the paper: what the touched box means, then the assistant.
+   * No second list of questions to keep in step with the document.
+   */
+  const guidePane = (
+    <div className="flex-1 min-h-0 overflow-y-auto bg-slate-50">
+      <div className="max-w-xl mx-auto px-3.5 py-4 space-y-3.5">
+        <FieldGuide
+          field={activeField}
+          explanation={explanation}
+          status={explanationStatus}
+          onClear={clearActiveField}
+          onPlayAudio={onPlayAudio}
+        />
+
+        {assistant}
+
+        {s.totalQuestions > 0 && (
+          <button
+            type="button"
+            onClick={() => {
+              setGuideMode(false);
+              clearActiveField();
+            }}
+            className={`w-full flex items-center gap-2.5 px-3.5 py-3 rounded-2xl border border-slate-200 bg-white
+              text-right cursor-pointer hover:bg-slate-50 transition ${t.focus}`}
+            dir="rtl"
+          >
+            <ListChecks className={`w-4 h-4 ${t.faint} shrink-0`} />
+            <span className="font-farsi text-[13px] font-bold text-slate-700 flex-1">
+              ترجیح می‌دهید قدم‌به‌قدم راهنمایی شوید؟
+            </span>
+          </button>
+        )}
+      </div>
+    </div>
+  );
+
+  const wizardPane = question ? (
     <div className="flex-1 min-h-0 overflow-y-auto bg-slate-50">
       <div className="max-w-xl mx-auto px-3.5 py-4 space-y-3.5">
         {/* At most one banner, and it can always be dismissed. */}
@@ -119,16 +232,18 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
           />
         )}
 
+        {assistant}
+
         <button
           type="button"
-          onClick={() => s.setIsAssistantOpen(true)}
+          onClick={() => setGuideMode(true)}
           className={`w-full flex items-center gap-2.5 px-3.5 py-3 rounded-2xl border border-slate-200 bg-white
             text-right cursor-pointer hover:bg-slate-50 transition ${t.focus}`}
           dir="rtl"
         >
-          <Sparkles className={`w-4 h-4 ${t.primaryText} shrink-0`} />
+          <Hand className={`w-4 h-4 ${t.faint} shrink-0`} />
           <span className="font-farsi text-[13px] font-bold text-slate-700 flex-1">
-            سوالی دارید؟ از دستیار بپرسید
+            به جای این، روی خود فرم بزنید و توضیح بگیرید
           </span>
         </button>
 
@@ -166,6 +281,10 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
       </div>
     </div>
   ) : null;
+
+  // Following the form is the default. The step-by-step list is still there
+  // for anyone who wants to be led, but it is no longer the only way in.
+  const questionPane = guideMode || !wizardPane ? guidePane : wizardPane;
 
   return (
     <div className="fixed inset-0 flex flex-col bg-slate-50 print:static print:h-auto">
@@ -230,18 +349,6 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
           </div>
         </>
       )}
-
-      <AssistantSheet
-        open={s.isAssistantOpen}
-        onClose={() => s.setIsAssistantOpen(false)}
-        messages={s.chatMessages}
-        input={s.chatInput}
-        onInputChange={s.setChatInput}
-        onSend={() => s.sendChatMessage()}
-        isProcessing={s.isChatProcessing}
-        onUseSuggestion={s.useSuggestion}
-        questionFa={question?.farsiTranslation}
-      />
 
       {confirmReset && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-5" role="dialog" aria-modal="true">

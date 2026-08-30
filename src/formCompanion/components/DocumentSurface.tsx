@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, FileText } from 'lucide-react';
 import { OfficialForm } from '../../data/officialForms';
-import { OfficialPdfViewer } from '../../components/OfficialPdfViewer';
+import { OfficialPdfViewer, RenderedField } from '../../components/OfficialPdfViewer';
 import { CustomFormObject } from '../types';
 import { t } from '../tokens';
 
@@ -10,6 +10,12 @@ interface DocumentSurfaceProps {
   customPages?: CustomFormObject['uploadedPages'];
   pageIndex: number;
   onSelectPage: (index: number) => void;
+  /** Boxes on the current page, once the page has rendered. */
+  fields?: RenderedField[];
+  activeFieldId?: string | null;
+  onSelectField?: (field: RenderedField) => void;
+  onFieldsRendered?: (info: { pageIndex: number; fields: RenderedField[]; pageText: string }) => void;
+  answeredFieldIds?: string[];
 }
 
 /**
@@ -25,6 +31,11 @@ export const DocumentSurface: React.FC<DocumentSurfaceProps> = ({
   customPages,
   pageIndex,
   onSelectPage,
+  fields = [],
+  activeFieldId,
+  onSelectField,
+  onFieldsRendered,
+  answeredFieldIds = [],
 }) => {
   const [zoom, setZoom] = useState(100);
   const [pdfPageCount, setPdfPageCount] = useState(form.pageCount);
@@ -46,8 +57,46 @@ export const DocumentSurface: React.FC<DocumentSurfaceProps> = ({
   let body: React.ReactNode;
 
   if (!hasCustom) {
+    // A touch target over every box the form actually contains. It is drawn
+    // on top of the page, never into it - the document underneath is the
+    // untouched official PDF.
+    const overlay =
+      onSelectField && fields.length > 0 ? (
+        <div className="absolute inset-0">
+          {fields.map((f) => {
+            const isActive = f.id === activeFieldId;
+            const isAnswered = answeredFieldIds.includes(f.id);
+            return (
+              <button
+                key={f.id}
+                type="button"
+                onClick={() => onSelectField(f)}
+                aria-label={f.name}
+                aria-pressed={isActive}
+                className={`absolute rounded-[3px] transition cursor-pointer
+                  ${
+                    isActive
+                      ? 'bg-[#005EB8]/25 ring-2 ring-[#005EB8]'
+                      : isAnswered
+                      ? 'bg-emerald-500/20 hover:bg-emerald-500/30'
+                      : 'bg-[#005EB8]/8 hover:bg-[#005EB8]/20'
+                  }`}
+                style={{
+                  left: f.left,
+                  top: f.top,
+                  width: Math.max(f.width, 14),
+                  height: Math.max(f.height, 14),
+                }}
+              />
+            );
+          })}
+        </div>
+      ) : undefined;
+
     body = (
       <OfficialPdfViewer
+        overlay={overlay}
+        onFieldsRendered={onFieldsRendered}
         pdfPath={form.pdfPath}
         titleEn={form.titleEn}
         titleFa={form.titleFa}

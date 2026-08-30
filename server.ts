@@ -1090,6 +1090,64 @@ Return JSON:
 });
 
 // Endpoint: Form Consistency Scanner
+// Endpoint: explain one box on the official form, in plain Persian or Dari.
+// The client sends the PDF's own field name plus the text printed around it,
+// so the explanation describes the real box on the paper rather than a
+// question we wrote separately.
+app.post('/api/form/explain-field', async (req, res) => {
+  try {
+    const { fieldName, fieldType = 'text', pageContext = '', formTitle = 'UK official form', userLanguage = 'farsi' } = req.body;
+    if (!fieldName || !String(fieldName).trim()) {
+      return res.status(400).json({ error: 'fieldName is required' });
+    }
+
+    const language = userLanguage === 'dari' ? 'Dari' : 'Farsi';
+
+    const systemInstruction = `You explain one single box on an official UK paper form to a refugee or asylum seeker who reads little English and may read ${language} slowly.
+
+You are given the form's own internal name for the box and the text printed on that page around it. Explain THAT box only.
+
+RULES:
+1. Write in simple, everyday ${language}. Short sentences. No legal or bureaucratic wording. No Home Office jargon.
+2. NEVER invent what the form says. If the page text does not make the box's meaning clear, say plainly that it is not clear and suggest asking the office on the form's helpline.
+3. NEVER tell the person what to answer about their own circumstances, and never suggest an answer that could be untrue.
+4. The person writes on the paper form by hand. Tell them what kind of thing goes in the box, not how to use an app.
+5. exampleAnswer must be an obviously fictional illustration of the FORMAT only (e.g. a made-up name, "15/08/1994"), never advice.
+6. If the box is a tick box, say clearly what ticking it means.
+
+Output JSON with:
+ - labelFa: a short ${language} name for this box, 2-6 words.
+ - meaningFa: 1-3 short ${language} sentences saying what the box is asking for.
+ - whatToWriteFa: one ${language} sentence on the kind of information that goes here.
+ - exampleAnswer: a short fictional example in English showing the format, or an empty string for a tick box.
+ - cautionFa: an empty string, or one short ${language} sentence if getting this box wrong commonly causes problems.`;
+
+    const schema = {
+      type: Type.OBJECT,
+      properties: {
+        labelFa: { type: Type.STRING },
+        meaningFa: { type: Type.STRING },
+        whatToWriteFa: { type: Type.STRING },
+        exampleAnswer: { type: Type.STRING },
+        cautionFa: { type: Type.STRING },
+      },
+      required: ['labelFa', 'meaningFa', 'whatToWriteFa'],
+    };
+
+    const rawResponseText = await generateWithFallback(
+      `Form: ${formTitle}\nBox internal name: ${fieldName}\nBox type: ${fieldType === 'choice' ? 'tick box or yes/no box' : 'text box'}\n\nText printed on this page:\n${String(pageContext).slice(0, 4000)}`,
+      systemInstruction,
+      schema
+    );
+
+    const parsed = cleanJsonText(rawResponseText);
+    return res.json(parsed);
+  } catch (error: any) {
+    console.error('Error in /api/form/explain-field:', error);
+    return res.status(500).json({ error: 'Failed to explain field' });
+  }
+});
+
 app.post('/api/form/consistency-check', async (req, res) => {
   try {
     const { formAnswers = [] } = req.body;

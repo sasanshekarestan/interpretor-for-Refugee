@@ -86,6 +86,8 @@ export const useFormSession = ({
   const [chatInput, setChatInput] = useState('');
   const [isChatProcessing, setIsChatProcessing] = useState(false);
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
+  /** The box on the paper the person is asking about, when they tapped one. */
+  const [chatFieldContext, setChatFieldContext] = useState<string | null>(null);
 
   const [showReviewMode, setShowReviewMode] = useState(false);
   const [showRestoredBanner, setShowRestoredBanner] = useState(false);
@@ -474,7 +476,7 @@ export const useFormSession = ({
             message: text,
             formTitle: selectedForm?.titleEn || 'UK Form Document',
             questions,
-            activeFieldKey: currentQuestion?.fieldKey,
+            activeFieldKey: chatFieldContext || currentQuestion?.fieldKey,
             currentAnswers: answers,
             userLanguage,
           }),
@@ -511,7 +513,7 @@ export const useFormSession = ({
         setIsChatProcessing(false);
       }
     },
-    [chatInput, isChatProcessing, currentQuestion, selectedForm, questions, answers, userLanguage]
+    [chatInput, isChatProcessing, currentQuestion, selectedForm, questions, answers, userLanguage, chatFieldContext]
   );
 
   /** Put the assistant's suggestion into the answer field, for the user to accept. */
@@ -619,6 +621,8 @@ export const useFormSession = ({
     isChatProcessing,
     sendChatMessage,
     useSuggestion,
+    chatFieldContext,
+    setChatFieldContext,
 
     // voice
     isRecording,

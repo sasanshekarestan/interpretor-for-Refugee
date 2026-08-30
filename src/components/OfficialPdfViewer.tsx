@@ -6,6 +6,17 @@ import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 // Explicitly configure pdf.js worker URL to match the exact installed pdfjs-dist version
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
+/** One fillable box on the paper form, placed in rendered canvas pixels. */
+export interface RenderedField {
+  id: string;
+  name: string;
+  type: 'text' | 'choice';
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
 interface OfficialPdfViewerProps {
   pdfPath: string;
   titleEn: string;
@@ -22,6 +33,10 @@ interface OfficialPdfViewerProps {
   /** Let the viewer fill its parent instead of reserving 600px. */
   fill?: boolean;
   onPageCountChange?: (count: number) => void;
+  /** Called after each page render with that page's form fields. */
+  onFieldsRendered?: (info: { pageIndex: number; fields: RenderedField[]; pageText: string }) => void;
+  /** Drawn over the canvas, in the canvas's own coordinate space. */
+  overlay?: React.ReactNode;
 }
 
 export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
@@ -37,6 +52,8 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
   onZoomChange,
   fill = false,
   onPageCountChange,
+  onFieldsRendered,
+  overlay,
 }) => {
   const [internalZoom, setInternalZoom] = useState<number>(100);
   const zoom = zoomProp ?? internalZoom;
@@ -154,6 +171,47 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
       await renderTask.promise;
       renderTaskRef.current = null;
       setPageRendering(false);
+
+      // Hand the caller the page's own form fields, positioned in rendered
+      // pixels. HC1 and forms like it ship as fillable PDFs, so every box on
+      // the paper already has a name and a rectangle - we do not have to
+      // invent hotspots or re-draw anything.
+      if (onFieldsRendered) {
+        try {
+          const annotations = await page.getAnnotations();
+          const fields: RenderedField[] = annotations
+            .filter((a: any) => a.subtype === 'Widget' && Array.isArray(a.rect))
+            .map((a: any) => {
+              const [x1, y1, x2, y2] = viewport.convertToViewportRectangle(a.rect);
+              return {
+                id: String(a.id),
+                name: String(a.fieldName || ''),
+                type: a.fieldType === 'Btn' ? ('choice' as const) : ('text' as const),
+                left: Math.min(x1, x2),
+                top: Math.min(y1, y2),
+                width: Math.abs(x2 - x1),
+                height: Math.abs(y2 - y1),
+              };
+            })
+            .filter((f: RenderedField) => f.name && f.width > 2 && f.height > 2);
+
+          // The words printed on this page, so an explanation can describe
+          // what the form itself says rather than guessing from a field name.
+          let pageText = '';
+          try {
+            const tc = await page.getTextContent();
+            pageText = tc.items
+              .map((i: any) => (typeof i.str === 'string' ? i.str : ''))
+              .join(' ')
+              .replace(/\s+/g, ' ')
+              .trim();
+          } catch (_) {}
+
+          onFieldsRendered({ pageIndex: currentPageIndex, fields, pageText });
+        } catch (_) {
+          onFieldsRendered({ pageIndex: currentPageIndex, fields: [], pageText: '' });
+        }
+      }
     } catch (err: any) {
       if (err?.name !== 'RenderingCancelledException') {
         console.error('Page render error:', err);
@@ -401,9 +459,10 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
             </div>
           )}
 
-          {/* Actual Canvas */}
-          <div className="shadow-2xl rounded-lg overflow-hidden bg-white border border-slate-700">
+          {/* Actual Canvas, with any field overlay pinned to the same box */}
+          <div className="relative shadow-2xl rounded-lg overflow-hidden bg-white border border-slate-700">
             <canvas ref={canvasRef} className="block mx-auto max-w-full h-auto" />
+            {overlay}
           </div>
         </div>
       </div>
