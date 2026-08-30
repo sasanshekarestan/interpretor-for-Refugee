@@ -3,6 +3,17 @@
 
 import { FormQuestion } from '../types';
 
+/**
+ * How the form is actually completed.
+ *
+ * 'paper'  — there is a real document to fill in by hand. Form Companion can
+ *            show it, so it belongs in the library.
+ * 'online' — the application only exists as a web journey. There is nothing
+ *            to display beside a guide, so these are kept here for the
+ *            browser extension to use and are not listed in the app.
+ */
+export type FormDelivery = 'paper' | 'online';
+
 export interface OfficialForm {
   id: string;
   code: string;
@@ -16,8 +27,12 @@ export interface OfficialForm {
   pdfPath: string;
   officialSourceUrl: string;
   pageCount: number;
+  delivery: FormDelivery;
   questions: FormQuestion[];
 }
+
+/** The forms Form Companion can show: the ones that exist on paper. */
+export const paperForms = (forms: OfficialForm[]) => forms.filter((f) => f.delivery !== 'online');
 
 export const OFFICIAL_FORMS: OfficialForm[] = [
   {
@@ -33,6 +48,7 @@ export const OFFICIAL_FORMS: OfficialForm[] = [
     pdfPath: 'public/forms/hc1.pdf',
     officialSourceUrl: 'https://www.nhsbsa.nhs.uk/nhs-low-income-scheme',
     pageCount: 20,
+    delivery: 'paper',
     questions: [
       {
         id: 'hc1_q1',
@@ -180,6 +196,7 @@ export const OFFICIAL_FORMS: OfficialForm[] = [
     pdfPath: 'public/forms/hc5.pdf',
     officialSourceUrl: 'https://www.nhsbsa.nhs.uk/nhs-low-income-scheme',
     pageCount: 4,
+    delivery: 'paper',
     questions: [
       {
         id: 'hc5_q1',
@@ -241,6 +258,7 @@ export const OFFICIAL_FORMS: OfficialForm[] = [
     pdfPath: 'public/forms/gms1.pdf',
     officialSourceUrl: 'https://www.nhs.uk/nhs-services/gps/how-to-register-with-a-gp-surgery/',
     pageCount: 2,
+    delivery: 'paper',
     questions: [
       {
         id: 'gms1_q1',
@@ -316,6 +334,7 @@ export const OFFICIAL_FORMS: OfficialForm[] = [
     pdfPath: 'public/forms/arc-replacement.pdf',
     officialSourceUrl: 'https://www.gov.uk/asylum-reporting-centre',
     pageCount: 2,
+    delivery: 'online',
     questions: [
       {
         id: 'arc_q1',
@@ -411,67 +430,6 @@ export const OFFICIAL_FORMS: OfficialForm[] = [
     ]
   },
   {
-    id: 'section95_coc',
-    code: 'Section 95 CoC',
-    titleEn: 'Section 95 Change of Circumstances (CoC)',
-    titleFa: 'اعلام تغییر شرایط حقوقی و مالی برای پشتیبانی پناهندگی سکشن ۹۵',
-    titleDari: 'اطلاع‌دهی تغییر حالت فامیلی و مالی برای حمایت پناهندگی سکشن ۹۵',
-    issuer: 'UK Visas & Immigration (Home Office)',
-    category: 'home_office',
-    purposeFa: 'اطلاع‌رسانی تغییر آدرس، تولد نوزاد، ازدواج یا تغییر درآمد به هوم آفیس',
-    purposeEn: 'Notify Home Office of address change, newborn baby, marriage, or financial change while on asylum support.',
-    pdfPath: 'public/forms/section95-coc.pdf',
-    officialSourceUrl: 'https://www.gov.uk/asylum-support',
-    pageCount: 4,
-    questions: [
-      {
-        id: 's95_q1',
-        number: 1,
-        questionCode: 'Part 1',
-        section: 'Personal Identification',
-        questionEn: 'What is your Full Name, Home Office Reference Number, and Port Reference?',
-        simpleEnglish: 'Give your main applicant name and 9-digit Home Office reference number.',
-        farsiTranslation: 'نام کامل متقاضی اصلی و شماره مرجع هوم آفیس چیست؟',
-        dariTranslation: 'نام مکمل متقاضی اصلی و نمبر دوسیه هوم آفیس چیست؟',
-        explanationFa: 'مشخصات پرونده پشتیبانی پناهندگی سکشن ۹۵.',
-        whatTypeInfoNeeded: 'نام کامل و شماره ۹ رقمی هوم آفیس',
-        exampleFormat: 'Name: MOHAMMAD RAHIMI / HO Ref: 09876543',
-        fieldKey: 's95_applicant_details',
-        required: true
-      },
-      {
-        id: 's95_q2',
-        number: 2,
-        questionCode: 'Part 2',
-        section: 'Type of Change',
-        questionEn: 'What specific change of circumstance are you reporting?',
-        simpleEnglish: 'Tick change of address, birth of a child, marriage, partner joining, or change in income.',
-        farsiTranslation: 'چه تغییر خاصی در شرایط شما رخ داده است؟',
-        dariTranslation: 'کدام تغییر در حالت فامیلی یا زندگی شما رخ داده است؟',
-        explanationFa: 'تولد نوزاد، تغییر آدرس، ازدواج، یا دریافت هرگونه درآمد جدید.',
-        whatTypeInfoNeeded: 'نوع تغییر (تولد کودک، آدرس، ازدواج، درآمد)',
-        exampleFormat: 'Birth of a child (Newborn baby born on 20/08/2026)',
-        fieldKey: 's95_change_type',
-        required: true
-      },
-      {
-        id: 's95_q3',
-        number: 3,
-        questionCode: 'Part 3',
-        section: 'Details of New Dependent or Address',
-        questionEn: 'What are the details of the new family member, or your new address?',
-        simpleEnglish: 'If a baby was born, provide NHS birth notification or birth certificate details.',
-        farsiTranslation: 'جزییات فرد جدید اضافه شده به خانواده یا آدرس جدید چیست؟',
-        dariTranslation: 'تفصیلات عضوی جدید فامیل یا آدرس جدید چیست؟',
-        explanationFa: 'گواهی تولد نوزاد یا تاییدیه مسکن جدید باید ضمیمه شود.',
-        whatTypeInfoNeeded: 'نام نوزاد، تاریخ تولد، شماره گواهی تولد / آدرس جدید',
-        exampleFormat: 'Baby Name: Sara Rahimi, DOB: 20/08/2026, NHS No: 987 654 3210',
-        fieldKey: 's95_change_details',
-        required: true
-      }
-    ]
-  },
-  {
     id: 'asf1_asylum_support',
     code: 'ASF1',
     titleEn: 'Application for Asylum Support (ASF1)',
@@ -482,8 +440,9 @@ export const OFFICIAL_FORMS: OfficialForm[] = [
     purposeFa: 'درخواست مسکن و حقوق هفتگی پناهندگی برای افراد فاقد تمکن مالی',
     purposeEn: 'Apply for Home Office housing and weekly cash support for destitute asylum seekers.',
     pdfPath: 'public/forms/asf1.pdf',
-    officialSourceUrl: 'https://www.gov.uk/asylum-support/how-to-claim',
-    pageCount: 12,
+    officialSourceUrl: 'https://www.gov.uk/government/publications/application-for-asylum-support-form-asf1',
+    pageCount: 36,
+    delivery: 'paper',
     questions: [
       {
         id: 'asf1_q1',
@@ -533,50 +492,23 @@ export const OFFICIAL_FORMS: OfficialForm[] = [
     ]
   },
   {
-    id: 'aspen_card',
-    code: 'ASPEN',
-    titleEn: 'ASPEN Card Issue / Replacement Report',
-    titleFa: 'گزارش مشکل، مفقودی یا درخواست فعال‌سازی کارت حقوق پناهندگی ASPEN',
-    titleDari: 'گزارش مشکل یا مفقودی کارت حقوق پناهندگی ASPEN',
-    issuer: 'Prepaid Financial Services / Home Office',
+    id: 'asf2_additional_support',
+    code: 'ASF2',
+    titleEn: 'Request for Additional Support (ASF2)',
+    titleFa: 'درخواست کمک اضافی (فرم ASF2 / سکشن ۹۶)',
+    titleDari: 'درخواست کمک اضافی (فرم ASF2)',
+    issuer: 'UK Visas & Immigration (Home Office)',
     category: 'home_office',
-    purposeFa: 'گزارش گم شدن کارت پول پناهندگی، مسدود شدن رمز یا عدم واریز حقوق هفتگی',
-    purposeEn: 'Report missing ASPEN debit card, forgotten PIN, or failed payment delivery.',
-    pdfPath: 'public/forms/aspen.pdf',
-    officialSourceUrl: 'https://www.gov.uk/asylum-support',
-    pageCount: 2,
-    questions: [
-      {
-        id: 'aspen_q1',
-        number: 1,
-        questionCode: 'Part 1',
-        section: 'Cardholder Identification',
-        questionEn: 'What is your Full Name, Home Office Reference Number and ASPEN Card Number (if known)?',
-        simpleEnglish: 'Your identity details linked to your weekly asylum support payment card.',
-        farsiTranslation: 'نام کامل، شماره پرونده هوم آفیس و شماره کارت ASPEN (در صورت اطلاع) چیست؟',
-        dariTranslation: 'نام مکمل، نمبر دوسیه هوم آفیس و نمبر کارت ASPEN شما چیست؟',
-        explanationFa: 'اطلاعات شناسه دارنده کارت پول پناهندگی.',
-        whatTypeInfoNeeded: 'نام، شماره هوم آفیس ۹ رقمی، ۱۶ رقم روی کارت (در صورت موجود بودن)',
-        exampleFormat: 'Name: HASSAN KARIMI / HO Ref: 01122334',
-        fieldKey: 'aspen_holder_id',
-        required: true
-      },
-      {
-        id: 'aspen_q2',
-        number: 2,
-        questionCode: 'Part 2',
-        section: 'Problem Type',
-        questionEn: 'What is the issue with your ASPEN payment card?',
-        simpleEnglish: 'Is card lost, stolen, damaged, blocked PIN, or payment not arrived?',
-        farsiTranslation: 'مشکل کارت ASPEN شما چیست؟',
-        dariTranslation: 'مشکل کارت پول شما چیست؟',
-        explanationFa: 'گزارش مفقودی، دزدیده شدن، بلوک شدن رمز یا عدم واریز پول هفتگی.',
-        whatTypeInfoNeeded: 'انتخاب نوع مشکل (Lost / Stolen / Blocked PIN / Missing Payment)',
-        exampleFormat: 'PIN blocked after 3 wrong entries',
-        fieldKey: 'aspen_issue_type',
-        required: true
-      }
-    ]
+    purposeFa: 'درخواست کمک اضافی برای نیازهای ضروری که با کمک‌هزینه فعلی شما پوشش داده نمی‌شود',
+    purposeEn: 'Ask for extra support when the current cash allowance does not cover essential living needs.',
+    pdfPath: 'public/forms/asf2.pdf',
+    officialSourceUrl: 'https://www.gov.uk/government/publications/application-for-additional-asylum-support-form-asf2',
+    pageCount: 9,
+    delivery: 'paper',
+    // The Home Office publishes ASF2 as an ODT only. This PDF is that file
+    // converted unchanged - no question set is written for it, because the
+    // guidance comes from tapping the document itself.
+    questions: [],
   },
   {
     id: 'universal_credit',
@@ -591,6 +523,7 @@ export const OFFICIAL_FORMS: OfficialForm[] = [
     pdfPath: 'public/forms/universal-credit.pdf',
     officialSourceUrl: 'https://www.gov.uk/universal-credit',
     pageCount: 6,
+    delivery: 'online',
     questions: [
       {
         id: 'uc_q1',
@@ -652,6 +585,7 @@ export const OFFICIAL_FORMS: OfficialForm[] = [
     pdfPath: 'public/forms/school-admission.pdf',
     officialSourceUrl: 'https://www.gov.uk/apply-for-school-place',
     pageCount: 4,
+    delivery: 'paper',
     questions: [
       {
         id: 'school_q1',

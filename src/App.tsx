@@ -3,7 +3,7 @@ import { TranslationDirection, InterpretationResult, EmbedSettings, QuickPhrase,
 import { Header } from './components/Header';
 import { NavigationTabs } from './components/NavigationTabs';
 import { PrivacyBanner } from './components/PrivacyBanner';
-import { FormCompanion } from './components/FormCompanion';
+import { FormCompanion } from './formCompanion/FormCompanion';
 import { MessageWriterView } from './components/MessageWriterView';
 import { SayItForMeModal } from './components/SayItForMeModal';
 import { UkTerminologyView } from './components/UkTerminologyView';
@@ -51,6 +51,14 @@ import {
   FolderLock
 } from 'lucide-react';
 
+/** A failure the person needs to see, in both languages. */
+interface AppError {
+  fa: string;
+  en: string;
+  /** Technical cause, shown small, for whoever is running the site. */
+  detail?: string;
+}
+
 export default function App() {
   const [activeTab, setActiveTab] = useState<AppTab>('home');
   const [direction, setDirection] = useState<TranslationDirection>('farsi_to_english');
@@ -59,7 +67,7 @@ export default function App() {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [currentResult, setCurrentResult] = useState<InterpretationResult | null>(null);
   const [history, setHistory] = useState<InterpretationResult[]>([]);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<AppError | null>(null);
 
   // New features state
   const [savedPhrases, setSavedPhrases] = useState<SavedPhrase[]>([]);
@@ -77,6 +85,9 @@ export default function App() {
   const [isFormUploadOpen, setIsFormUploadOpen] = useState<boolean>(false);
   const [selectedFormForCompanion, setSelectedFormForCompanion] = useState<string | null>(null);
   const [customUploadedForm, setCustomUploadedForm] = useState<any | null>(null);
+  // True while a form is open: the document owns the screen, so the app header,
+  // tab strip and footer stand down rather than pushing it below the fold.
+  const [isFormImmersive, setIsFormImmersive] = useState<boolean>(false);
 
   // App / Embed settings
   const [settings, setSettings] = useState<EmbedSettings>({
@@ -228,10 +239,36 @@ export default function App() {
     }
   };
 
-  const formatErrorMessage = (rawError: any): string => {
-    if (!rawError) return 'An unexpected error occurred. Please try again.';
-    const msg = typeof rawError === 'string' ? rawError : rawError.message || String(rawError);
-    return msg;
+  /**
+   * Turn a failure into something a person can act on, in both languages.
+   * Server wording like "GEMINI_API_KEY is missing" means nothing to someone
+   * holding a letter, so it is kept as a technical detail underneath rather
+   * than shown as the message.
+   */
+  const describeError = (rawError: any): AppError => {
+    const msg =
+      typeof rawError === 'string' ? rawError : rawError?.message || String(rawError || '');
+
+    if (/GEMINI_API_KEY|API key/i.test(msg)) {
+      return {
+        fa: 'سرویس ترجمه در حال حاضر در دسترس نیست. لطفاً کمی بعد دوباره تلاش کنید.',
+        en: 'The translation service is not available right now. Please try again shortly.',
+        detail: 'The server has no GEMINI_API_KEY set.',
+      };
+    }
+
+    if (rawError?.name === 'TimeoutError' || rawError?.name === 'AbortError' || /timeout|aborted/i.test(msg)) {
+      return {
+        fa: 'پاسخ خیلی طول کشید. اتصال اینترنت خود را بررسی کنید و دوباره تلاش کنید.',
+        en: 'That took too long. Check your connection and try again.',
+      };
+    }
+
+    return {
+      fa: 'ترجمه انجام نشد. دوباره تلاش کنید یا به جای صدا، متن خود را تایپ کنید.',
+      en: 'The translation did not go through. Try again, or type your message instead.',
+      detail: msg || undefined,
+    };
   };
 
   const handleAudioReady = async (base64Audio: string, mimeType: string, overrideDirection?: TranslationDirection) => {
@@ -267,9 +304,7 @@ export default function App() {
       triggerAutoSpeech(data);
     } catch (err: any) {
       console.warn('Audio interpretation issue:', err?.message || err);
-      setErrorMessage(
-        formatErrorMessage(err) || 'Could not interpret audio. Please check your microphone or try typing.'
-      );
+      setErrorMessage(describeError(err));
     } finally {
       setIsProcessing(false);
     }
@@ -327,7 +362,7 @@ export default function App() {
         saveToHistory(fallbackResult);
         triggerAutoSpeech(fallbackResult);
       } else {
-        setErrorMessage(formatErrorMessage(err) || 'Could not interpret text. Please try again or use Quick Phrases.');
+        setErrorMessage(describeError(err));
       }
     } finally {
       setIsProcessing(false);
@@ -356,8 +391,9 @@ export default function App() {
   const userLang = settings.userLanguage || 'farsi';
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-teal-600 selection:text-white pb-16 print:bg-white print:p-0 print:pb-0 print:text-black w-full max-w-full overflow-x-hidden">
+    <div className={`min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-teal-600 selection:text-white print:bg-white print:p-0 print:pb-0 print:text-black w-full max-w-full overflow-x-hidden ${isFormImmersive ? '' : 'pb-16'}`}>
       {/* Header */}
+      {!isFormImmersive && (
       <Header
         direction={direction}
         onToggleDirection={() =>
@@ -370,13 +406,50 @@ export default function App() {
         selectedDialectHint={dialectHint}
         onSelectDialectHint={setDialectHint}
       />
+      )}
 
       {/* Navigation Tabs */}
-      <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />
+      {!isFormImmersive && <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />}
 
       {/* Main Container */}
-      <main className="flex-1 max-w-6xl w-full mx-auto p-3.5 sm:p-6 space-y-6 sm:space-y-7 min-w-0">
-        
+      <main
+        className={
+          isFormImmersive
+            ? 'flex-1 w-full min-w-0'
+            : 'flex-1 max-w-6xl w-full mx-auto p-3.5 sm:p-6 space-y-6 sm:space-y-7 min-w-0'
+        }
+      >
+        {/* A failed interpretation used to leave the screen silent: the error
+            was recorded in state and never rendered anywhere, so a recording
+            that did not come back simply vanished. It is shown here, above
+            whichever tab is open, because both the home and the interpreter
+            inputs set it. */}
+        {errorMessage && !isFormImmersive && (
+          <div
+            role="alert"
+            className="bg-rose-50 border border-rose-200 rounded-2xl p-4 flex items-start gap-3"
+          >
+            <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+            <div className="flex-1 min-w-0 space-y-1">
+              <p className="font-farsi text-sm font-bold text-rose-900 leading-relaxed" dir="rtl">
+                {errorMessage.fa}
+              </p>
+              <p className="text-xs text-rose-800 leading-relaxed">{errorMessage.en}</p>
+              {errorMessage.detail && (
+                <p className="text-[11px] text-rose-500 font-mono break-words pt-0.5">
+                  {errorMessage.detail}
+                </p>
+              )}
+            </div>
+            <button
+              onClick={() => setErrorMessage(null)}
+              className="shrink-0 text-xs font-bold text-rose-700 hover:text-rose-900 underline underline-offset-2 cursor-pointer font-farsi"
+            >
+              بستن
+            </button>
+          </div>
+        )}
+
         {/* TAB 1: HOME HUB */}
         {activeTab === 'home' && (
           <div className="space-y-6 sm:space-y-7 w-full min-w-0">
@@ -651,29 +724,46 @@ export default function App() {
         {activeTab === 'letter_scanner' && (
           <div className="space-y-6">
             <div className="bg-indigo-900 text-white p-6 rounded-3xl border border-indigo-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div>
-                <h2 className="text-xl font-bold">Understand a letter / فهمیدن یک نامه</h2>
-                <p className="text-xs text-indigo-200 mt-1">Take a photo or upload a document to get an instant breakdown in plain English and Farsi.</p>
+              <div className="space-y-1">
+                <h2 className="text-xl font-bold">Understand a letter</h2>
+                <p className="text-lg font-bold font-farsi" dir="rtl">فهمیدن یک نامه</p>
+                <p className="text-xs text-indigo-200 font-farsi leading-relaxed" dir="rtl">
+                  از نامه عکس بگیرید یا فایل PDF آن را اضافه کنید تا به زبان ساده برایتان توضیح دهیم.
+                </p>
+                <p className="text-xs text-indigo-200/90">
+                  Take a photo or add a PDF, and get it explained in plain English and Farsi.
+                </p>
               </div>
               <button
                 onClick={() => setIsLetterScannerOpen(true)}
-                className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-400 text-white rounded-xl text-xs font-bold transition shadow-xs"
+                className="px-5 py-3 bg-indigo-500 hover:bg-indigo-400 text-white rounded-xl text-xs font-bold transition shadow-xs shrink-0 flex items-center gap-2"
               >
-                Launch Scanner Modal
+                <span>Start</span>
+                <span className="font-farsi">| شروع</span>
               </button>
             </div>
 
             <div className="bg-white rounded-3xl p-8 text-center border border-slate-200 space-y-4">
               <Camera className="w-12 h-12 text-indigo-600 mx-auto" />
-              <h3 className="font-bold text-slate-900 text-base">Scan or Upload Official Document</h3>
+              <div className="space-y-1">
+                <h3 className="font-bold text-slate-900 text-base">Add an official letter</h3>
+                <p className="font-bold text-slate-900 text-base font-farsi" dir="rtl">نامه رسمی خود را اضافه کنید</p>
+              </div>
+              <p className="text-xs text-slate-600 max-w-md mx-auto font-farsi leading-relaxed" dir="rtl">
+                نامه‌های هوم آفیس، NHS، شورای شهر، مسکن و مطب دکتر را می‌خوانیم و می‌گوییم این نامه چیست، چه نوشته،
+                چه کاری باید انجام دهید و تاریخ‌های مهم آن کدام است.
+              </p>
               <p className="text-xs text-slate-500 max-w-md mx-auto">
-                We analyze official UK documents (Home Office, NHS, Housing, GP, Council) and explain what it is, what it says, what you must do, and key dates.
+                We read official UK letters (Home Office, NHS, Housing, GP, Council) and explain what it is, what it
+                says, what you must do, and the dates that matter.
               </p>
               <button
                 onClick={() => setIsLetterScannerOpen(true)}
-                className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-2xl shadow-xs"
+                className="px-6 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-2xl shadow-xs inline-flex items-center gap-2"
               >
-                Open Camera / Upload PDF
+                <Camera className="w-4 h-4" />
+                <span>Take a photo or add a PDF</span>
+                <span className="font-farsi">| عکس بگیرید یا PDF اضافه کنید</span>
               </button>
             </div>
           </div>
@@ -692,6 +782,7 @@ export default function App() {
             }}
             initialFormId={selectedFormForCompanion}
             customUploadedForm={customUploadedForm}
+            onImmersiveChange={setIsFormImmersive}
           />
         )}
 
@@ -763,14 +854,16 @@ export default function App() {
       )}
 
       {/* Pinned Details Bar at Bottom */}
-      <PinnedDetailsBar
-        details={pinnedDetails}
-        onClearDetails={handleClearPinnedDetails}
-        onRemoveDetail={handleRemovePinnedDetail}
-      />
+      {!isFormImmersive && (
+        <PinnedDetailsBar
+          details={pinnedDetails}
+          onClearDetails={handleClearPinnedDetails}
+          onRemoveDetail={handleRemovePinnedDetail}
+        />
+      )}
 
       {/* Footer Disclaimer */}
-      <footer className="mt-auto border-t border-slate-200 bg-white/90 py-4 px-4 text-center text-xs text-slate-500 print:hidden w-full max-w-full overflow-hidden">
+      <footer className={`mt-auto border-t border-slate-200 bg-white/90 py-4 px-4 text-center text-xs text-slate-500 print:hidden w-full max-w-full overflow-hidden ${isFormImmersive ? 'hidden' : ''}`}>
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-600 w-full min-w-0">
           <div className="flex items-center gap-2 text-left min-w-0">
             <Info className="w-4 h-4 text-slate-400 shrink-0" />
