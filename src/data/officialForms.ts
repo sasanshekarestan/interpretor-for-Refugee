@@ -440,8 +440,8 @@ export const OFFICIAL_FORMS: OfficialForm[] = [
     purposeFa: 'درخواست مسکن و حقوق هفتگی پناهندگی برای افراد فاقد تمکن مالی',
     purposeEn: 'Apply for Home Office housing and weekly cash support for destitute asylum seekers.',
     pdfPath: 'public/forms/asf1.pdf',
-    officialSourceUrl: 'https://www.gov.uk/asylum-support/how-to-claim',
-    pageCount: 12,
+    officialSourceUrl: 'https://www.gov.uk/government/publications/application-for-asylum-support-form-asf1',
+    pageCount: 36,
     delivery: 'paper',
     questions: [
       {
@@ -490,6 +490,25 @@ export const OFFICIAL_FORMS: OfficialForm[] = [
         fieldKey: 'asf1_medical_needs'
       }
     ]
+  },
+  {
+    id: 'asf2_additional_support',
+    code: 'ASF2',
+    titleEn: 'Request for Additional Support (ASF2)',
+    titleFa: 'درخواست کمک اضافی (فرم ASF2 / سکشن ۹۶)',
+    titleDari: 'درخواست کمک اضافی (فرم ASF2)',
+    issuer: 'UK Visas & Immigration (Home Office)',
+    category: 'home_office',
+    purposeFa: 'درخواست کمک اضافی برای نیازهای ضروری که با کمک‌هزینه فعلی شما پوشش داده نمی‌شود',
+    purposeEn: 'Ask for extra support when the current cash allowance does not cover essential living needs.',
+    pdfPath: 'public/forms/asf2.pdf',
+    officialSourceUrl: 'https://www.gov.uk/government/publications/application-for-additional-asylum-support-form-asf2',
+    pageCount: 9,
+    delivery: 'paper',
+    // The Home Office publishes ASF2 as an ODT only. This PDF is that file
+    // converted unchanged - no question set is written for it, because the
+    // guidance comes from tapping the document itself.
+    questions: [],
   },
   {
     id: 'universal_credit',

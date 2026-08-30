@@ -6,16 +6,104 @@ import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 // Explicitly configure pdf.js worker URL to match the exact installed pdfjs-dist version
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
-/** One fillable box on the paper form, placed in rendered canvas pixels. */
+/** One touchable place on the paper form, in rendered canvas pixels. */
 export interface RenderedField {
   id: string;
   name: string;
   type: 'text' | 'choice';
+  /**
+   * 'widget' — a real fillable box the PDF declares, as on HC1.
+   * 'line'   — a line of printed text, for the many official forms that are
+   *            flat PDFs with no field data at all, as on ASF1 and ASF2.
+   */
+  source: 'widget' | 'line';
   left: number;
   top: number;
   width: number;
   height: number;
 }
+
+/**
+ * Group a flat page's text into the lines a reader sees, so a finger on the
+ * page lands on a whole question rather than on one stray word.
+ */
+const linesFromTextContent = (items: any[], viewport: any): RenderedField[] => {
+  const scale = viewport.scale || 1;
+
+  const boxes = items
+    .filter((i) => typeof i.str === 'string' && i.str.trim())
+    .map((i) => {
+      const [vx, vy] = viewport.convertToViewportPoint(i.transform[4], i.transform[5]);
+      const height = Math.max((i.height || 10) * scale, 8);
+      return {
+        text: i.str,
+        left: vx,
+        top: vy - height,
+        width: Math.max((i.width || 0) * scale, 2),
+        height,
+      };
+    })
+    .sort((a, b) => a.top - b.top || a.left - b.left);
+
+  const lines: RenderedField[] = [];
+  let current: typeof boxes = [];
+
+  const flush = () => {
+    if (!current.length) return;
+    const left = Math.min(...current.map((b) => b.left));
+    const right = Math.max(...current.map((b) => b.left + b.width));
+    const top = Math.min(...current.map((b) => b.top));
+    const bottom = Math.max(...current.map((b) => b.top + b.height));
+    const text = current.map((b) => b.text).join(' ').replace(/\s+/g, ' ').trim();
+    if (text) {
+      lines.push({
+        id: `line-${lines.length}`,
+        name: text,
+        type: 'text',
+        source: 'line',
+        left,
+        top,
+        width: Math.max(right - left, 24),
+        height: Math.max(bottom - top, 10),
+      });
+    }
+    current = [];
+  };
+
+  for (const box of boxes) {
+    if (!current.length) {
+      current = [box];
+      continue;
+    }
+    const reference = current[current.length - 1];
+    const sameLine = Math.abs(box.top - reference.top) < reference.height * 0.6;
+    if (sameLine) current.push(box);
+    else {
+      flush();
+      current = [box];
+    }
+  }
+  flush();
+
+  // Grow each line towards its neighbours so short lines are still easy to
+  // hit with a finger, but never far enough to cover the line below - an
+  // overlapping target is one the reader cannot reach at all.
+  const COMFORTABLE = 22;
+  return lines.map((line, index) => {
+    const previous = lines[index - 1];
+    const next = lines[index + 1];
+    const ceiling = previous ? previous.top + previous.height + 1 : 0;
+    const floor = next ? next.top - 1 : line.top + line.height + COMFORTABLE;
+
+    const wanted = Math.max(line.height, COMFORTABLE);
+    const spare = wanted - line.height;
+
+    const top = Math.max(ceiling, line.top - spare / 2);
+    const bottom = Math.min(floor, line.top + line.height + spare / 2);
+
+    return { ...line, top, height: Math.max(bottom - top, 8) };
+  });
+};
 
 interface OfficialPdfViewerProps {
   pdfPath: string;
@@ -179,7 +267,7 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
       if (onFieldsRendered) {
         try {
           const annotations = await page.getAnnotations();
-          const fields: RenderedField[] = annotations
+          let fields: RenderedField[] = annotations
             .filter((a: any) => a.subtype === 'Widget' && Array.isArray(a.rect))
             .map((a: any) => {
               const [x1, y1, x2, y2] = viewport.convertToViewportRectangle(a.rect);
@@ -187,6 +275,7 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
                 id: String(a.id),
                 name: String(a.fieldName || ''),
                 type: a.fieldType === 'Btn' ? ('choice' as const) : ('text' as const),
+                source: 'widget' as const,
                 left: Math.min(x1, x2),
                 top: Math.min(y1, y2),
                 width: Math.abs(x2 - x1),
@@ -198,14 +287,23 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
           // The words printed on this page, so an explanation can describe
           // what the form itself says rather than guessing from a field name.
           let pageText = '';
+          let textItems: any[] = [];
           try {
             const tc = await page.getTextContent();
+            textItems = tc.items;
             pageText = tc.items
               .map((i: any) => (typeof i.str === 'string' ? i.str : ''))
               .join(' ')
               .replace(/\s+/g, ' ')
               .trim();
           } catch (_) {}
+
+          // Most official forms are flat PDFs with no field data - ASF1 and
+          // ASF2 among them. There the printed lines are what a finger lands
+          // on, so they become the touch targets instead.
+          if (fields.length === 0 && textItems.length > 0) {
+            fields = linesFromTextContent(textItems, viewport);
+          }
 
           onFieldsRendered({ pageIndex: currentPageIndex, fields, pageText });
         } catch (_) {

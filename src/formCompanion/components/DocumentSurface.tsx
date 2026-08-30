@@ -73,13 +73,19 @@ export const DocumentSurface: React.FC<DocumentSurfaceProps> = ({
                 onClick={() => onSelectField(f)}
                 aria-label={f.name}
                 aria-pressed={isActive}
+                /* A real fillable box gets a faint tint, because there is
+                   genuinely a box there. A line of printed text stays
+                   invisible until touched — tinting every line would bury
+                   the document under blue. */
                 className={`absolute rounded-[3px] transition cursor-pointer
                   ${
                     isActive
                       ? 'bg-[#005EB8]/25 ring-2 ring-[#005EB8]'
                       : isAnswered
                       ? 'bg-emerald-500/20 hover:bg-emerald-500/30'
-                      : 'bg-[#005EB8]/8 hover:bg-[#005EB8]/20'
+                      : f.source === 'widget'
+                      ? 'bg-[#005EB8]/8 hover:bg-[#005EB8]/20'
+                      : 'bg-transparent hover:bg-[#005EB8]/15'
                   }`}
                 style={{
                   left: f.left,
