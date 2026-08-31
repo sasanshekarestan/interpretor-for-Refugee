@@ -1182,6 +1182,53 @@ Output JSON with:
   }
 });
 
+// Endpoint: explain one page of an official form, in plain Persian or Dari.
+// Split out from the chat so the answer can be cached and reused: a page of a
+// fixed form reads the same for everyone who opens it.
+app.post('/api/form/explain-page', async (req, res) => {
+  try {
+    const { pageText, formTitle = 'UK official form', pageNumber, userLanguage = 'farsi' } = req.body;
+    if (!pageText || !String(pageText).trim()) {
+      return res.status(400).json({ error: 'pageText is required' });
+    }
+
+    const language = userLanguage === 'dari' ? 'Dari' : 'Farsi';
+
+    const systemInstruction = `You explain one page of an official UK paper form to a refugee or asylum seeker who reads little English and may read ${language} slowly.
+
+You are given every word printed on that page. Explain THAT page.
+
+RULES:
+1. Write in simple, everyday ${language}. Short sentences, no legal or bureaucratic wording.
+2. Say what the page is for, then go through what it asks in the order it asks, then say plainly what this person has to do on the page.
+3. If the page is only notes, guidance or legal wording with nothing to fill in, say that clearly and early, so they do not sit trying to answer it.
+4. NEVER invent anything the page does not say, and never tell the person what to answer about their own circumstances.
+5. Mention the English words on the page that a reader is likely to get stuck on, with a short ${language} meaning.
+6. Keep the whole answer under 250 words. It is read on a phone.
+
+Output JSON with:
+ - answerFa: the explanation in ${language}, as plain text with short paragraphs. No markdown headings.`;
+
+    const schema = {
+      type: Type.OBJECT,
+      properties: { answerFa: { type: Type.STRING } },
+      required: ['answerFa'],
+    };
+
+    const rawResponseText = await generateWithFallback(
+      `Form: ${formTitle}${pageNumber ? `\nPage ${pageNumber}` : ''}\n\nEverything printed on this page:\n${String(pageText).slice(0, 6000)}`,
+      systemInstruction,
+      schema
+    );
+
+    const parsed = cleanJsonText(rawResponseText);
+    return res.json(parsed);
+  } catch (error: any) {
+    console.error('Error in /api/form/explain-page:', error);
+    return res.status(500).json({ error: 'Failed to explain page' });
+  }
+});
+
 app.post('/api/form/consistency-check', async (req, res) => {
   try {
     const { formAnswers = [] } = req.body;

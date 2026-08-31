@@ -528,6 +528,14 @@ export const useFormSession = ({
     [chatInput, isChatProcessing, currentQuestion, selectedForm, questions, answers, userLanguage, chatFieldContext]
   );
 
+  /** Add a message to the conversation without asking the model for one. */
+  const appendChatMessage = useCallback((sender: 'user' | 'ai', textFa: string) => {
+    setChatMessages((prev) => [
+      ...prev,
+      { id: `msg_${sender}_${Date.now()}_${prev.length}`, sender, textFa, timestamp: Date.now() },
+    ]);
+  }, []);
+
   /** Put the assistant's suggestion into the answer field, for the user to accept. */
   const useSuggestion = useCallback((suggestion: string) => {
     setInputText(suggestion);
@@ -632,6 +640,7 @@ export const useFormSession = ({
     setChatInput,
     isChatProcessing,
     sendChatMessage,
+    appendChatMessage,
     useSuggestion,
     chatFieldContext,
     setChatFieldContext,

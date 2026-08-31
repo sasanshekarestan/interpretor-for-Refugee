@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { FormQuestion, UserLanguage } from '../types';
 import { RenderedField } from '../components/OfficialPdfViewer';
+import { cachedFieldGuide, cachedPageGuide } from '../data/guideCache';
 
 /**
  * Guidance keyed to the real boxes on the paper form.
@@ -147,6 +148,15 @@ export const useFieldExplanation = (args: {
       return;
     }
 
+    // Shipped with the app: the same box explained once, for everyone.
+    const shared = cachedFieldGuide(formId, userLanguage === 'dari' ? 'dari' : 'farsi', field.name);
+    if (shared) {
+      setExplanation({ ...shared, source: 'written' });
+      setStatus('idle');
+      return;
+    }
+
+    // Then whatever this device has already paid for.
     const key = cacheKey(formId, field.name, userLanguage);
     const cached = readCache(key);
     if (cached) {
@@ -200,4 +210,50 @@ export const useFieldExplanation = (args: {
   }, [field, pageText, formId, formTitle, questions, userLanguage]);
 
   return { explanation, status };
+};
+
+const pageCacheKey = (formId: string, pageIndex: number, lang: UserLanguage) =>
+  `page_guide_${formId}_${lang}_${pageIndex}`;
+
+/**
+ * Explain a whole page of a form.
+ *
+ * A page of a fixed form reads the same for everyone, so the answer is looked
+ * for in the shipped cache first, then in this device's own, and only then
+ * asked for - and kept once it has been.
+ */
+export const explainPage = async (args: {
+  formId: string;
+  formTitle: string;
+  pageIndex: number;
+  pageText: string;
+  userLanguage: UserLanguage;
+}): Promise<{ answerFa: string; fromCache: boolean }> => {
+  const { formId, formTitle, pageIndex, pageText, userLanguage } = args;
+
+  const shared = cachedPageGuide(formId, userLanguage === 'dari' ? 'dari' : 'farsi', pageIndex);
+  if (shared) return { answerFa: shared, fromCache: true };
+
+  const key = pageCacheKey(formId, pageIndex, userLanguage);
+  try {
+    const stored = localStorage.getItem(key);
+    if (stored) return { answerFa: stored, fromCache: true };
+  } catch (_) {}
+
+  const res = await fetch('/api/form/explain-page', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ formTitle, pageNumber: pageIndex + 1, pageText, userLanguage }),
+  });
+  if (!res.ok) throw new Error('explain page failed');
+
+  const data = await res.json();
+  const answerFa = String(data.answerFa || '').trim();
+  if (!answerFa) throw new Error('empty page explanation');
+
+  try {
+    localStorage.setItem(key, answerFa);
+  } catch (_) {}
+
+  return { answerFa, fromCache: false };
 };

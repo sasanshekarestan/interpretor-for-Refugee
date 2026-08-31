@@ -3,7 +3,8 @@ import { ArrowRight, ArrowLeft, ListChecks, Hand, FileQuestion } from 'lucide-re
 import { UserLanguage } from '../types';
 import { RenderedField } from '../components/OfficialPdfViewer';
 import { useFormSession } from './useFormSession';
-import { useFieldExplanation } from './fieldGuide';
+import { useFieldExplanation, explainPage } from './fieldGuide';
+import { loadGuideCache } from '../data/guideCache';
 import { CustomFormObject } from './types';
 import { AppBar } from './components/AppBar';
 import { BottomBar } from './components/BottomBar';
@@ -60,6 +61,7 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
    * covered 9 of the form's boxes.
    */
   const [guideMode, setGuideMode] = useState(true);
+  const [isExplainingPage, setIsExplainingPage] = useState(false);
 
   const handleFieldsRendered = useCallback(
     (info: { pageIndex: number; fields: RenderedField[]; pageText: string }) => {
@@ -96,21 +98,49 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
   }, [setChatFieldContext]);
 
   /**
+   * Ask about the page as a whole.
+   *
+   * A page of a fixed form reads the same for everyone, so this goes through
+   * the cached explain-page route rather than the conversation: the first
+   * person to ask pays for it, everybody after gets it at once. The answer
+   * still lands in the chat, where the person can carry on asking.
+   */
+  const askAboutPage = useCallback(async () => {
+    if (!s.selectedFormId || !pageText || isExplainingPage) return;
+
+    clearActiveField();
+    setGuideMode(true);
+    s.setPhoneView('questions');
+    setIsExplainingPage(true);
+    s.appendChatMessage('user', 'این صفحه چه می‌گوید و باید چکار کنم؟');
+
+    try {
+      const { answerFa } = await explainPage({
+        formId: s.selectedFormId,
+        formTitle: s.selectedForm?.titleEn || '',
+        pageIndex: s.documentPageIndex,
+        pageText,
+        userLanguage,
+      });
+      s.appendChatMessage('ai', answerFa);
+    } catch (_) {
+      s.appendChatMessage(
+        'ai',
+        'توضیح این صفحه آماده نشد. اتصال اینترنت را بررسی کنید و دوباره تلاش کنید.'
+      );
+    } finally {
+      setIsExplainingPage(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clearActiveField, pageText, isExplainingPage, s.selectedFormId, s.documentPageIndex, userLanguage]);
+
+  /**
    * Put a piece of the form into the question box.
    *
    * The document is drawn to a canvas, so its words cannot be selected the
    * way text on a page can. Rather than leave people trying, the text they
    * touched is carried into the assistant for them, ready to ask about.
    */
-  /** Ask about the page as a whole, with every word printed on it. */
-  const askAboutPage = useCallback(() => {
-    clearActiveField();
-    setGuideMode(true);
-    s.setPhoneView('questions');
-    s.sendChatMessage('این صفحه چه می‌گوید و باید چکار کنم؟', { pageText });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [clearActiveField, pageText, s.sendChatMessage, s.setPhoneView]);
-
   const askAboutFormText = useCallback(
     (formText: string) => {
       s.setChatInput(`«${formText}»\n`);
@@ -130,6 +160,19 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
     setActiveField(null);
     setChatFieldContext(null);
   }, [s.documentPageIndex, s.selectedFormId, setChatFieldContext]);
+
+  /**
+   * Pick up the guidance we already hold for this form.
+   *
+   * It is fetched once, in the background, while the person is still looking
+   * at the first page - so by the time they touch a box the answer is usually
+   * already here, costing nothing. A form we have no file for simply misses,
+   * and each box is explained on demand as before.
+   */
+  useEffect(() => {
+    if (!s.selectedFormId) return;
+    void loadGuideCache(s.selectedFormId, userLanguage === 'dari' ? 'dari' : 'farsi');
+  }, [s.selectedFormId, userLanguage]);
 
   const hasForm = !!s.selectedFormId && !!s.selectedForm;
 
@@ -170,7 +213,7 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
       input={s.chatInput}
       onInputChange={s.setChatInput}
       onSend={(m) => s.sendChatMessage(m)}
-      isProcessing={s.isChatProcessing}
+      isProcessing={s.isChatProcessing || isExplainingPage}
       onUseSuggestion={guideMode ? undefined : s.useSuggestion}
       contextFa={
         guideMode
@@ -198,7 +241,7 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
         <button
           type="button"
           onClick={askAboutPage}
-          disabled={s.isChatProcessing || !pageText}
+          disabled={s.isChatProcessing || isExplainingPage || !pageText}
           className={`w-full flex items-center gap-2.5 px-4 py-3.5 rounded-2xl text-right transition
             disabled:opacity-50 disabled:pointer-events-none cursor-pointer ${t.focus}
             ${activeField ? 'bg-white border border-slate-200 hover:bg-slate-50' : `${t.primary} shadow-sm`}`}
