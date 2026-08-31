@@ -1178,7 +1178,15 @@ Output JSON with:
     return res.json(parsed);
   } catch (error: any) {
     console.error('Error in /api/form/explain-field:', error);
-    return res.status(500).json({ error: 'Failed to explain field' });
+    // The cache generator makes hundreds of these in a row, so a bare 500
+    // tells whoever is running it nothing. Rate limiting is the usual cause
+    // and it is worth saying so rather than making them guess.
+    const reason = String(error?.message || error);
+    const rateLimited = /429|rate|quota|exhausted|resource_exhausted/i.test(reason);
+    return res.status(rateLimited ? 429 : 500).json({
+      error: rateLimited ? 'Rate limited by the model - slow down and retry' : 'Failed to explain field',
+      reason,
+    });
   }
 });
 
@@ -1225,7 +1233,12 @@ Output JSON with:
     return res.json(parsed);
   } catch (error: any) {
     console.error('Error in /api/form/explain-page:', error);
-    return res.status(500).json({ error: 'Failed to explain page' });
+    const reason = String(error?.message || error);
+    const rateLimited = /429|rate|quota|exhausted|resource_exhausted/i.test(reason);
+    return res.status(rateLimited ? 429 : 500).json({
+      error: rateLimited ? 'Rate limited by the model - slow down and retry' : 'Failed to explain page',
+      reason,
+    });
   }
 });
 

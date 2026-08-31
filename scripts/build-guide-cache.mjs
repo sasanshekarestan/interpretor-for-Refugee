@@ -70,19 +70,61 @@ if (!fs.existsSync(file)) {
 const doc = await pdfjs.getDocument({ data: new Uint8Array(fs.readFileSync(file)) }).promise;
 console.log(`${titleEn}, ${language}: ${doc.numPages} pages`);
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * One question at a time, with a gap.
+ *
+ * A form runs to hundreds of boxes, and asking for them all at once gets the
+ * whole run refused by the model's rate limit - which is what a wall of 500s
+ * from this script means. Pacing costs a slower run and nothing else, since
+ * this is only ever done once per form.
+ */
+const GAP_MS = Number(process.env.GUIDE_CACHE_GAP_MS || 1200);
+
 const post = async (route, body) => {
-  const res = await fetch(`${baseUrl}${route}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) throw new Error(`${route} returned ${res.status}`);
-  return res.json();
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    await sleep(GAP_MS);
+
+    const res = await fetch(`${baseUrl}${route}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    if (res.ok) return res.json();
+
+    const detail = await res.text().catch(() => '');
+    const busy = res.status === 429 || res.status === 503 || /rate|quota|exhausted/i.test(detail);
+
+    // Backing off and waiting is right for a queue that is simply full; any
+    // other failure will not fix itself by being asked again.
+    if (busy && attempt < 5) {
+      const wait = 5000 * 2 ** (attempt - 1);
+      process.stdout.write(`\n  busy, waiting ${wait / 1000}s...`);
+      await sleep(wait);
+      continue;
+    }
+
+    throw new Error(`${route} returned ${res.status}${detail ? ` - ${detail.slice(0, 200)}` : ''}`);
+  }
+  throw new Error(`${route} kept refusing`);
 };
 
 let asked = 0;
 let skipped = 0;
 let failed = 0;
+let consecutiveFailures = 0;
+
+/** Something is wrong with the setup, not with one box. Stop rather than grind. */
+const giveUpIfBroken = () => {
+  if (consecutiveFailures < 10) return;
+  console.error(
+    '\n10 failures in a row - stopping. Check the dev server is running and GEMINI_API_KEY is set;' +
+      ' the reason is printed above and in the server window.'
+  );
+  process.exit(1);
+};
 
 for (let p = 1; p <= doc.numPages; p++) {
   const page = await doc.getPage(p);
@@ -110,9 +152,12 @@ for (let p = 1; p <= doc.numPages; p++) {
       });
       if (data.answerFa) cache.pages[String(p - 1)] = data.answerFa;
       asked++;
+      consecutiveFailures = 0;
     } catch (err) {
       failed++;
+      consecutiveFailures++;
       console.warn(`\npage ${p} failed: ${err.message}`);
+      giveUpIfBroken();
     }
   }
 
@@ -148,9 +193,12 @@ for (let p = 1; p <= doc.numPages; p++) {
         };
       }
       asked++;
+      consecutiveFailures = 0;
     } catch (err) {
       failed++;
+      consecutiveFailures++;
       console.warn(`\nfield "${target.name.slice(0, 40)}" failed: ${err.message}`);
+      giveUpIfBroken();
     }
   }
 

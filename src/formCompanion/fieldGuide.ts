@@ -131,6 +131,17 @@ export const useFieldExplanation = (args: {
       return;
     }
 
+    // Written for this exact box, and shipped with the app. This comes first
+    // because it is the most specific thing we have: the guidance below is
+    // matched by part number, so one entry has to cover every box in a part,
+    // while this describes the single box under the person's finger.
+    const shared = cachedFieldGuide(formId, userLanguage === 'dari' ? 'dari' : 'farsi', field.name);
+    if (shared) {
+      setExplanation({ ...shared, source: 'written' });
+      setStatus('idle');
+      return;
+    }
+
     const written = writtenGuidanceFor(field, questions);
     if (written) {
       const isDari = userLanguage === 'dari';
@@ -144,14 +155,6 @@ export const useFieldExplanation = (args: {
         cautionFa: written.legalAidNotice,
         source: 'written',
       });
-      setStatus('idle');
-      return;
-    }
-
-    // Shipped with the app: the same box explained once, for everyone.
-    const shared = cachedFieldGuide(formId, userLanguage === 'dari' ? 'dari' : 'farsi', field.name);
-    if (shared) {
-      setExplanation({ ...shared, source: 'written' });
       setStatus('idle');
       return;
     }
