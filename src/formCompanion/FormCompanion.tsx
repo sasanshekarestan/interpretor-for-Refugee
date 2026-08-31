@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { ArrowRight, ArrowLeft, ListChecks, Hand } from 'lucide-react';
+import { ArrowRight, ArrowLeft, ListChecks, Hand, FileQuestion } from 'lucide-react';
 import { UserLanguage } from '../types';
 import { RenderedField } from '../components/OfficialPdfViewer';
 import { useFormSession } from './useFormSession';
@@ -102,6 +102,15 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
    * way text on a page can. Rather than leave people trying, the text they
    * touched is carried into the assistant for them, ready to ask about.
    */
+  /** Ask about the page as a whole, with every word printed on it. */
+  const askAboutPage = useCallback(() => {
+    clearActiveField();
+    setGuideMode(true);
+    s.setPhoneView('questions');
+    s.sendChatMessage('این صفحه چه می‌گوید و باید چکار کنم؟', { pageText });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clearActiveField, pageText, s.sendChatMessage, s.setPhoneView]);
+
   const askAboutFormText = useCallback(
     (formText: string) => {
       s.setChatInput(`«${formText}»\n`);
@@ -183,6 +192,29 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
   const guidePane = (
     <div className="flex-1 min-h-0 overflow-y-auto bg-slate-50">
       <div className="max-w-xl mx-auto px-3.5 py-4 space-y-3.5">
+        {/* The whole page, not one box. Tapping a line answers about that
+            line, which is the wrong answer to "what is this page and what
+            do I have to do" - the commonest question of all. */}
+        <button
+          type="button"
+          onClick={askAboutPage}
+          disabled={s.isChatProcessing || !pageText}
+          className={`w-full flex items-center gap-2.5 px-4 py-3.5 rounded-2xl text-right transition
+            disabled:opacity-50 disabled:pointer-events-none cursor-pointer ${t.focus}
+            ${activeField ? 'bg-white border border-slate-200 hover:bg-slate-50' : `${t.primary} shadow-sm`}`}
+          dir="rtl"
+        >
+          <FileQuestion className={`w-5 h-5 shrink-0 ${activeField ? t.faint : 'text-white/90'}`} />
+          <span className="flex-1 min-w-0">
+            <span className={`block font-farsi font-bold text-[14px] ${activeField ? 'text-slate-800' : 'text-white'}`}>
+              این صفحه چه می‌گوید و باید چکار کنم؟
+            </span>
+            <span className={`block text-[11px] ${activeField ? 'text-slate-500' : 'text-white/80'}`}>
+              Explain this whole page · صفحه {s.documentPageIndex + 1}
+            </span>
+          </span>
+        </button>
+
         <FieldGuide
           field={activeField}
           explanation={explanation}

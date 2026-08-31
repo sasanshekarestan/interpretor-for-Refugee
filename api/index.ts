@@ -1044,7 +1044,7 @@ IMPORTANT RULES:
 // Endpoint: Form Companion Interactive AI Chat Sidepanel
 app.post('/api/form/chat', async (req, res) => {
   try {
-    const { message, formTitle, questions = [], activeFieldKey, activeFieldText, currentAnswers = {}, userLanguage = 'farsi' } = req.body;
+    const { message, formTitle, questions = [], activeFieldKey, activeFieldText, pageText, currentAnswers = {}, userLanguage = 'farsi' } = req.body;
     if (!message || !message.trim()) {
       return res.status(400).json({ error: 'Message text is required' });
     }
@@ -1054,7 +1054,13 @@ app.post('/api/form/chat', async (req, res) => {
     // When someone taps a part of the document, that text is what they are
     // asking about. Falling back to the first question in the list would
     // answer about a different part of the form entirely.
-    const focus = activeFieldText
+    const focus = pageText
+      ? `The person is asking about the WHOLE PAGE they are looking at, not one box. Here is every word printed on that page:
+"""
+${String(pageText).slice(0, 6000)}
+"""
+Answer about this whole page. Say what the page is for, walk through what it asks in order, and then say plainly what this person has to do on it. If the page is only notes or legal wording with nothing to fill in, say that clearly so they do not sit trying to answer it. Do not describe a different page.`
+      : activeFieldText
       ? `The person is pointing at this exact text on the document: "${String(activeFieldText).slice(0, 600)}". Answer about THAT part of the form.`
       : activeQ
       ? `Currently focused question/box: [Box ${activeQ.number} - ${activeQ.fieldKey}] ${activeQ.questionEn} (${activeQ.farsiTranslation}).`

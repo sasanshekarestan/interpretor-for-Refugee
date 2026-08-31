@@ -433,8 +433,15 @@ export const useFormSession = ({
 
   // ------------------------------------------------------------- assistant
 
+  /**
+   * Ask the assistant something.
+   *
+   * `pageText` widens the question to the whole page in front of the person:
+   * without it the answer is scoped to the box or line they touched, which is
+   * right for "what is this box" and wrong for "what does this page say".
+   */
   const sendChatMessage = useCallback(
-    async (message?: string) => {
+    async (message?: string, options?: { pageText?: string }) => {
       const text = (message ?? chatInput).trim();
       if (!text || isChatProcessing) return;
 
@@ -479,8 +486,9 @@ export const useFormSession = ({
             activeFieldKey: currentQuestion?.fieldKey,
             // The exact words the person touched on the document, so the
             // answer is about that and not about whichever question happened
-            // to be first in the list.
-            activeFieldText: chatFieldContext || undefined,
+            // to be first in the list. A page-wide question drops it.
+            activeFieldText: options?.pageText ? undefined : chatFieldContext || undefined,
+            pageText: options?.pageText ? options.pageText.slice(0, 6000) : undefined,
             currentAnswers: answers,
             userLanguage,
           }),
