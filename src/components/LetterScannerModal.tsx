@@ -401,11 +401,27 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
             <div className="space-y-3.5 animate-fade-in">
               <div className="flex items-start justify-between gap-3 pb-1">
                 <div className="min-w-0 space-y-1">
-                  <span className="inline-block px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-900 font-bold text-[11px] uppercase tracking-wide">
-                    {result.letterType || 'Official letter'}
+                  {/* Persian carries the label; the English category sits
+                      under it, because the reader may know very little. */}
+                  <span
+                    dir="rtl"
+                    className="inline-block px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-900 font-farsi font-bold text-[12px]"
+                  >
+                    {result.letterTypeFa || result.letterType || 'نامه رسمی'}
                   </span>
+                  {result.letterTypeFa && result.letterType && (
+                    <p className="text-[10.5px] text-slate-500 uppercase tracking-wide">{result.letterType}</p>
+                  )}
+                  {/* The sender's name is English inside a right-to-left
+                      line, so it gets its own row: truncating a mixed line
+                      cuts the wrong end and hides the start of the name. */}
                   {result.sender && (
-                    <p className="text-[12px] font-semibold text-slate-700 truncate">From: {result.sender}</p>
+                    <div className="pt-0.5">
+                      <p className="font-farsi text-[11.5px] font-bold text-slate-500" dir="rtl">فرستنده</p>
+                      <p dir="ltr" className="text-[12.5px] font-semibold text-slate-800 leading-snug break-words">
+                        {result.sender}
+                      </p>
+                    </div>
                   )}
                 </div>
                 <button
@@ -417,11 +433,21 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
                 </button>
               </div>
 
-              {/* 1. What is this letter */}
-              {result.whatIsThis && (
-                <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-1">
-                  <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">What is this?</p>
-                  <p className="text-[13.5px] text-slate-800 leading-relaxed">{result.whatIsThis}</p>
+              {/* 1. What is this letter — Persian leads, English follows */}
+              {(result.whatIsThisFa || result.whatIsThis) && (
+                <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+                  <p className="font-farsi text-[12.5px] font-bold text-slate-600" dir="rtl">
+                    این نامه چیست؟
+                    <span className="font-sans font-semibold text-slate-400 text-[11px]"> · What is this?</span>
+                  </p>
+                  {result.whatIsThisFa && (
+                    <p dir="rtl" className="font-farsi text-[14.5px] text-slate-900 leading-loose">
+                      {result.whatIsThisFa}
+                    </p>
+                  )}
+                  {result.whatIsThis && (
+                    <p className="text-[12.5px] text-slate-600 leading-relaxed">{result.whatIsThis}</p>
+                  )}
                 </div>
               )}
 

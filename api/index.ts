@@ -652,8 +652,10 @@ Never invent facts not present in the document.
 
 Return clean JSON with:
 - letterType: Document category (e.g. "Home Office Reporting Requirement", "NHS Hospital Appointment", "ASPEN Card Notification", "Housing Change Notice").
+- letterTypeFa: The same category in Farsi/Dari script, 2-5 words. The reader may know very little English, so this must not be left in English.
 - sender: Sender name/department (e.g., "Home Office Visas & Immigration", "NHS Foundation Trust").
 - whatIsThis: Clear 1-2 sentence explanation of what this document is.
+- whatIsThisFa: The same explanation in plain Farsi/Dari script. Never leave this in English.
 - whatDoesItSayFa: Plain-language summary in Farsi/Dari script for the user.
 - whatDoesItSayEn: Plain-language summary in Simple English.
 - whatDoINeedToDo: Array of action items [{ en, fa, urgency: 'high'|'medium'|'normal' }].
@@ -670,8 +672,10 @@ Return clean JSON with:
       type: Type.OBJECT,
       properties: {
         letterType: { type: Type.STRING },
+        letterTypeFa: { type: Type.STRING },
         sender: { type: Type.STRING },
         whatIsThis: { type: Type.STRING },
+        whatIsThisFa: { type: Type.STRING },
         whatDoesItSayFa: { type: Type.STRING },
         whatDoesItSayEn: { type: Type.STRING },
         whatDoINeedToDo: {

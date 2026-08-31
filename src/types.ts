@@ -74,8 +74,11 @@ export interface LetterAnalysisResult {
   id: string;
   timestamp: number;
   letterType: string;
+  /** The category in Persian - the reader may know very little English. */
+  letterTypeFa?: string;
   sender: string;
   whatIsThis: string;
+  whatIsThisFa?: string;
   whatDoesItSayFa: string;
   whatDoesItSayEn: string;
   whatDoINeedToDo: { en: string; fa: string; urgency: 'high' | 'medium' | 'normal' }[];
