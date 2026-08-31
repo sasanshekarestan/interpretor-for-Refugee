@@ -476,7 +476,11 @@ export const useFormSession = ({
             message: text,
             formTitle: selectedForm?.titleEn || 'UK Form Document',
             questions,
-            activeFieldKey: chatFieldContext || currentQuestion?.fieldKey,
+            activeFieldKey: currentQuestion?.fieldKey,
+            // The exact words the person touched on the document, so the
+            // answer is about that and not about whichever question happened
+            // to be first in the list.
+            activeFieldText: chatFieldContext || undefined,
             currentAnswers: answers,
             userLanguage,
           }),

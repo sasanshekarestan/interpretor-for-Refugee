@@ -111,6 +111,7 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({
 
       <div className="border-t border-slate-200 p-2.5 flex items-end gap-2">
         <textarea
+          id="assistant-input"
           value={input}
           onChange={(e) => onInputChange(e.target.value)}
           onKeyDown={(e) => {

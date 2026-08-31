@@ -1044,16 +1044,25 @@ IMPORTANT RULES:
 // Endpoint: Form Companion Interactive AI Chat Sidepanel
 app.post('/api/form/chat', async (req, res) => {
   try {
-    const { message, formTitle, questions = [], activeFieldKey, currentAnswers = {}, userLanguage = 'farsi' } = req.body;
+    const { message, formTitle, questions = [], activeFieldKey, activeFieldText, currentAnswers = {}, userLanguage = 'farsi' } = req.body;
     if (!message || !message.trim()) {
       return res.status(400).json({ error: 'Message text is required' });
     }
 
     const activeQ = questions.find((q: any) => q.fieldKey === activeFieldKey) || questions[0];
 
+    // When someone taps a part of the document, that text is what they are
+    // asking about. Falling back to the first question in the list would
+    // answer about a different part of the form entirely.
+    const focus = activeFieldText
+      ? `The person is pointing at this exact text on the document: "${String(activeFieldText).slice(0, 600)}". Answer about THAT part of the form.`
+      : activeQ
+      ? `Currently focused question/box: [Box ${activeQ.number} - ${activeQ.fieldKey}] ${activeQ.questionEn} (${activeQ.farsiTranslation}).`
+      : 'Currently focused: general document.';
+
     const systemInstruction = `You are a patient, friendly, bilingual AI Form & Document Interpreter Assistant for Farsi and Dari speaking refugees in the UK.
 The user is viewing an official UK form: "${formTitle}".
-Currently focused question/box: ${activeQ ? `[Box ${activeQ.number} - ${activeQ.fieldKey}] ${activeQ.questionEn} (${activeQ.farsiTranslation})` : 'General Document'}.
+${focus}
 List of form fields: ${JSON.stringify(questions.map((q: any) => ({ number: q.number, key: q.fieldKey, en: q.questionEn, fa: q.farsiTranslation })))}
 Current filled answers so far: ${JSON.stringify(currentAnswers)}
 

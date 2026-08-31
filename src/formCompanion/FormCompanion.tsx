@@ -95,6 +95,27 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
     setChatFieldContext(null);
   }, [setChatFieldContext]);
 
+  /**
+   * Put a piece of the form into the question box.
+   *
+   * The document is drawn to a canvas, so its words cannot be selected the
+   * way text on a page can. Rather than leave people trying, the text they
+   * touched is carried into the assistant for them, ready to ask about.
+   */
+  const askAboutFormText = useCallback(
+    (formText: string) => {
+      s.setChatInput(`«${formText}»\n`);
+      window.setTimeout(() => {
+        const box = document.getElementById('assistant-input') as HTMLTextAreaElement | null;
+        box?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        box?.focus();
+        const end = box?.value.length ?? 0;
+        box?.setSelectionRange(end, end);
+      }, 60);
+    },
+    [s.setChatInput]
+  );
+
   // A different page, or a different form, means a different set of boxes.
   useEffect(() => {
     setActiveField(null);
@@ -168,6 +189,7 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
           status={explanationStatus}
           onClear={clearActiveField}
           onPlayAudio={onPlayAudio}
+          onAsk={askAboutFormText}
         />
 
         {assistant}

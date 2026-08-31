@@ -1,5 +1,5 @@
-import React from 'react';
-import { Loader2, Hand, PenLine, AlertTriangle, Volume2, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { Loader2, Hand, PenLine, AlertTriangle, Volume2, X, Copy, Check, MessageSquarePlus } from 'lucide-react';
 import { RenderedField } from '../../components/OfficialPdfViewer';
 import { FieldExplanation, parseFieldName } from '../fieldGuide';
 import { Notice } from './Primitives';
@@ -11,6 +11,8 @@ interface FieldGuideProps {
   status: 'idle' | 'loading' | 'error';
   onClear: () => void;
   onPlayAudio?: (text: string, lang: string) => void;
+  /** Send this part of the form to the assistant as a question. */
+  onAsk?: (formText: string) => void;
 }
 
 /**
@@ -26,7 +28,10 @@ export const FieldGuide: React.FC<FieldGuideProps> = ({
   status,
   onClear,
   onPlayAudio,
+  onAsk,
 }) => {
+  const [copied, setCopied] = useState(false);
+
   if (!field) {
     return (
       <div
@@ -43,6 +48,16 @@ export const FieldGuide: React.FC<FieldGuideProps> = ({
   }
 
   const parsed = parseFieldName(field.name);
+
+  /** What the form prints here: a whole line, or a box's own label. */
+  const formText = field.source === 'line' ? field.name : parsed.label || field.name;
+
+  const copyFormText = () => {
+    navigator.clipboard?.writeText(formText);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   const spoken = explanation
     ? `${explanation.labelFa}. ${explanation.meaningFa}. ${explanation.whatToWriteFa}`
     : '';
@@ -84,10 +99,40 @@ export const FieldGuide: React.FC<FieldGuideProps> = ({
         </div>
       </div>
 
-      {/* What the form itself prints beside this box, before any translation. */}
-      <p className="text-[12.5px] text-slate-500 text-left leading-snug" dir="ltr">
-        {parsed.label}
-      </p>
+      {/* The form's own words for this part. A canvas has no text to select,
+          so the text is reproduced here as real selectable text - and can be
+          copied, or sent straight to the assistant, without selecting it. */}
+      <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 space-y-2.5">
+        <p className="font-farsi text-[11.5px] font-bold text-slate-500" dir="rtl">
+          متن روی فرم
+        </p>
+        <p dir="ltr" className="text-left text-[13px] text-slate-800 leading-relaxed select-all break-words">
+          {formText}
+        </p>
+        <div className="flex items-center gap-2">
+          {onAsk && (
+            <button
+              type="button"
+              onClick={() => onAsk(formText)}
+              className={`flex-1 min-h-[40px] inline-flex items-center justify-center gap-2 px-3 rounded-xl
+                ${t.primary} text-[12.5px] font-bold cursor-pointer transition ${t.focus}`}
+            >
+              <MessageSquarePlus className="w-4 h-4" />
+              <span className="font-farsi">درباره این بپرس</span>
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={copyFormText}
+            aria-label="کپی متن"
+            className={`min-h-[40px] px-3 inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-300
+              bg-white text-slate-700 text-[12px] font-bold cursor-pointer hover:bg-slate-50 transition ${t.focus}`}
+          >
+            {copied ? <Check className={`w-4 h-4 ${t.doneText}`} /> : <Copy className="w-4 h-4" />}
+            <span className="font-farsi">{copied ? 'کپی شد' : 'کپی'}</span>
+          </button>
+        </div>
+      </div>
 
       {status === 'loading' && (
         <div className="flex items-center gap-2.5 py-2 font-farsi text-[13px] text-slate-500">
