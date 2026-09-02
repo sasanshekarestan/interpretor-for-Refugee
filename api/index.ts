@@ -184,6 +184,65 @@ async function generateWithFallback(
   throw lastError || new Error('Failed to generate response from all available models.');
 }
 
+/**
+ * What went wrong, in a word the app can act on.
+ *
+ * The model provider's errors arrive as a wall of JSON carrying billing
+ * console links and project identifiers. That is useful in a server log and
+ * wrong on the screen of someone holding a Home Office letter, so the raw text
+ * never leaves this file: it is classified here and only the kind travels.
+ */
+export type FailureKind = 'no_key' | 'quota' | 'rate_limit' | 'timeout' | 'unavailable';
+
+export const failureKind = (error: any): FailureKind => {
+  const text = `${error?.message || ''} ${error?.status || ''} ${(() => {
+    try {
+      return JSON.stringify(error);
+    } catch (_) {
+      return '';
+    }
+  })()}`.toLowerCase();
+
+  if (/gemini_api_key|api key not valid|api_key_invalid|permission_denied|unauthenticated/.test(text)) {
+    return 'no_key';
+  }
+  // Out of money is not the same as too many requests: one waits, one needs
+  // somebody to top the account up, and the difference decides what we say.
+  if (/credits are depleted|prepay|billing|insufficient|exceeded your current quota|quota_exceeded|out of credit/.test(text)) {
+    return 'quota';
+  }
+  if (/resource_exhausted|429|rate limit|too many requests/.test(text)) return 'rate_limit';
+  if (/timed out|timeout|abort/.test(text)) return 'timeout';
+  return 'unavailable';
+};
+
+const FAILURE_STATUS: Record<FailureKind, number> = {
+  no_key: 503,
+  quota: 503,
+  rate_limit: 429,
+  timeout: 504,
+  unavailable: 500,
+};
+
+/** Short, safe English. The app turns the kind into the words a person reads. */
+const FAILURE_SUMMARY: Record<FailureKind, string> = {
+  no_key: 'The translation service is not configured.',
+  quota: 'The translation service has run out of credit.',
+  rate_limit: 'The translation service is busy.',
+  timeout: 'The translation service took too long to answer.',
+  unavailable: 'The translation service is unavailable.',
+};
+
+/**
+ * Log the whole failure, tell the app only what it needs.
+ * `where` names the endpoint so the server log stays readable.
+ */
+export const sendFailure = (res: any, error: any, where: string) => {
+  const kind = failureKind(error);
+  console.error(`[${where}] ${kind}:`, error?.message || error);
+  return res.status(FAILURE_STATUS[kind]).json({ kind, error: FAILURE_SUMMARY[kind] });
+};
+
 function cleanJsonText(rawText: string): any {
   let text = rawText.trim();
   // Strip code fences if present
@@ -314,10 +373,7 @@ app.post('/api/interpret', async (req, res) => {
       return res.status(400).json({ error: 'Either audio or text payload is required for interpretation' });
     }
   } catch (error: any) {
-    console.error('Error in /api/interpret:', error);
-    return res.status(500).json({
-      error: error.message || 'Failed to interpret. Please try again or check server connection.',
-    });
+    return sendFailure(res, error, '/api/interpret');
   }
 });
 
@@ -554,10 +610,7 @@ app.post('/api/interpret/audio', async (req, res) => {
       ...parsed,
     });
   } catch (error: any) {
-    console.error('Error in /api/interpret/audio:', error);
-    return res.status(500).json({
-      error: error.message || 'Failed to interpret audio. Please try again or switch to typing mode.',
-    });
+    return sendFailure(res, error, '/api/interpret/audio');
   }
 });
 
@@ -590,10 +643,7 @@ app.post('/api/interpret/text', async (req, res) => {
       ...parsed,
     });
   } catch (error: any) {
-    console.error('Error in /api/interpret/text:', error);
-    return res.status(500).json({
-      error: error.message || 'Failed to interpret text. Please try again.',
-    });
+    return sendFailure(res, error, '/api/interpret/text');
   }
 });
 
@@ -633,7 +683,7 @@ app.post('/api/tts', async (req, res) => {
   } catch (error: any) {
     console.error('TTS generation error:', error);
     // Return gracefully so client can use Web Speech API British voice
-    return res.status(500).json({ error: error.message || 'TTS unavailable, client fallback will be used' });
+    return sendFailure(res, error, '/api/tts');
   }
 });
 
@@ -802,10 +852,7 @@ Return clean JSON with:
       ...parsed,
     });
   } catch (error: any) {
-    console.error('Error in /api/interpret/letter:', error);
-    return res.status(500).json({
-      error: error.message || 'Failed to analyze letter photo. Please try again or type the letter details.',
-    });
+    return sendFailure(res, error, '/api/interpret/letter');
   }
 });
 

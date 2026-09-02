@@ -178,6 +178,25 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
       });
 
       if (!response.ok) {
+        // Telling someone to retake the photo when the service itself is down
+        // sends them round in circles with a camera. The server says which it
+        // is, so say the true thing.
+        const failure = await response.json().catch(() => ({}));
+        if (failure?.kind === 'quota' || failure?.kind === 'no_key') {
+          throw new Error(
+            'We cannot reach the reading service at the moment. This is a problem with the app, not with your photo. Please try again later. | در حال حاضر نمی‌توانیم به سرویس خواندن نامه وصل شویم. این ایراد از برنامه است، نه از عکس شما. لطفاً بعداً دوباره سر بزنید.'
+          );
+        }
+        if (failure?.kind === 'rate_limit') {
+          throw new Error(
+            'The service is busy right now. Wait a minute and try again. | سرویس الان شلوغ است. یک دقیقه صبر کنید و دوباره تلاش کنید.'
+          );
+        }
+        if (failure?.kind === 'timeout') {
+          throw new Error(
+            'That took too long. Check your connection and try again. | پاسخ خیلی طول کشید. اتصال اینترنت خود را بررسی کنید و دوباره تلاش کنید.'
+          );
+        }
         throw new Error(
           'The letter could not be read. Check the photo is clear and try again. | نامه خوانده نشد. مطمئن شوید عکس واضح است و دوباره تلاش کنید.'
         );

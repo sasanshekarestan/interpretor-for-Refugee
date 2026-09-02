@@ -241,33 +241,58 @@ export default function App() {
 
   /**
    * Turn a failure into something a person can act on, in both languages.
-   * Server wording like "GEMINI_API_KEY is missing" means nothing to someone
-   * holding a letter, so it is kept as a technical detail underneath rather
-   * than shown as the message.
+   *
+   * Two rules here. The raw text of a failure never reaches the screen: the
+   * provider's errors are JSON full of billing links and project ids, and a
+   * person holding a Home Office letter should not be reading that. And when
+   * the fault is ours rather than theirs, the message says so - otherwise
+   * someone with shaky English assumes they pressed the wrong thing and stops
+   * trying.
    */
   const describeError = (rawError: any): AppError => {
     const msg =
       typeof rawError === 'string' ? rawError : rawError?.message || String(rawError || '');
+    const kind: string =
+      rawError?.kind ||
+      (rawError?.name === 'TimeoutError' || rawError?.name === 'AbortError' ? 'timeout' : '');
 
-    if (/GEMINI_API_KEY|API key/i.test(msg)) {
+    // The service is up, but the account behind it has run dry. Nothing the
+    // person can do will change that, so do not tell them to try again.
+    if (kind === 'quota' || kind === 'no_key') {
       return {
-        fa: 'سرویس ترجمه در حال حاضر در دسترس نیست. لطفاً کمی بعد دوباره تلاش کنید.',
-        en: 'The translation service is not available right now. Please try again shortly.',
-        detail: 'The server has no GEMINI_API_KEY set.',
+        fa: 'در حال حاضر نمی‌توانیم به سرویس ترجمه وصل شویم. این ایراد از برنامه است، نه از شما یا گوشی‌تان. لطفاً بعداً دوباره سر بزنید.',
+        en: 'We cannot reach the translation service at the moment. This is a problem with the app, not with you or your phone. Please try again later.',
+        detail:
+          kind === 'quota'
+            ? "The app's translation service has run out of credit and needs topping up."
+            : 'The translation service has no valid API key configured.',
       };
     }
 
-    if (rawError?.name === 'TimeoutError' || rawError?.name === 'AbortError' || /timeout|aborted/i.test(msg)) {
+    if (kind === 'rate_limit') {
+      return {
+        fa: 'سرویس ترجمه الان شلوغ است. یک دقیقه صبر کنید و دوباره تلاش کنید.',
+        en: 'The translation service is busy right now. Wait a minute and try again.',
+      };
+    }
+
+    if (kind === 'timeout' || /timeout|aborted/i.test(msg)) {
       return {
         fa: 'پاسخ خیلی طول کشید. اتصال اینترنت خود را بررسی کنید و دوباره تلاش کنید.',
         en: 'That took too long. Check your connection and try again.',
       };
     }
 
+    if (!navigator.onLine) {
+      return {
+        fa: 'به اینترنت وصل نیستید. اتصال خود را بررسی کنید و دوباره تلاش کنید.',
+        en: 'You are not connected to the internet. Check your connection and try again.',
+      };
+    }
+
     return {
       fa: 'ترجمه انجام نشد. دوباره تلاش کنید یا به جای صدا، متن خود را تایپ کنید.',
       en: 'The translation did not go through. Try again, or type your message instead.',
-      detail: msg || undefined,
     };
   };
 
@@ -295,7 +320,9 @@ export default function App() {
 
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || 'Server error while interpreting audio');
+        throw Object.assign(new Error(errData.error || 'Server error while interpreting audio'), {
+          kind: errData.kind,
+        });
       }
 
       const data: InterpretationResult = await res.json();
@@ -333,7 +360,9 @@ export default function App() {
 
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || 'Server error while interpreting text');
+        throw Object.assign(new Error(errData.error || 'Server error while interpreting text'), {
+          kind: errData.kind,
+        });
       }
 
       const data: InterpretationResult = await res.json();
@@ -435,10 +464,16 @@ export default function App() {
                 {errorMessage.fa}
               </p>
               <p className="text-xs text-rose-800 leading-relaxed">{errorMessage.en}</p>
+              {/* The cause is for whoever runs the site, not for the person
+                  trying to speak to a nurse, so it is folded away rather than
+                  printed under their message. */}
               {errorMessage.detail && (
-                <p className="text-[11px] text-rose-500 font-mono break-words pt-0.5">
-                  {errorMessage.detail}
-                </p>
+                <details className="pt-0.5">
+                  <summary className="text-[11px] text-rose-500 cursor-pointer select-none">
+                    جزئیات فنی · Technical details
+                  </summary>
+                  <p className="text-[11px] text-rose-500 break-words pt-1">{errorMessage.detail}</p>
+                </details>
               )}
             </div>
             <button
