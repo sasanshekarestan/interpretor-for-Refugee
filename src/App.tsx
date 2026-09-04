@@ -504,12 +504,12 @@ export default function App() {
             <Volume2 className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
             <div className="flex-1 min-w-0 space-y-1">
               <p className="font-farsi text-sm font-bold text-amber-900 leading-relaxed" dir="rtl">
-                ترجمه آماده است، ولی این دستگاه صدای فارسی ندارد و نمی‌تواند آن را بخواند. متن را
-                می‌توانید بخوانید یا نشان بدهید.
+                ترجمه آماده است، ولی صدای فارسی در این لحظه در دسترس نیست. متن را می‌توانید
+                بخوانید یا به طرف مقابل نشان بدهید.
               </p>
               <p className="text-xs text-amber-800 leading-relaxed">
-                The translation is ready, but this device has no Farsi voice to read it aloud. You
-                can still read it or show it to someone.
+                The translation is ready, but Farsi audio is not available right now. You can
+                still read it or show it to someone.
               </p>
             </div>
             <button

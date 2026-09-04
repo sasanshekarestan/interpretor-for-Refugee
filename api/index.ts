@@ -476,6 +476,156 @@ function splitTextIntoChunks(text: string, maxLength: number = 180): string[] {
 }
 
 // Text-to-Speech audio synthesis endpoint for Farsi/Dari (tl=fa) and British English (tl=en)
+/** Audio ready to send, or the reason there is none. */
+type SpokenAudio = { buffer: Buffer; contentType: string };
+
+/**
+ * Google's own translate_tts endpoint. Free and quick, but undocumented and
+ * meant for a browser, so Google blocks it from data-centre addresses - which
+ * is exactly what the deployed app runs on. Worth trying, never worth relying
+ * on.
+ */
+const speakViaGoogleTranslate = async (text: string, isEnglish: boolean): Promise<SpokenAudio> => {
+  const chunks = splitTextIntoChunks(text, 180);
+  const audioBuffers: Buffer[] = [];
+
+  for (const chunk of chunks) {
+    const url = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${
+      isEnglish ? 'en' : 'fa'
+    }&q=${encodeURIComponent(chunk)}`;
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        Accept: 'audio/mpeg, audio/*;q=0.9, */*;q=0.1',
+      },
+    });
+
+    if (!response.ok) throw new Error(`translate_tts returned ${response.status}`);
+    const buffer = Buffer.from(await response.arrayBuffer());
+    if (buffer.length <= 50) throw new Error('translate_tts returned an empty chunk');
+    audioBuffers.push(buffer);
+  }
+
+  if (!audioBuffers.length) throw new Error('translate_tts returned nothing');
+  return { buffer: Buffer.concat(audioBuffers), contentType: 'audio/mpeg' };
+};
+
+/**
+ * Gemini's own speech model. Costs a call, but it is the only route that
+ * actually answers to us rather than to an endpoint that can refuse us, and it
+ * speaks Persian properly.
+ */
+// Preview models are not enabled on every key, so there is a settled one
+// behind the newest. Persian is a supported output language on all of them.
+const TTS_MODELS = ['gemini-3.1-flash-tts-preview', 'gemini-2.5-flash-preview-tts'];
+
+const speakViaGemini = async (text: string, isEnglish: boolean): Promise<SpokenAudio> => {
+  const ai = getGeminiClient();
+  const prompt = isEnglish
+    ? `Read the following text out loud in clear British English: "${text.slice(0, 500)}"`
+    : `متن زیر را با لحن روشن و آرام بخوان: "${text.slice(0, 500)}"`;
+
+  let response: any = null;
+  let lastError: any = null;
+  for (const model of TTS_MODELS) {
+    try {
+      response = await ai.models.generateContent({
+        model,
+        config: {
+          responseModalities: ['AUDIO'],
+          speechConfig: {
+            voiceConfig: { prebuiltVoiceConfig: { voiceName: isEnglish ? 'Zephyr' : 'Kore' } },
+          },
+        },
+        contents: prompt,
+      });
+      break;
+    } catch (err: any) {
+      lastError = err;
+      // Out of credit will fail on every model, so stop rather than spend the
+      // person's wait on a second identical refusal.
+      if (failureKind(err) === 'quota' || failureKind(err) === 'no_key') throw err;
+    }
+  }
+  if (!response) throw lastError || new Error('No TTS model answered');
+
+  const parts = response.candidates?.[0]?.content?.parts || [];
+  const audioPart = parts.find(
+    (p: any) => p.inlineData && (p.inlineData.mimeType?.startsWith('audio/') || p.inlineData.data)
+  );
+  if (!audioPart?.inlineData?.data) throw new Error('Gemini returned no audio');
+
+  let buffer = Buffer.from(audioPart.inlineData.data, 'base64');
+  const mime = audioPart.inlineData.mimeType || 'audio/l16';
+  // Gemini hands back bare 24kHz 16-bit PCM. A browser will not play that
+  // without a RIFF header on the front of it.
+  if (mime.includes('pcm') || mime.includes('l16') || !mime.includes('wav')) {
+    buffer = pcmToWav(buffer, 24000, 1, 16);
+  }
+  return { buffer, contentType: 'audio/wav' };
+};
+
+/**
+ * Which route to try first, and why it differs by language.
+ *
+ * If nothing on the server can produce English, the browser still has an
+ * English voice and the person hears something. Persian has no such safety
+ * net: almost no phone or laptop ships a Persian voice, so when the server
+ * produces nothing the result is silence. Persian therefore goes to the model
+ * that reliably answers us first, and only falls back to the free endpoint.
+ * English keeps the free route first, because its fallback actually works.
+ */
+const speechRoutesFor = (isEnglish: boolean) =>
+  isEnglish
+    ? ([['google_translate', speakViaGoogleTranslate], ['gemini', speakViaGemini]] as const)
+    : ([['gemini', speakViaGemini], ['google_translate', speakViaGoogleTranslate]] as const);
+
+/**
+ * Which speech routes work from where this is deployed.
+ *
+ * The two routes fail in ways that cannot be reproduced anywhere but the
+ * server itself: one is blocked by address, the other by billing. Rather than
+ * guess from a silent phone, open /api/tts/check and read which one answered.
+ */
+app.get('/api/tts/check', async (_req, res) => {
+  const results: Record<string, any> = {};
+
+  for (const isEnglish of [true, false]) {
+    const sample = isEnglish ? 'Hello, this is a test.' : 'سلام، این یک آزمایش است.';
+    for (const [name, route] of speechRoutesFor(isEnglish)) {
+      const label = `${isEnglish ? 'english' : 'farsi'}.${name}`;
+      const startedAt = Date.now();
+      try {
+        const audio = await route(sample, isEnglish);
+        results[label] = {
+          ok: true,
+          bytes: audio.buffer.length,
+          type: audio.contentType,
+          ms: Date.now() - startedAt,
+        };
+      } catch (err: any) {
+        results[label] = {
+          ok: false,
+          kind: failureKind(err),
+          ms: Date.now() - startedAt,
+          // Safe here: this endpoint is for whoever runs the site.
+          reason: String(err?.message || err).slice(0, 300),
+        };
+      }
+    }
+  }
+
+  const farsiWorks = results['farsi.gemini']?.ok || results['farsi.google_translate']?.ok;
+  return res.json({
+    farsiAudioAvailable: !!farsiWorks,
+    note: farsiWorks
+      ? 'Farsi speech can be produced by this server.'
+      : 'Neither route can produce Farsi speech from this server, so the app will be silent in Farsi on any device without a Persian voice installed.',
+    results,
+  });
+});
+
 app.get('/api/tts', async (req, res) => {
   try {
     const rawText = (req.query.text as string) || '';
@@ -492,106 +642,36 @@ app.get('/api/tts', async (req, res) => {
       .replace(/[*_#`~]/g, '')
       .trim();
 
-    const isEnglish = targetLang === 'en' || targetLang === 'en-GB' || targetLang === 'en_GB' || targetLang === 'en-US';
-    const googleTl = isEnglish ? 'en' : 'fa';
+    const isEnglish =
+      targetLang === 'en' || targetLang === 'en-GB' || targetLang === 'en_GB' || targetLang === 'en-US';
 
-    // Strategy 1: Fast Google Translate TTS for both Farsi (tl=fa) and English (tl=en)
-    const textChunks = splitTextIntoChunks(textToSpeak, 180);
-    try {
-      const audioBuffers: Buffer[] = [];
-      let allChunksOk = true;
+    const failures: Record<string, string> = {};
 
-      for (const chunk of textChunks) {
-        const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${googleTl}&q=${encodeURIComponent(chunk)}`;
-        const response = await fetch(ttsUrl, {
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-            'Accept': 'audio/mpeg, audio/*;q=0.9, */*;q=0.1',
-          },
-        });
-
-        if (response.ok) {
-          const arrayBuffer = await response.arrayBuffer();
-          const buffer = Buffer.from(arrayBuffer);
-          if (buffer.length > 50) {
-            audioBuffers.push(buffer);
-          } else {
-            allChunksOk = false;
-            break;
-          }
-        } else {
-          allChunksOk = false;
-          break;
-        }
-      }
-
-      if (allChunksOk && audioBuffers.length > 0) {
-        const combined = Buffer.concat(audioBuffers);
+    for (const [name, route] of speechRoutesFor(isEnglish)) {
+      try {
+        const audio = await route(textToSpeak, isEnglish);
         res.set({
-          'Content-Type': 'audio/mpeg',
-          'Content-Length': combined.length.toString(),
+          'Content-Type': audio.contentType,
+          'Content-Length': audio.buffer.length.toString(),
           'Cache-Control': 'public, max-age=86400',
+          // So the browser console can show which route answered.
+          'X-Speech-Route': name,
         });
-        return res.send(combined);
-      }
-    } catch (e) {
-      console.warn('Google Translate TTS chunk fetch note:', e);
-    }
-
-    // Strategy 2: Gemini TTS dedicated model (fallback if Google Translate TTS is unreachable)
-    try {
-      const ai = getGeminiClient();
-      const prompt = isEnglish
-        ? `Read the following text out loud in clear British English: "${textToSpeak.slice(0, 500)}"`
-        : textToSpeak.slice(0, 500);
-
-      const response = await ai.models.generateContent({
-        model: 'gemini-3.1-flash-tts-preview',
-        config: {
-          responseModalities: ['AUDIO'],
-          speechConfig: {
-            voiceConfig: {
-              prebuiltVoiceConfig: {
-                voiceName: isEnglish ? 'Zephyr' : 'Kore',
-              },
-            },
-          },
-        },
-        contents: prompt,
-      });
-
-      const parts = response.candidates?.[0]?.content?.parts || [];
-      const audioPart = parts.find(
-        (p: any) => p.inlineData && (p.inlineData.mimeType?.startsWith('audio/') || p.inlineData.data)
-      );
-
-      if (audioPart && audioPart.inlineData?.data) {
-        let audioBuffer = Buffer.from(audioPart.inlineData.data, 'base64');
-        const mime = audioPart.inlineData.mimeType || 'audio/l16';
-
-        // Wrap raw PCM/L16 audio buffer into 24kHz 16-bit RIFF WAV header for browser playback
-        if (mime.includes('pcm') || mime.includes('l16') || !mime.includes('wav')) {
-          audioBuffer = pcmToWav(audioBuffer, 24000, 1, 16);
-        }
-
-        res.set({
-          'Content-Type': 'audio/wav',
-          'Content-Length': audioBuffer.length.toString(),
-          'Cache-Control': 'public, max-age=86400',
-        });
-        return res.send(audioBuffer);
-      }
-    } catch (geminiError: any) {
-      const isQuotaError = geminiError?.status === 429 || geminiError?.message?.includes('429') || geminiError?.message?.includes('quota');
-      if (isQuotaError) {
-        console.warn('Gemini 3.1 TTS quota limit reached (429). Client will use browser speech synthesis.');
-        return res.status(429).json({ error: 'TTS quota exceeded, falling back to local speech synthesis.' });
-      } else {
-        console.warn('Gemini 3.1 TTS generation warning:', geminiError?.message || geminiError);
+        return res.send(audio.buffer);
+      } catch (err: any) {
+        failures[name] = String(err?.message || err).slice(0, 200);
+        console.warn(`[tts] ${name} failed for ${isEnglish ? 'en' : 'fa'}: ${failures[name]}`);
       }
     }
 
-    return res.status(500).json({ error: 'Failed to synthesize speech' });
+    // Nothing could speak it. Say which language, because the app can fall
+    // back to a browser voice for English and has nothing for Persian.
+    console.error(`[tts] no route could speak ${isEnglish ? 'English' : 'Farsi'}:`, failures);
+    return res.status(503).json({
+      error: 'No speech route is available',
+      language: isEnglish ? 'english' : 'farsi',
+      kind: 'unavailable',
+    });
   } catch (error: any) {
     console.error('Error generating TTS:', error);
     return res.status(500).json({ error: 'Failed to synthesize voice audio' });
