@@ -37,6 +37,8 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
 }) => {
   const [copied, setCopied] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  /** True when this device simply has no Persian voice to read the text with. */
+  const [noFarsiVoice, setNoFarsiVoice] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<'standard' | 'formal' | 'phonetic'>('standard');
   const [showHandOverModal, setShowHandOverModal] = useState<boolean>(false);
   const [handOverLang, setHandOverLang] = useState<'target' | 'source'>('target');
@@ -97,10 +99,13 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
           onEnd: () => setIsPlaying(false),
         });
       } else {
+        setNoFarsiVoice(false);
         await playSpokenAudio(result.translatedText, 'fa', {
           rate: settings.voiceSpeed || 0.9,
           onStart: () => setIsPlaying(true),
           onEnd: () => setIsPlaying(false),
+          // A play button that does nothing looks broken. Say why instead.
+          onUnavailable: () => setNoFarsiVoice(true),
         });
       }
     } catch (err) {
@@ -346,6 +351,19 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
               )}
             </div>
           </div>
+
+          {/* Pressing play and hearing nothing looks like a broken button, so
+              when the device has no Persian voice the reason is shown here. */}
+          {noFarsiVoice && (
+            <p
+              className="mt-3 text-[11px] font-farsi text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 leading-relaxed"
+              dir="rtl"
+              role="status"
+            >
+              این دستگاه صدای فارسی ندارد، برای همین متن خوانده نمی‌شود. می‌توانید متن را بخوانید یا
+              نشان بدهید.
+            </p>
+          )}
 
           {/* Voice Speak Out Button */}
           <div className="mt-4 pt-3 border-t border-teal-100 flex items-center justify-between gap-3">

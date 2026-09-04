@@ -274,6 +274,45 @@ Return clean JSON with:
 - toneOrEmotion: Emotional state or communication urgency.
 - keyTerms: Array of UK asylum/healthcare/legal terms found ({ farsi, english, explanation, category }).`;
 
+/**
+ * What a live turn actually needs.
+ *
+ * The full schema below asks for ten fields on every utterance - formal
+ * phrasing, dialect notes, tone, and an array of key terms with explanations -
+ * and the person waits while all of it is written out before they see a single
+ * word. In a conversation at a GP reception that wait is the whole experience.
+ *
+ * So a live turn asks for the few fields it uses, and asks for them only in
+ * the direction where they mean anything: British phrasing is what gets spoken
+ * aloud when translating into English, and is meaningless going the other way;
+ * a romanised spelling helps an English speaker read Farsi aloud, and is
+ * pointless in reverse. The richer fields are still rendered whenever they
+ * arrive - every one of them is drawn conditionally - so dropping them costs
+ * detail on the card, not correctness.
+ */
+const liveInterpretationSchema = (direction: string) => {
+  const intoEnglish = direction === 'farsi_to_english';
+  return {
+    type: Type.OBJECT,
+    properties: {
+      sourceText: { type: Type.STRING, description: 'Verbatim transcription in original script' },
+      translatedText: { type: Type.STRING, description: 'Accurate translation' },
+      detectedDialect: { type: Type.STRING, description: 'Detected regional dialect and accent' },
+      ...(intoEnglish
+        ? { britishPhrasing: { type: Type.STRING, description: 'Natural British English phrasing' } }
+        : { phoneticSpelling: { type: Type.STRING, description: 'Romanized transliteration' } }),
+    },
+    required: intoEnglish
+      ? ['sourceText', 'translatedText', 'britishPhrasing']
+      : ['sourceText', 'translatedText'],
+  };
+};
+
+/** Kept short for the same reason: it is read before every reply. */
+const SYSTEM_INSTRUCTION_LIVE = `You are a fast, precise UK asylum and healthcare interpreter between Farsi/Dari (Tehrani, Kabuli, Herati, Hazaragi and other dialects) and British English.
+
+Translate accurately and plainly, in the register a person would actually speak. Keep NHS, Home Office and legal terms correct. Do not add commentary, notes, or anything the speaker did not say. Return only the JSON fields asked for.`;
+
 // Common schema for interpretation response
 const interpretationSchema = {
   type: Type.OBJECT,
@@ -336,8 +375,8 @@ app.post('/api/interpret', async (req, res) => {
 
       const rawResponseText = await generateWithFallback(
         contents,
-        SYSTEM_INSTRUCTION_INTERPRETER,
-        interpretationSchema
+        SYSTEM_INSTRUCTION_LIVE,
+        liveInterpretationSchema(direction)
       );
 
       const parsed = cleanJsonText(rawResponseText);
@@ -356,8 +395,8 @@ app.post('/api/interpret', async (req, res) => {
 
       const rawResponseText = await generateWithFallback(
         directionPrompt,
-        SYSTEM_INSTRUCTION_INTERPRETER,
-        interpretationSchema
+        SYSTEM_INSTRUCTION_LIVE,
+        liveInterpretationSchema(direction)
       );
 
       const parsed = cleanJsonText(rawResponseText);

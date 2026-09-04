@@ -68,6 +68,8 @@ export default function App() {
   const [currentResult, setCurrentResult] = useState<InterpretationResult | null>(null);
   const [history, setHistory] = useState<InterpretationResult[]>([]);
   const [errorMessage, setErrorMessage] = useState<AppError | null>(null);
+  /** Set when the translation arrived but could not be read aloud. */
+  const [speechNotice, setSpeechNotice] = useState<'farsi_voice' | null>(null);
 
   // New features state
   const [savedPhrases, setSavedPhrases] = useState<SavedPhrase[]>([]);
@@ -232,6 +234,10 @@ export default function App() {
       } else {
         await playSpokenAudio(result.translatedText, 'fa-IR', {
           rate: settings.voiceSpeed,
+          // Most devices carry no Persian voice, so when the server audio
+          // cannot be reached there is nothing left to speak with. Saying so
+          // is better than a button that appears to do nothing.
+          onUnavailable: () => setSpeechNotice('farsi_voice'),
         });
       }
     } catch (err) {
@@ -300,6 +306,7 @@ export default function App() {
     primeAudioPlayback();
     setIsProcessing(true);
     setErrorMessage(null);
+    setSpeechNotice(null);
     const activeDir = overrideDirection || direction;
     if (activeDir !== direction) {
       setDirection(activeDir);
@@ -341,6 +348,7 @@ export default function App() {
     primeAudioPlayback();
     setIsProcessing(true);
     setErrorMessage(null);
+    setSpeechNotice(null);
     const activeDir = overrideDirection || direction;
     if (activeDir !== direction) {
       setDirection(activeDir);
@@ -479,6 +487,34 @@ export default function App() {
             <button
               onClick={() => setErrorMessage(null)}
               className="shrink-0 text-xs font-bold text-rose-700 hover:text-rose-900 underline underline-offset-2 cursor-pointer font-farsi"
+            >
+              بستن
+            </button>
+          </div>
+        )}
+
+        {/* The translation arrived but nothing could say it. Silence reads as
+            a broken app, so it is named - and this is amber, not red, because
+            the translation itself is on screen and still usable. */}
+        {speechNotice === 'farsi_voice' && !isFormImmersive && (
+          <div
+            role="status"
+            className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3"
+          >
+            <Volume2 className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+            <div className="flex-1 min-w-0 space-y-1">
+              <p className="font-farsi text-sm font-bold text-amber-900 leading-relaxed" dir="rtl">
+                ترجمه آماده است، ولی این دستگاه صدای فارسی ندارد و نمی‌تواند آن را بخواند. متن را
+                می‌توانید بخوانید یا نشان بدهید.
+              </p>
+              <p className="text-xs text-amber-800 leading-relaxed">
+                The translation is ready, but this device has no Farsi voice to read it aloud. You
+                can still read it or show it to someone.
+              </p>
+            </div>
+            <button
+              onClick={() => setSpeechNotice(null)}
+              className="shrink-0 text-xs font-bold text-amber-700 hover:text-amber-900 underline underline-offset-2 cursor-pointer font-farsi"
             >
               بستن
             </button>

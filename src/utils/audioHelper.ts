@@ -206,7 +206,13 @@ export function preCacheCommonPhrases(phrases?: Array<{ englishText?: string; fa
 export async function playSpokenAudio(
   text: string,
   lang: 'fa' | 'en-GB' | 'fa-IR',
-  options?: { rate?: number; onStart?: () => void; onEnd?: () => void }
+  options?: {
+    rate?: number;
+    onStart?: () => void;
+    onEnd?: () => void;
+    /** Nothing could be spoken at all - the caller should say so rather than leave silence. */
+    onUnavailable?: (reason: 'no_voice') => void;
+  }
 ): Promise<void> {
   stopAllSpeech();
 
@@ -237,15 +243,20 @@ export async function playSpokenAudio(
     };
 
     const playWithLocalSynthesis = async () => {
-      console.log('Prioritizing locally-generated synthetic speech (Web Speech API)');
       try {
         if (normalizedLang === 'fa-IR') {
           await speakFarsi(textToSpeak, options);
         } else {
           await speakBritishEnglish(textToSpeak, options);
         }
-      } catch (err) {
-        console.warn('Local speech synthesis fallback failed:', err);
+      } catch (err: any) {
+        // The device has no Persian voice. Silence here reads as a broken
+        // button, so tell the caller and let it say what happened.
+        if (err?.name === 'NoFarsiVoiceError') {
+          options?.onUnavailable?.('no_voice');
+        } else {
+          console.warn('Local speech synthesis fallback failed:', err);
+        }
       }
       finish();
     };
@@ -293,8 +304,12 @@ export async function playSpokenAudio(
     const serverUrl = `/api/tts?text=${encodeURIComponent(textToSpeak)}&lang=${encodeURIComponent(normalizedLang)}`;
 
     try {
+      // The server splits long text into chunks and fetches each one, so the
+      // wait grows with the sentence. A flat 3.5s cut off anything but a
+      // short phrase and handed it to a fallback that, in Farsi, is silent.
+      const budget = Math.min(12000, 4000 + textToSpeak.length * 25);
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3500);
+      const timeoutId = setTimeout(() => controller.abort(), budget);
 
       const res = await fetch(serverUrl, { signal: controller.signal });
       clearTimeout(timeoutId);
@@ -419,6 +434,36 @@ export async function speakBritishEnglish(
   });
 }
 
+/**
+ * A Farsi voice on this device, if there is one.
+ *
+ * Most phones and desktops ship no Persian voice at all. English always has
+ * one, which is why speech into English has always worked and speech into
+ * Farsi quietly did not: the browser accepted the utterance, had nothing to
+ * say it with, and produced silence. Deliberately no Arabic voice: it reads
+ * Persian letters with the wrong sounds and is worse than saying nothing.
+ */
+export function findFarsiVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | undefined {
+  return voices.find(
+    (v) =>
+      v.lang === 'fa-IR' ||
+      v.lang.toLowerCase() === 'fa-ir' ||
+      v.lang === 'fa-AF' ||
+      v.lang.startsWith('fa') ||
+      v.name.toLowerCase().includes('persian') ||
+      v.name.toLowerCase().includes('farsi') ||
+      v.name.toLowerCase().includes('dari')
+  );
+}
+
+/** Thrown rather than mimed, so the app can say why nothing was heard. */
+export class NoFarsiVoiceError extends Error {
+  constructor() {
+    super('This device has no Farsi voice installed.');
+    this.name = 'NoFarsiVoiceError';
+  }
+}
+
 // Speak text in Farsi / Persian (STRICTLY NO ARABIC VOICE FALLBACK)
 export async function speakFarsi(
   text: string,
@@ -426,31 +471,27 @@ export async function speakFarsi(
 ): Promise<void> {
   if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
     options?.onEnd?.();
-    return;
+    throw new NoFarsiVoiceError();
   }
 
   const voices = await ensureVoicesLoaded();
   window.speechSynthesis.cancel();
 
+  const farsiVoice = findFarsiVoice(voices);
+
+  // Speaking Persian text with an English voice produces gibberish or, more
+  // often, nothing. Either way the person is left waiting for a sound that
+  // never comes, so say plainly that it is not available instead.
+  if (!farsiVoice) {
+    options?.onEnd?.();
+    throw new NoFarsiVoiceError();
+  }
+
   return new Promise((resolve) => {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = options?.rate || 0.9;
     utterance.lang = 'fa-IR';
-
-    // Find best Farsi ('fa-IR') voice - strictly no 'ar' voices
-    const farsiVoice = voices.find(v => 
-      v.lang === 'fa-IR' || 
-      v.lang.toLowerCase() === 'fa-ir' ||
-      v.lang === 'fa-AF' || 
-      v.lang.startsWith('fa') || 
-      v.name.toLowerCase().includes('persian') || 
-      v.name.toLowerCase().includes('farsi') || 
-      v.name.toLowerCase().includes('dari')
-    );
-
-    if (farsiVoice) {
-      utterance.voice = farsiVoice;
-    }
+    utterance.voice = farsiVoice;
 
     utterance.onstart = () => options?.onStart?.();
     utterance.onend = () => {
