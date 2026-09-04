@@ -57,22 +57,82 @@ export const ConversationHistory: React.FC<ConversationHistoryProps> = ({
     }
   };
 
+  /**
+   * Write the conversation out the way it happened.
+   *
+   * The log is held newest-first because that is how it is read on screen, but
+   * a transcript is read from the top down, so it is reversed here. Days are
+   * marked, because a session picked up the next morning otherwise shows a
+   * later clock time above an earlier one with nothing to explain it.
+   *
+   * Every line says which language it is in. The old export labelled the
+   * translation "English" whichever way round it went, so a Persian sentence
+   * appeared under an English heading, and it preferred the British phrasing
+   * over the translation itself - which meant that translating INTO Persian
+   * wrote out the English again instead of the Persian.
+   */
   const handleExportText = () => {
-    const lines = history.map((item, index) => {
-      const time = new Date(item.timestamp).toLocaleTimeString();
-      return `--- Entry #${history.length - index} (${time}) [${item.direction}] ---\n` +
-             `Detected: ${item.detectedDialect || 'Farsi/Dari'}\n` +
-             `Source: ${item.sourceText}\n` +
-             `English: ${item.britishPhrasing || item.translatedText}\n` +
-             (item.formalPhrasing ? `Formal: ${item.formalPhrasing}\n` : '') +
-             `\n`;
-    }).join('');
+    const oldestFirst = [...history].sort((a, b) => a.timestamp - b.timestamp);
 
-    const blob = new Blob([lines], { type: 'text/plain;charset=utf-8' });
+    const dayOf = (ts: number) =>
+      new Date(ts).toLocaleDateString(undefined, {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      });
+    const timeOf = (ts: number) =>
+      new Date(ts).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+
+    const out: string[] = [
+      'Hamyar - interpretation transcript',
+      'همیار - رونوشت گفتگو',
+      '',
+      `Saved: ${dayOf(Date.now())}, ${timeOf(Date.now())}`,
+      `Entries: ${oldestFirst.length}`,
+      '',
+      'This is a machine translation, not a certified interpretation.',
+      'این ترجمهٔ ماشینی است و ترجمهٔ رسمی به حساب نمی‌آید.',
+      '',
+    ];
+
+    let lastDay = '';
+    oldestFirst.forEach((item, index) => {
+      const day = dayOf(item.timestamp);
+      if (day !== lastDay) {
+        out.push('='.repeat(60), day, '='.repeat(60), '');
+        lastDay = day;
+      }
+
+      const intoEnglish = item.direction === 'farsi_to_english';
+      const spokenIn = intoEnglish ? 'Farsi / Dari' : 'English';
+      const translatedInto = intoEnglish ? 'English' : 'Farsi / Dari';
+
+      out.push(
+        `${index + 1}. ${timeOf(item.timestamp)}  ${spokenIn} to ${translatedInto}`,
+        `   Said (${spokenIn})${item.detectedDialect ? ` [${item.detectedDialect}]` : ''}:`,
+        `   ${item.sourceText}`,
+        `   Translation (${translatedInto}):`,
+        `   ${item.translatedText}`
+      );
+
+      // Only meaningful when the translation is English: it is the same
+      // sentence said the way a person would say it out loud.
+      if (intoEnglish && item.britishPhrasing && item.britishPhrasing !== item.translatedText) {
+        out.push('   Spoken English version:', `   ${item.britishPhrasing}`);
+      }
+      if (intoEnglish && item.formalPhrasing) {
+        out.push('   Formal English version (for letters and forms):', `   ${item.formalPhrasing}`);
+      }
+      out.push('');
+    });
+
+    const blob = new Blob([out.join('\n')], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Refugee_Interpretation_Session_${new Date().toISOString().slice(0, 10)}.txt`;
+    // Date first, so a folder of these sorts into order on its own.
+    a.download = `${new Date().toISOString().slice(0, 10)}-hamyar-transcript.txt`;
     a.click();
     URL.revokeObjectURL(url);
   };

@@ -290,21 +290,34 @@ Return clean JSON with:
  * arrive - every one of them is drawn conditionally - so dropping them costs
  * detail on the card, not correctness.
  */
-const liveInterpretationSchema = (direction: string) => {
+const liveInterpretationSchema = (direction: string, fromAudio: boolean) => {
   const intoEnglish = direction === 'farsi_to_english';
+
+  // Transcribing speech is the point when the input is audio. When the person
+  // typed, we already have their words to the letter, and asking the model to
+  // write them out again is a whole sentence of waiting for something we could
+  // simply copy.
+  const transcription = fromAudio
+    ? { sourceText: { type: Type.STRING, description: 'Verbatim transcription in original script' } }
+    : {};
+
   return {
     type: Type.OBJECT,
     properties: {
-      sourceText: { type: Type.STRING, description: 'Verbatim transcription in original script' },
+      ...transcription,
       translatedText: { type: Type.STRING, description: 'Accurate translation' },
       detectedDialect: { type: Type.STRING, description: 'Detected regional dialect and accent' },
+      // Only when translating into English, and only because it is what gets
+      // spoken aloud. Going the other way there is nothing it would add: a
+      // romanised spelling of the Persian doubles the length of the answer for
+      // a line almost nobody opens, and that wait is felt on every turn.
       ...(intoEnglish
         ? { britishPhrasing: { type: Type.STRING, description: 'Natural British English phrasing' } }
-        : { phoneticSpelling: { type: Type.STRING, description: 'Romanized transliteration' } }),
+        : {}),
     },
     required: intoEnglish
-      ? ['sourceText', 'translatedText', 'britishPhrasing']
-      : ['sourceText', 'translatedText'],
+      ? [...(fromAudio ? ['sourceText'] : []), 'translatedText', 'britishPhrasing']
+      : [...(fromAudio ? ['sourceText'] : []), 'translatedText'],
   };
 };
 
@@ -376,7 +389,7 @@ app.post('/api/interpret', async (req, res) => {
       const rawResponseText = await generateWithFallback(
         contents,
         SYSTEM_INSTRUCTION_LIVE,
-        liveInterpretationSchema(direction)
+        liveInterpretationSchema(direction, true)
       );
 
       const parsed = cleanJsonText(rawResponseText);
@@ -391,12 +404,12 @@ app.post('/api/interpret', async (req, res) => {
     } else if (text && text.trim()) {
       const directionPrompt = direction === 'farsi_to_english'
         ? `The user typed in Farsi or Dari (or Pinglish/Latin Persian): "${text}". Accurately interpret this text, detect whether it is Iranian Persian, Afghan Dari, Hazaragi, Herati or colloquial dialect, and translate into natural British English with UK asylum/legal context.${dialectHint ? ` User indicated dialect hint: ${dialectHint}` : ''}`
-        : `The user typed in English: "${text}". Translate this into natural, respectful Farsi/Dari suitable for an asylum seeker or refugee in the UK. Provide both Farsi script and phonetic pronunciation.`;
+        : `The user typed in English: "${text}". Translate this into natural, respectful Farsi/Dari suitable for an asylum seeker or refugee in the UK.`;
 
       const rawResponseText = await generateWithFallback(
         directionPrompt,
         SYSTEM_INSTRUCTION_LIVE,
-        liveInterpretationSchema(direction)
+        liveInterpretationSchema(direction, false)
       );
 
       const parsed = cleanJsonText(rawResponseText);
@@ -407,6 +420,10 @@ app.post('/api/interpret', async (req, res) => {
         timestamp: Date.now(),
         direction,
         ...parsed,
+        // The model was not asked to echo what the person typed, so put it
+        // back - and after the spread, because their own words are the record
+        // here, not anything the model might have decided to send instead.
+        sourceText: text,
       });
     } else {
       return res.status(400).json({ error: 'Either audio or text payload is required for interpretation' });
