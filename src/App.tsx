@@ -606,20 +606,27 @@ export default function App() {
             {/* What this is, before anything else. Someone arriving here has
                 usually been sent by a support worker and does not yet know
                 what the app does. Persian block, then English block. */}
-            <section className="grid md:grid-cols-[1fr_auto] items-center gap-6 md:gap-8">
-              <div className="space-y-4 order-2 md:order-1">
-                <div dir="rtl" className="space-y-2">
-                  <h2 className="font-farsi text-2xl sm:text-3xl font-bold text-ink leading-tight">
+            {/* On a phone this is a stack and the picture is small, because the
+                first thing a thumb should reach is the cards. On a desktop
+                there is a screenful before anything scrolls, so the hero takes
+                it: larger type, and the picture at something like half the
+                width rather than a thumbnail parked in the corner. */}
+            <section className="grid md:grid-cols-[1.05fr_1fr] items-center gap-6 md:gap-10 lg:gap-14 md:py-4 lg:py-8">
+              <div className="space-y-4 md:space-y-6 order-2 md:order-1">
+                <div dir="rtl" className="space-y-2 md:space-y-3">
+                  <h2 className="font-farsi text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-ink leading-tight">
                     تازه به بریتانیا آمده‌اید؟
                   </h2>
-                  <p className="font-farsi text-lg text-ink-muted leading-relaxed">
+                  <p className="font-farsi text-lg md:text-xl lg:text-2xl text-ink-muted leading-relaxed">
                     همیار به شما کمک می‌کند حرفتان را بزنید، نامه‌های رسمی را بفهمید و
                     فرم‌های NHS و اداره مهاجرت را پر کنید. به فارسی و دری.
                   </p>
                 </div>
-                <div className="space-y-1 border-t border-edge pt-4">
-                  <h3 className="text-xl font-bold text-ink">Just arrived in the UK?</h3>
-                  <p className="text-base text-ink-muted leading-relaxed">
+                <div className="space-y-1 md:space-y-2 border-t border-edge pt-4 md:pt-6">
+                  <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-ink leading-tight">
+                    Just arrived in the UK?
+                  </h3>
+                  <p className="text-base md:text-lg text-ink-muted leading-relaxed">
                     Hamyar helps you be understood, read the letters you are sent, and fill in NHS
                     and Home Office forms, in Farsi and Dari.
                   </p>
@@ -630,7 +637,7 @@ export default function App() {
                 alt=""
                 width={1187}
                 height={959}
-                className="order-1 md:order-2 w-full max-w-[260px] sm:max-w-[300px] h-auto mx-auto"
+                className="order-1 md:order-2 w-full max-w-[260px] sm:max-w-[300px] md:max-w-[420px] lg:max-w-[520px] h-auto mx-auto"
               />
             </section>
 
@@ -652,22 +659,25 @@ export default function App() {
               {/* Card 1: Talk to someone */}
               <div
                 onClick={() => goToTab('interpreter')}
-                className="group bg-gradient-to-b from-teal-50/70 to-teal-50/40 border-2 border-teal-200/90 hover:border-teal-500 rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
+                className="group bg-teal-50/60 border-2 border-teal-200 hover:border-primary rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
               >
                 <div className="space-y-4">
-                  <div className="w-12 h-12 rounded-2xl bg-teal-600 flex items-center justify-center text-white shadow-md shadow-teal-600/20 group-hover:scale-105 transition">
+                  <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-on-primary group-hover:scale-105 transition">
                     <Mic className="w-6 h-6" />
                   </div>
                   <div>
                     <h3 className="text-base font-bold text-slate-900 break-words">Talk to someone</h3>
                     <p className="text-xs text-slate-500 font-medium break-words">Live audio interpretation</p>
-                    <h4 dir="rtl" className="font-farsi font-bold text-teal-800 text-base mt-2 break-words">با کسی صحبت کنید</h4>
+                    <h4 dir="rtl" className="font-farsi font-bold text-primary text-base mt-2 break-words">با کسی صحبت کنید</h4>
                     <p dir="rtl" className="font-farsi text-xs text-slate-500 break-words">ترجمه زنده و همزمان</p>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-teal-200/60 flex items-center justify-between text-xs font-bold text-teal-800">
-                  <span>Start live interpreter →</span>
+                <div className="pt-3 border-t border-teal-200 flex items-center justify-between text-xs font-bold text-primary">
+                  {/* "Start live interpreter" wrapped onto two lines while the
+                      other three sat on one, which made this card taller than
+                      its neighbours for no reason. */}
+                  <span>Start talking →</span>
                   <span className="font-farsi">شروع گفتگو</span>
                 </div>
               </div>
@@ -675,21 +685,21 @@ export default function App() {
               {/* Card 2: Understand a letter */}
               <div
                 onClick={() => setIsLetterScannerOpen(true)}
-                className="group bg-gradient-to-b from-teal-50/70 to-slate-50/40 border-2 border-teal-200/90 hover:border-teal-500 rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
+                className="group bg-teal-50/60 border-2 border-teal-200 hover:border-primary rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
               >
                 <div className="space-y-4">
-                  <div className="w-12 h-12 rounded-2xl bg-teal-600 flex items-center justify-center text-white shadow-md shadow-teal-600/20 group-hover:scale-105 transition">
+                  <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-on-primary group-hover:scale-105 transition">
                     <Camera className="w-6 h-6" />
                   </div>
                   <div>
                     <h3 className="text-base font-bold text-slate-900 break-words">Understand a letter</h3>
                     <p className="text-xs text-slate-500 font-medium break-words">Photo analysis & deadlines</p>
-                    <h4 dir="rtl" className="font-farsi font-bold text-teal-900 text-base mt-2 break-words">یک نامه را بفهمید</h4>
+                    <h4 dir="rtl" className="font-farsi font-bold text-primary text-base mt-2 break-words">یک نامه را بفهمید</h4>
                     <p dir="rtl" className="font-farsi text-xs text-slate-500 break-words">عکس نامه و خلاصه فارسی</p>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-teal-200/60 flex items-center justify-between text-xs font-bold text-teal-800">
+                <div className="pt-3 border-t border-teal-200 flex items-center justify-between text-xs font-bold text-primary">
                   <span>Scan letter now →</span>
                   <span className="font-farsi">اسکن نامه</span>
                 </div>
@@ -702,21 +712,21 @@ export default function App() {
                   setCustomUploadedForm(null);
                   goToTab('form_companion');
                 }}
-                className="group bg-gradient-to-b from-teal-50/70 to-slate-50/40 border-2 border-teal-300 hover:border-teal-600 rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
+                className="group bg-teal-50/60 border-2 border-teal-200 hover:border-primary rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
               >
                 <div className="space-y-4">
-                  <div className="w-12 h-12 rounded-2xl bg-teal-700 flex items-center justify-center text-white shadow-md shadow-teal-700/20 group-hover:scale-105 transition">
+                  <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-on-primary group-hover:scale-105 transition">
                     <CheckSquare className="w-6 h-6" />
                   </div>
                   <div>
                     <h3 className="text-base font-bold text-slate-900 break-words">Fill in a form</h3>
                     <p className="text-xs text-slate-500 font-medium break-words">Guided question-by-question</p>
-                    <h4 dir="rtl" className="font-farsi font-bold text-teal-950 text-base mt-2 break-words">یک فرم را تکمیل کنید</h4>
+                    <h4 dir="rtl" className="font-farsi font-bold text-primary text-base mt-2 break-words">یک فرم را تکمیل کنید</h4>
                     <p dir="rtl" className="font-farsi text-xs text-slate-500 break-words">پاسخ صوتی و بررسی پاسخ‌ها</p>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-teal-300/60 flex items-center justify-between text-xs font-bold text-teal-900">
+                <div className="pt-3 border-t border-teal-200 flex items-center justify-between text-xs font-bold text-primary">
                   <span>Start form guide →</span>
                   <span className="font-farsi">تکمیل فرم</span>
                 </div>
@@ -725,7 +735,7 @@ export default function App() {
               {/* Card 4: Write a message */}
               <div
                 onClick={() => goToTab('message_writer')}
-                className="group bg-teal-50/40 border-2 border-teal-200 hover:border-teal-600 rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
+                className="group bg-teal-50/60 border-2 border-teal-200 hover:border-primary rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
               >
                 <div className="space-y-4">
                   <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-on-primary group-hover:scale-105 transition">
@@ -734,12 +744,12 @@ export default function App() {
                   <div>
                     <h3 className="text-base font-bold text-slate-900 break-words">Write a message</h3>
                     <p className="text-xs text-slate-500 font-medium break-words">Polite UK English messages</p>
-                    <h4 dir="rtl" className="font-farsi font-bold text-teal-900 text-base mt-2 break-words">یک پیام را بنویسید</h4>
+                    <h4 dir="rtl" className="font-farsi font-bold text-primary text-base mt-2 break-words">یک پیام را بنویسید</h4>
                     <p dir="rtl" className="font-farsi text-xs text-slate-500 break-words">ارسال پیام به مسئول پرونده</p>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-teal-300/60 flex items-center justify-between text-xs font-bold text-teal-900">
+                <div className="pt-3 border-t border-teal-200 flex items-center justify-between text-xs font-bold text-primary">
                   <span>Write message →</span>
                   <span className="font-farsi">نوشتن پیام</span>
                 </div>
