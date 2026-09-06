@@ -975,47 +975,77 @@ export default function App() {
         {/* TAB 3: LETTER SCANNER */}
         {activeTab === 'letter_scanner' && (
           <div className="space-y-6">
-            <div className="bg-teal-900 text-white p-6 rounded-3xl border border-teal-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <h2 className="text-xl font-bold">Understand a letter</h2>
-                <p className="text-lg font-bold font-farsi" dir="rtl">فهمیدن یک نامه</p>
-                <p className="text-xs text-teal-200 font-farsi leading-relaxed" dir="rtl">
-                  از نامه عکس بگیرید یا فایل PDF آن را اضافه کنید تا به زبان ساده برایتان توضیح دهیم.
+            {/* The introduction. It was laid out left to right with the
+                English heading first, on a raw teal-900 that belongs to no
+                token, and its instructions were set at twelve pixels, which
+                design.md calls exclusion rather than a style choice. It is
+                Persian block then English block on the emphasis surface now,
+                the same as the interpreter's opening band.
+
+                Its Start button has gone. It did exactly what the button on
+                the card below does, and a screen with two primary actions has
+                none. The card is the action; this says what the screen is. */}
+            <div
+              dir="rtl"
+              className="bg-emphasis text-on-emphasis p-5 sm:p-6 rounded-3xl space-y-3"
+            >
+              <div className="space-y-2">
+                <h2 className="font-farsi text-xl sm:text-2xl font-bold leading-tight">
+                  فهمیدن یک نامه
+                </h2>
+                <p className="font-farsi text-base text-on-emphasis-muted leading-relaxed">
+                  از نامه عکس بگیرید یا فایل PDF آن را اضافه کنید تا به زبان ساده برایتان توضیح
+                  دهیم.
                 </p>
-                <p className="text-xs text-teal-200/90">
+              </div>
+              {/* dir="ltr" because this half is English. Inheriting the
+                  parent's RTL put the full stop at the start of the
+                  sentence. */}
+              <div dir="ltr" className="space-y-0.5 border-t border-white/15 pt-3">
+                <h3 className="font-bold text-base">Understand a letter</h3>
+                <p className="text-sm text-on-emphasis-muted leading-relaxed">
                   Take a photo or add a PDF, and get it explained in plain English and Farsi.
                 </p>
               </div>
-              <button
-                onClick={() => setIsLetterScannerOpen(true)}
-                className="px-5 py-3 bg-teal-500 hover:bg-teal-400 text-white rounded-xl text-xs font-bold transition shadow-xs shrink-0 flex items-center gap-2"
-              >
-                <span>Start</span>
-                <span className="font-farsi">| شروع</span>
-              </button>
             </div>
 
-            <div className="bg-white rounded-3xl p-8 text-center border border-slate-200 space-y-4">
-              <Camera className="w-12 h-12 text-teal-600 mx-auto" />
-              <div className="space-y-1">
-                <h3 className="font-bold text-slate-900 text-base">Add an official letter</h3>
-                <p className="font-bold text-slate-900 text-base font-farsi" dir="rtl">نامه رسمی خود را اضافه کنید</p>
+            <div className="bg-surface rounded-3xl p-6 sm:p-8 text-center border border-edge space-y-4">
+              <Camera className="w-12 h-12 text-primary mx-auto" aria-hidden="true" />
+
+              <div dir="rtl" className="space-y-2 max-w-md mx-auto">
+                <h3 className="font-farsi font-bold text-ink text-lg">
+                  نامه رسمی خود را اضافه کنید
+                </h3>
+                <p className="font-farsi text-base text-ink-muted leading-relaxed">
+                  نامه‌های اداره مهاجرت (<span dir="ltr">Home Office</span>)، <span dir="ltr">NHS</span>، شورای شهر،
+                  مسکن و مطب دکتر را می‌خوانیم و می‌گوییم این نامه چیست، چه نوشته، چه کاری باید
+                  انجام دهید و تاریخ‌های مهم آن کدام است.
+                </p>
               </div>
-              <p className="text-xs text-slate-600 max-w-md mx-auto font-farsi leading-relaxed" dir="rtl">
-                نامه‌های هوم آفیس، NHS، شورای شهر، مسکن و مطب دکتر را می‌خوانیم و می‌گوییم این نامه چیست، چه نوشته،
-                چه کاری باید انجام دهید و تاریخ‌های مهم آن کدام است.
-              </p>
-              <p className="text-xs text-slate-500 max-w-md mx-auto">
-                We read official UK letters (Home Office, NHS, Housing, GP, Council) and explain what it is, what it
-                says, what you must do, and the dates that matter.
-              </p>
+
+              <div className="space-y-1 max-w-md mx-auto border-t border-edge pt-4">
+                <h4 className="font-bold text-ink text-base">Add an official letter</h4>
+                <p className="text-sm text-ink-muted leading-relaxed">
+                  We read official UK letters (Home Office, NHS, Housing, GP, Council) and explain
+                  what it is, what it says, what you must do, and the dates that matter.
+                </p>
+              </div>
+
+              {/* Stacked rather than joined with a pipe. "Take a photo or add a
+                  PDF | عکس بگیرید" put two reading directions on one line with
+                  a bar between them, which reads as neither language. */}
               <button
                 onClick={() => setIsLetterScannerOpen(true)}
-                className="px-6 py-3.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-2xl shadow-xs inline-flex items-center gap-2"
+                className="min-h-[48px] px-6 py-2 rounded-2xl bg-primary text-on-primary hover:bg-primary-press
+                           font-bold transition inline-flex items-center gap-2.5"
               >
-                <Camera className="w-4 h-4" />
-                <span>Take a photo or add a PDF</span>
-                <span className="font-farsi">| عکس بگیرید یا PDF اضافه کنید</span>
+                <Camera className="w-5 h-5 shrink-0" />
+                <span className="text-left leading-tight">
+                  <span dir="rtl" className="block font-farsi text-sm">
+                    عکس بگیرید یا PDF اضافه کنید
+                  </span>
+                  <span className="block text-xs opacity-85">Take a photo or add a PDF</span>
+                </span>
               </button>
             </div>
           </div>
