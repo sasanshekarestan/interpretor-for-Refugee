@@ -112,7 +112,10 @@ export function getSuperSimpleQuestionGuidance(
   if (
     fieldKey.includes('nhs') ||
     qEn.includes('nhs number') ||
-    qFa.includes('شماره nhs') ||
+    qFa.includes('nhs') ||
+    // The Persian spelling of NHS is gone from the content, because Arabic
+    // script renders it as a nonsense word. Kept here so a question written
+    // before that change still matches.
     qFa.includes('ان‌اچ‌اس')
   ) {
     const meaning = isDari

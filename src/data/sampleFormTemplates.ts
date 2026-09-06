@@ -703,7 +703,7 @@ export const SAMPLE_FORM_DOCUMENTS: Record<string, {
                 boxLabel: 'Box 3 - NHS Number',
                 fieldNumber: 3,
                 placeholderText: '10-digit number e.g. 123 456 7890 or First UK Reg',
-                explanationFa: 'شماره ۱۰ رقمی ان‌اچ‌اس در صورت ثبت‌نام قبلی در درمانگاه.',
+                explanationFa: 'شماره ۱۰ رقمی NHS در صورت ثبت‌نام قبلی در درمانگاه.',
               },
               {
                 fieldKey: 'gp_current_address',
