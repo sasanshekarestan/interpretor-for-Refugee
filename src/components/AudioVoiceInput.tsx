@@ -199,33 +199,46 @@ export const AudioVoiceInput: React.FC<AudioVoiceInputProps> = ({
 
   return (
     <div className="w-full bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-7 shadow-sm transition-all">
-      {/* 2-Person Conversation Header & Dual Language Badge */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 bg-gradient-to-r from-teal-50 via-teal-50 to-teal-50 border border-teal-200/80 rounded-xl mb-6">
+      {/* 2-Person Conversation Header & Dual Language Badge
+
+          This band says what the screen is; it is not something a person
+          acts on. It looked like one of the cards below it, so it takes the
+          emphasis surface from tokens.css instead: an introduction should be
+          told apart from the controls at a glance.
+
+          It is Persian and was laid out left to right. With dir="rtl" the
+          heading and its icon sit at the right edge and the language pair at
+          the left, and the pair itself now reads Persian first.
+
+          The line about simultaneous support and smart dialect detection is
+          gone. It described the machinery rather than telling anyone what to
+          do, and design.md gives a screen one instruction, not a specification. */}
+      <div
+        dir="rtl"
+        className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 bg-emphasis rounded-xl mb-6"
+      >
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-white rounded-lg border border-teal-200 shadow-2xs text-teal-700">
+          <div className="p-2 rounded-lg bg-white/10 border border-white/20 text-on-emphasis">
             <Languages className="w-5 h-5" />
           </div>
-          <div>
-            {/* Stacked, not side by side. On one row the Persian pushed the
-                English badge off the edge and clipped it mid-word. */}
-            <div className="flex flex-col items-start gap-1">
-              <span className="text-base font-bold text-slate-900 font-farsi" dir="rtl">
-                حالت گفتگوی دو نفره
-              </span>
-              <span className="text-sm font-semibold text-teal-800">Two-party live mode</span>
-            </div>
-            <p className="text-xs text-slate-600 font-farsi mt-0.5">
-              پشتیبانی همزمان از زبان انگلیسی و فارسی / دری با تشخیص هوشمند لهجه‌ها
-            </p>
+          {/* Stacked, not side by side. On one row the Persian pushed the
+              English off the edge and clipped it mid-word. */}
+          <div className="flex flex-col items-start gap-1">
+            <span className="text-base font-bold text-on-emphasis font-farsi">
+              حالت گفتگوی دو نفره
+            </span>
+            <span className="text-sm font-semibold text-on-emphasis-muted">
+              Two-party live mode
+            </span>
           </div>
         </div>
 
         {/* Dual Support Pill Tag */}
-        <div className="flex items-center gap-1.5 bg-white/90 border border-teal-200/80 px-3 py-1.5 rounded-xl shadow-2xs shrink-0">
-          <Globe className="w-3.5 h-3.5 text-teal-600" />
-          <span className="text-xs font-bold text-slate-800">English</span>
-          <ArrowLeftRight className="w-3 h-3 text-slate-400" />
-          <span className="text-xs font-bold text-teal-800 font-farsi">فارسی / دری</span>
+        <div className="flex items-center gap-1.5 bg-white/10 border border-white/20 px-3 py-1.5 rounded-xl shrink-0">
+          <Globe className="w-3.5 h-3.5 text-on-emphasis-muted" />
+          <span className="text-xs font-bold text-on-emphasis font-farsi">فارسی / دری</span>
+          <ArrowLeftRight className="w-3 h-3 text-on-emphasis-muted" />
+          <span className="text-xs font-bold text-on-emphasis">English</span>
         </div>
       </div>
 
