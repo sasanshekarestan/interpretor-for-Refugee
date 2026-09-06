@@ -361,7 +361,7 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <span className="font-bold text-white text-sm line-clamp-1">{titleEn}</span>
-              {titleFa && <span className="text-xs text-amber-300 font-farsi dir-rtl font-semibold">({titleFa})</span>}
+              {titleFa && <span dir="rtl" className="text-xs text-amber-300 font-farsi font-semibold">({titleFa})</span>}
             </div>
             <p className="text-xs text-slate-400">
               Official PDF • {displayTotalPages} {displayTotalPages === 1 ? 'Page' : 'Pages'} total
@@ -476,10 +476,10 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
             </div>
 
             <div className="space-y-2">
-              <h3 className="text-lg font-bold text-white font-farsi dir-rtl">
+              <h3 dir="rtl" className="text-lg font-bold text-white font-farsi">
                 سند رسمی PDF هنوز در سرور قرار داده نشده است
               </h3>
-              <p className="text-xs text-slate-300 leading-relaxed font-farsi dir-rtl">
+              <p dir="rtl" className="text-xs text-slate-300 leading-relaxed font-farsi">
                 فایل اصلی این فرم هنوز در مسیر فایل‌های استاتیک برنامه موجود نیست.
               </p>
             </div>
@@ -520,7 +520,7 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
               </button>
             </div>
 
-            <div className="p-3 bg-teal-950/40 border border-teal-900/60 rounded-xl text-xs text-teal-300 font-farsi dir-rtl">
+            <div dir="rtl" className="p-3 bg-teal-950/40 border border-teal-900/60 rounded-xl text-xs text-teal-300 font-farsi">
               دستیار هوشمند و راهنمای فارسی سوالات فرم کاملاً فعال و قابل استفاده است.
             </div>
           </div>
@@ -533,7 +533,7 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
               <AlertCircle className="w-10 h-10" />
             </div>
             <div className="space-y-1">
-              <h3 className="text-base font-bold text-white font-farsi dir-rtl">خطا در بارگذاری سند رسمی PDF</h3>
+              <h3 dir="rtl" className="text-base font-bold text-white font-farsi">خطا در بارگذاری سند رسمی PDF</h3>
               <p className="text-xs text-slate-400 font-mono">{errorMessage || 'Unable to render PDF'}</p>
             </div>
             <button

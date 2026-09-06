@@ -238,12 +238,12 @@ export const MessageWriterView: React.FC<MessageWriterViewProps> = ({ userLangua
           </div>
 
           <div className="relative">
-            <textarea
+            <textarea dir="rtl"
               value={userDraft}
               onChange={(e) => setUserDraft(e.target.value)}
               rows={4}
               placeholder="مثلا: سلام، من می‌خواهم بدانم نتایج مصاحبه من چه زمانی آماده می‌شود یا دکمه میکروفون بالا را فشار دهید..."
-              className={`w-full p-4 rounded-2xl border border-slate-300 focus:ring-2 focus:ring-amber-500 text-sm text-slate-900 font-farsi dir-rtl shadow-2xs ${
+              className={`w-full p-4 rounded-2xl border border-slate-300 focus:ring-2 focus:ring-amber-500 text-sm text-slate-900 font-farsi shadow-2xs ${
                 isListening ? 'ring-2 ring-rose-500/40 bg-rose-50/20' : ''
               }`}
             />
@@ -304,7 +304,7 @@ export const MessageWriterView: React.FC<MessageWriterViewProps> = ({ userLangua
           </div>
 
           {/* Farsi Translation of Message */}
-          <div className="space-y-1.5 pt-2 border-t border-slate-100 dir-rtl">
+          <div dir="rtl" className="space-y-1.5 pt-2 border-t border-slate-100">
             <span className="text-xs font-bold text-teal-900">ترجمه فارسی پیام (جهت اطمینان شما):</span>
             <p className="p-3.5 bg-slate-50 rounded-2xl text-xs font-farsi text-slate-800 leading-relaxed border border-slate-200">
               {generatedMessage.farsiTranslation}

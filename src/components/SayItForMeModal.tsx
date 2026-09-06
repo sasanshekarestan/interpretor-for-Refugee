@@ -160,12 +160,12 @@ export const SayItForMeModal: React.FC<SayItForMeModalProps> = ({ isOpen, onClos
             </button>
           </div>
           <div className="relative">
-            <textarea
+            <textarea dir="rtl"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               rows={3}
               placeholder="عبارت خود را به فارسی بگوئید یا تایپ کنید..."
-              className={`w-full p-3.5 rounded-2xl border border-slate-300 text-xs font-farsi dir-rtl focus:ring-2 focus:ring-teal-500 ${
+              className={`w-full p-3.5 rounded-2xl border border-slate-300 text-xs font-farsi focus:ring-2 focus:ring-teal-500 ${
                 isListening ? 'ring-2 ring-rose-500/40 bg-rose-50/20' : ''
               }`}
             />
@@ -203,7 +203,7 @@ export const SayItForMeModal: React.FC<SayItForMeModalProps> = ({ isOpen, onClos
             </div>
 
             <p className="text-base font-bold text-white leading-relaxed">{result.englishText}</p>
-            <p className="text-xs font-farsi text-slate-300 dir-rtl pt-1 border-t border-slate-800">
+            <p dir="rtl" className="text-xs font-farsi text-slate-300 pt-1 border-t border-slate-800">
               {result.farsiTranslation}
             </p>
           </div>

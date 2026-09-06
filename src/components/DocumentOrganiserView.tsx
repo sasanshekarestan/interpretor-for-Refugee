@@ -192,11 +192,11 @@ export const DocumentOrganiserView: React.FC<DocumentOrganiserViewProps> = ({ us
 
               <div>
                 <label className="block font-bold text-slate-700 mb-1">خلاصه به فارسی:</label>
-                <textarea
+                <textarea dir="rtl"
                   value={newSummaryFa}
                   onChange={(e) => setNewSummaryFa(e.target.value)}
                   rows={2}
-                  className="w-full p-3 rounded-xl border border-slate-300 font-farsi dir-rtl"
+                  className="w-full p-3 rounded-xl border border-slate-300 font-farsi"
                 />
               </div>
             </div>

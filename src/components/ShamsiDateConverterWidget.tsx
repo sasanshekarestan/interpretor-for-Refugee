@@ -52,7 +52,7 @@ export const ShamsiDateConverterWidget: React.FC<ShamsiDateConverterWidgetProps>
   };
 
   return (
-    <div className="bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50/50 p-4 sm:p-5 rounded-3xl border border-teal-200/80 shadow-xs space-y-3 font-farsi dir-rtl">
+    <div dir="rtl" className="bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50/50 p-4 sm:p-5 rounded-3xl border border-teal-200/80 shadow-xs space-y-3 font-farsi">
       <div className="flex items-center justify-between text-right">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-teal-600 text-white flex items-center justify-center shrink-0 shadow-xs">

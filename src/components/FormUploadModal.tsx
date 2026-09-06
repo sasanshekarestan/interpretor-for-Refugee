@@ -337,7 +337,7 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
           )}
 
           {hasBlurryPage && (
-            <div className="p-3.5 bg-amber-50 border border-amber-300 rounded-2xl text-amber-950 text-xs space-y-1 font-farsi dir-rtl">
+            <div dir="rtl" className="p-3.5 bg-amber-50 border border-amber-300 rounded-2xl text-amber-950 text-xs space-y-1 font-farsi">
               <div className="flex items-center gap-2 font-bold text-amber-900">
                 <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
                 <span>هشدار کیفیت تصویر / تاریکی عکس</span>
@@ -393,7 +393,7 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
               {/* Uploaded Pages List with Reorder & Remove */}
               {pages.length > 0 && (
                 <div className="space-y-2.5 pt-2">
-                  <div className="flex items-center justify-between font-farsi dir-rtl">
+                  <div dir="rtl" className="flex items-center justify-between font-farsi">
                     <span className="text-xs font-bold text-slate-800">
                       صفحات آپلود شده ({pages.length} صفحه):
                     </span>

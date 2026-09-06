@@ -217,7 +217,7 @@ export const UkTerminologyView: React.FC<UkTerminologyViewProps> = ({ userLangua
             </div>
 
             {/* Farsi & Dari Translations */}
-            <div className="space-y-1.5 pt-1 border-t border-slate-100 dir-rtl">
+            <div dir="rtl" className="space-y-1.5 pt-1 border-t border-slate-100">
               <div className="flex items-center gap-2">
                 <span className="font-farsi font-bold text-teal-800 text-sm">
                   {t.farsi}

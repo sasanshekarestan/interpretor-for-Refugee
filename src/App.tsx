@@ -47,6 +47,7 @@ import {
   Info,
   Star,
   ArrowRight,
+  ArrowLeft,
   CheckSquare,
   BookOpen,
   FolderLock
@@ -756,35 +757,52 @@ export default function App() {
               </div>
             </div>
 
-            {/* LINK TO OFFICIAL FORMS & COMPANION */}
-            <div 
+            {/* LINK TO OFFICIAL FORMS & COMPANION
+
+                Entirely Persian, and it was laid out left to right: the
+                heading started at the left edge, the button sat on the right,
+                and the arrow was an ArrowRight rotated 180 degrees to hide it.
+                The direction had never been set, because the className carried
+                "dir-rtl", which is not a class in Tailwind or anywhere else.
+                The real attribute puts the text at the right edge and the
+                button at the left with nothing reversed by hand.
+
+                The ground was slate-900, a colour used nowhere else in the
+                app; beside a teal interface it read as a component borrowed
+                from another product. It takes the emphasis surface from
+                tokens.css now, which is the brand darkened rather than a
+                second colour. */}
+            <div
+              dir="rtl"
               onClick={() => {
                 setSelectedFormForCompanion(null);
                 setCustomUploadedForm(null);
                 goToTab('form_companion');
               }}
-              className="bg-slate-900 text-white rounded-3xl p-4 sm:p-6 border border-slate-800 shadow-sm hover:border-slate-700 transition cursor-pointer flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-farsi dir-rtl group w-full min-w-0"
+              className="bg-emphasis text-on-emphasis rounded-3xl p-4 sm:p-6 shadow-sm transition cursor-pointer flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-farsi group w-full min-w-0"
             >
               <div className="flex items-start gap-3 sm:gap-3.5 min-w-0 flex-1">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-teal-950/80 border border-teal-700/60 flex items-center justify-center text-teal-400 shrink-0 mt-0.5">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-on-emphasis shrink-0 mt-0.5">
                   <FileText className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div className="space-y-1 min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                    <h3 className="font-bold text-sm sm:text-base md:text-lg text-white group-hover:text-amber-200 transition break-words">
+                    <h3 className="font-bold text-base md:text-lg text-on-emphasis break-words">
                       همراه تکمیل فرم‌های رسمی (NHS, Home Office, Council)
                     </h3>
-                    <span className="text-xs font-bold text-teal-300 bg-teal-950/90 px-2 py-0.5 rounded-md border border-teal-800/80 shrink-0">
+                    <span className="text-xs font-bold text-on-emphasis-muted bg-white/10 px-2 py-0.5 rounded-md border border-white/20 shrink-0">
                       آرشیو رسمی و آپلود
                     </span>
                   </div>
-                  <p className="text-xs sm:text-xs text-slate-300 leading-relaxed break-words">
+                  <p className="text-sm text-on-emphasis-muted leading-relaxed break-words">
                     راهنمای خانه‌به‌خانه، ترجمه پرسش‌ها به فارسی و دری، و بررسی خط‌به‌خط مدارک کاغذی.
                   </p>
                 </div>
               </div>
 
-              <div className="w-full sm:w-auto shrink-0 flex justify-end">
+              <div className="w-full sm:w-auto shrink-0">
+                {/* White on the deep teal. A mid-teal button on a dark teal
+                    ground has no edge to see. */}
                 <button
                   type="button"
                   onClick={(e) => {
@@ -793,10 +811,10 @@ export default function App() {
                     setCustomUploadedForm(null);
                     goToTab('form_companion');
                   }}
-                  className="min-h-[48px] w-full sm:w-auto px-4 sm:px-5 py-2.5 bg-teal-700 hover:bg-teal-600 text-white rounded-2xl text-xs sm:text-sm font-bold transition shadow-xs flex items-center justify-center gap-2 cursor-pointer"
+                  className="min-h-[48px] w-full sm:w-auto px-4 sm:px-5 py-2.5 bg-on-emphasis text-emphasis hover:bg-on-emphasis-muted rounded-2xl text-sm font-bold transition shadow-xs flex items-center justify-center gap-2"
                 >
                   <span>مشاهده آرشیو فرم‌ها</span>
-                  <ArrowRight className="w-4 h-4 rotate-180" />
+                  <ArrowLeft className="w-4 h-4" />
                 </button>
               </div>
             </div>

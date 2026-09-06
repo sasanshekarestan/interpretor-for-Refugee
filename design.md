@@ -61,6 +61,7 @@ Five colours carry meaning. Nothing else is coloured.
 | Role | Means | Never used for |
 | --- | --- | --- |
 | Primary | The app acting: buttons, links, progress, done | Backgrounds, decoration |
+| Emphasis | The one block on a screen that outranks a card | More than once per screen |
 | Attention | Read this before you continue | Ordinary emphasis |
 | Fault | Something went wrong | Anything working correctly |
 | Neutral | Structure, text, borders, surfaces | Meaning of any kind |
@@ -90,6 +91,9 @@ AA at 4.5:1, and every control boundary clears 3:1.
 --attention-bg      #FFF4D6    5.4:1 under attention text
 --fault             #B3261E    6.0:1 on page, 6.5:1 under white text
 --fault-bg          #FDECEA    5.7:1 under fault text
+--emphasis          #0A3D38   12.1:1 under white
+--on-emphasis       #FFFFFF
+--on-emphasis-muted #CFE0DC    8.8:1 on emphasis
 ```
 
 **Dark**
@@ -107,6 +111,9 @@ AA at 4.5:1, and every control boundary clears 3:1.
 --attention-bg      #2B2413
 --fault             #F0938B    8.0:1 on page
 --fault-bg          #2E1917
+--emphasis          #10443E    1.7:1 on page, so it reads as raised
+--on-emphasis       #FFFFFF   11.0:1 on emphasis
+--on-emphasis-muted #CFE0DC    7.5:1 on emphasis
 ```
 
 Dark is a first-class theme, not an inversion. Both palettes are defined in
@@ -116,6 +123,11 @@ full, in that order, and no colour is ever declared only inside a media query.
 
 - `#005EB8` does not appear in the interface. It survives only inside rendered
   documents, where it belongs to the NHS and not to us.
+- Emphasis is the brand darkened, not a sixth colour, and at most one block
+  per screen uses it. It exists because a dark neutral slab beside a teal
+  interface reads as a component borrowed from another product. A block on it
+  gets white text, white-tinted tiles, and a white button: a mid-teal control on
+  a dark teal ground has no edge to see.
 - Neutrals carry a slight green bias so they sit with the teal. A pure grey next
   to a teal reads as unconsidered.
 - Never encode meaning in colour alone. Fault carries an icon and words, done

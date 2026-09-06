@@ -31,6 +31,16 @@
   --hamyar-primary-press: #0a544c;
   --hamyar-on-primary: #ffffff;
 
+  /*
+   * One emphasis surface, for the single block on a screen that has to
+   * carry more weight than a card. It is the brand darkened, not a
+   * second colour: a slate slab beside a teal app read as a component
+   * borrowed from somewhere else.
+   */
+  --hamyar-emphasis: #0a3d38;          /* 12.1:1 under white */
+  --hamyar-on-emphasis: #ffffff;
+  --hamyar-on-emphasis-muted: #cfe0dc; /*  8.8:1 on emphasis */
+
   /* Read this before continuing --------------------------------- */
   --hamyar-attention: #8a5a00;     /*  5.5:1 on page */
   --hamyar-attention-bg: #fff4d6;
@@ -65,6 +75,10 @@
     --hamyar-primary-press: #6fd3c4;
     --hamyar-on-primary: #0b2e2a;    /*  6.5:1 on the primary */
 
+    --hamyar-emphasis: #10443e;          /* 1.7:1 on page, so it reads raised */
+    --hamyar-on-emphasis: #ffffff;       /* 11.0:1 on emphasis */
+    --hamyar-on-emphasis-muted: #cfe0dc; /*  7.5:1 on emphasis */
+
     --hamyar-attention: #e8b04b;     /*  9.3:1 on page */
     --hamyar-attention-bg: #2b2413;
 
@@ -89,6 +103,10 @@
   --hamyar-primary-press: #6fd3c4;
   --hamyar-on-primary: #0b2e2a;
 
+  --hamyar-emphasis: #10443e;
+  --hamyar-on-emphasis: #ffffff;
+  --hamyar-on-emphasis-muted: #cfe0dc;
+
   --hamyar-attention: #e8b04b;
   --hamyar-attention-bg: #2b2413;
 
@@ -112,6 +130,10 @@
   --color-primary: var(--hamyar-primary);
   --color-primary-press: var(--hamyar-primary-press);
   --color-on-primary: var(--hamyar-on-primary);
+
+  --color-emphasis: var(--hamyar-emphasis);
+  --color-on-emphasis: var(--hamyar-on-emphasis);
+  --color-on-emphasis-muted: var(--hamyar-on-emphasis-muted);
 
   --color-attention: var(--hamyar-attention);
   --color-attention-bg: var(--hamyar-attention-bg);
