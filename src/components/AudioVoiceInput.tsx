@@ -206,13 +206,13 @@ export const AudioVoiceInput: React.FC<AudioVoiceInputProps> = ({
             <Languages className="w-5 h-5" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-slate-900 font-farsi">
-                حالت گفتگو ۲ نفره (پناهجو ↔ کارشناس)
+            {/* Stacked, not side by side. On one row the Persian pushed the
+                English badge off the edge and clipped it mid-word. */}
+            <div className="flex flex-col items-start gap-1">
+              <span className="text-base font-bold text-slate-900 font-farsi" dir="rtl">
+                حالت گفتگوی دو نفره
               </span>
-              <span className="text-xs font-bold text-teal-800 bg-teal-100/80 px-2 py-0.5 rounded-full">
-                Two-Party Live Mode
-              </span>
+              <span className="text-sm font-semibold text-teal-800">Two-party live mode</span>
             </div>
             <p className="text-xs text-slate-600 font-farsi mt-0.5">
               پشتیبانی همزمان از زبان انگلیسی و فارسی / دری با تشخیص هوشمند لهجه‌ها

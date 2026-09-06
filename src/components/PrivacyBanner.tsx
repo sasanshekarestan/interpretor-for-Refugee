@@ -25,11 +25,14 @@ export const PrivacyBanner: React.FC<PrivacyBannerProps> = ({ onOpenPrivacyModal
               <Lock className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                <h3 className="font-bold text-xs sm:text-sm md:text-base text-white flex flex-wrap items-center gap-1.5 break-words">
-                  <span>Your conversations are private</span>
+              {/* Persian heading first, English under it. The pipe that used
+                  to separate them was a join between two directions, and it
+                  read as a stray mark at the start of the Persian line. */}
+              <div className="flex flex-col gap-0.5">
+                <h3 className="font-farsi font-bold text-lg text-teal-300 leading-tight" dir="rtl">
+                  گفتگوهای شما کاملاً خصوصی است
                 </h3>
-                <span className="text-teal-300 font-farsi text-xs font-semibold break-words">| گفتگوهای شما کاملاً خصوصی است</span>
+                <p className="font-bold text-base text-white">Your conversations are private</p>
               </div>
               <p className="text-xs sm:text-xs text-slate-300 mt-1 max-w-3xl leading-relaxed break-words">
                 Your information is handled securely. We do not share your conversations with your caseworker, Home Office, landlord or other organisations unless you explicitly choose to share something.

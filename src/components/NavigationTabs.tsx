@@ -1,112 +1,108 @@
 import React from 'react';
 import { AppTab } from '../types';
-import { 
-  Home, 
-  Mic, 
-  FileText, 
-  CheckSquare, 
-  PenTool, 
-  BookOpen, 
-  FolderLock, 
-  MoreHorizontal 
-} from 'lucide-react';
+import { Home, Mic, FileText, CheckSquare, MoreHorizontal } from 'lucide-react';
 
 interface NavigationTabsProps {
   activeTab: AppTab;
   onTabChange: (tab: AppTab) => void;
 }
 
+/**
+ * Where to go, under the thumb.
+ *
+ * This was eight destinations in a strip across the top that scrolled
+ * sideways. At 390px it showed two and a half of them, and nothing on screen
+ * suggested the rest existed, so a person who never swiped never learned the
+ * app could help with their forms.
+ *
+ * Four destinations and More now, at the bottom where a thumb already rests.
+ * Everything that was cut is still reachable through More.
+ *
+ * The labels are Persian only, and short. There is room in a fifth of a phone
+ * screen for one word at a readable size or two words at an unreadable one,
+ * and the people using this read Persian. The full name of each destination is
+ * on the screen it opens, and in the label a screen reader announces.
+ */
 export const NavigationTabs: React.FC<NavigationTabsProps> = ({ activeTab, onTabChange }) => {
-  const tabs: { id: AppTab; labelEn: string; labelFa: string; icon: React.ReactNode; color: string }[] = [
-    { 
-      id: 'home', 
-      labelEn: 'Home', 
-      labelFa: 'خانه', 
-      icon: <Home className="w-4 h-4" />,
-      color: 'text-teal-600'
+  const tabs: {
+    id: AppTab;
+    short: string;
+    fullFa: string;
+    fullEn: string;
+    icon: React.ReactNode;
+  }[] = [
+    {
+      id: 'home',
+      short: 'خانه',
+      fullFa: 'خانه',
+      fullEn: 'Home',
+      icon: <Home className="w-6 h-6" />,
     },
-    { 
-      id: 'interpreter', 
-      labelEn: 'Interpreter', 
-      labelFa: 'مترجم زنده', 
-      icon: <Mic className="w-4 h-4" />,
-      color: 'text-teal-600'
+    {
+      id: 'interpreter',
+      short: 'مترجم',
+      fullFa: 'مترجم زنده',
+      fullEn: 'Live interpreter',
+      icon: <Mic className="w-6 h-6" />,
     },
-    { 
-      id: 'letter_scanner', 
-      labelEn: 'Letter Reader', 
-      labelFa: 'فهمیدن نامه', 
-      icon: <FileText className="w-4 h-4" />,
-      color: 'text-indigo-600'
+    {
+      id: 'letter_scanner',
+      short: 'نامه',
+      fullFa: 'فهمیدن نامه',
+      fullEn: 'Letter reader',
+      icon: <FileText className="w-6 h-6" />,
     },
-    { 
-      id: 'form_companion', 
-      labelEn: 'Form Companion', 
-      labelFa: 'تکمیل فرم', 
-      icon: <CheckSquare className="w-4 h-4" />,
-      color: 'text-indigo-600'
+    {
+      id: 'form_companion',
+      short: 'فرم',
+      fullFa: 'تکمیل فرم',
+      fullEn: 'Form companion',
+      icon: <CheckSquare className="w-6 h-6" />,
     },
-    { 
-      id: 'message_writer', 
-      labelEn: 'Message Writer', 
-      labelFa: 'نوشتن پیام', 
-      icon: <PenTool className="w-4 h-4" />,
-      color: 'text-amber-600'
-    },
-    { 
-      id: 'phrases', 
-      labelEn: 'UK Terms & Phrases', 
-      labelFa: 'اصطلاحات UK', 
-      icon: <BookOpen className="w-4 h-4" />,
-      color: 'text-teal-600'
-    },
-    { 
-      id: 'documents', 
-      labelEn: 'My Documents', 
-      labelFa: 'مدارک من', 
-      icon: <FolderLock className="w-4 h-4" />,
-      color: 'text-slate-600'
-    },
-    { 
-      id: 'more', 
-      labelEn: 'More', 
-      labelFa: 'بیشتر', 
-      icon: <MoreHorizontal className="w-4 h-4" />,
-      color: 'text-slate-600'
+    {
+      id: 'more',
+      short: 'بیشتر',
+      fullFa: 'بیشتر',
+      fullEn: 'More',
+      icon: <MoreHorizontal className="w-6 h-6" />,
     },
   ];
 
   return (
-    <nav className="bg-white border-b border-slate-200 sticky top-[61px] sm:top-[73px] z-20 shadow-2xs print:hidden w-full max-w-full overflow-hidden">
-      <div className="max-w-6xl mx-auto px-2 sm:px-6 w-full">
-        <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar py-2 w-full overscroll-x-contain">
-          {tabs.map((tab) => {
-            const isActive = activeTab === tab.id;
-            return (
+    <nav
+      className="fixed bottom-0 inset-x-0 z-30 bg-surface border-t border-edge print:hidden
+                 pb-[env(safe-area-inset-bottom)]"
+      aria-label="بخش‌های برنامه / Sections"
+    >
+      <ul className="max-w-6xl mx-auto flex items-stretch">
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <li key={tab.id} className="flex-1">
               <button
-                key={tab.id}
                 id={`tab-nav-${tab.id}`}
                 onClick={() => onTabChange(tab.id)}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition shrink-0 whitespace-nowrap ${
-                  isActive
-                    ? 'bg-slate-900 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                }`}
+                aria-current={isActive ? 'page' : undefined}
+                aria-label={`${tab.fullFa} / ${tab.fullEn}`}
+                className={`w-full min-h-[60px] flex flex-col items-center justify-center gap-1 px-1 py-2
+                  transition cursor-pointer
+                  ${isActive ? 'text-primary' : 'text-ink-muted hover:text-ink'}`}
               >
-                <span className={isActive ? 'text-white' : tab.color}>
-                  {tab.icon}
+                {/* The active destination is marked by weight and a rule, not
+                    by colour alone. */}
+                <span aria-hidden="true">{tab.icon}</span>
+                <span className={`font-farsi text-xs leading-none ${isActive ? 'font-bold' : 'font-medium'}`}>
+                  {tab.short}
                 </span>
-                <div className="flex items-center gap-1.5">
-                  <span>{tab.labelEn}</span>
-                  <span className={`font-farsi font-normal opacity-90 ${isActive ? 'text-slate-200' : 'text-slate-500'}`}>
-                    ({tab.labelFa})
-                  </span>
-                </div>
+                <span
+                  aria-hidden="true"
+                  className={`block h-0.5 w-6 rounded-full ${isActive ? 'bg-primary' : 'bg-transparent'}`}
+                />
               </button>
-            );
-          })}
-        </div>
-      </div>
+            </li>
+          );
+        })}
+      </ul>
     </nav>
   );
 };

@@ -22,8 +22,9 @@ export const PinnedDetailsBar: React.FC<PinnedDetailsBarProps> = ({
     setTimeout(() => setCopiedItem(null), 1500);
   };
 
+  // Sits above the navigation bar rather than underneath it.
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-md text-white border-t border-slate-700 shadow-xl px-3 sm:px-4 py-2 animate-slide-up w-full max-w-full overflow-hidden">
+    <div className="fixed bottom-[76px] left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-md text-white border-t border-slate-700 shadow-xl px-3 sm:px-4 py-2 animate-slide-up w-full max-w-full overflow-hidden">
       <div className="max-w-6xl mx-auto flex items-center justify-between gap-2 sm:gap-3 w-full min-w-0">
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <div className="p-1 bg-amber-500/20 text-amber-400 rounded-lg border border-amber-500/30">

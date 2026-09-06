@@ -42,17 +42,19 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-teal-600 flex items-center justify-center text-white shadow-md shadow-teal-600/20 shrink-0">
               <Globe2 className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
+            {/* One language per block. These used to run together on one line
+                separated by a pipe, so two reading directions met in the middle
+                and neither name got a clean start. Persian leads because that
+                is who the app is for; the English sits under it for whoever is
+                on the other side of the desk. */}
+            {/* Both lines start from the same edge. Marking the Persian rtl
+                here threw it to the far side of the header, away from the
+                English underneath it: a single word has no bidi ambiguity to
+                resolve, so it does not need the direction set. */}
             <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-center gap-1 sm:gap-2">
-                <h1 className="font-bold text-slate-900 text-xs xs:text-sm sm:text-base md:text-lg leading-tight tracking-tight flex flex-wrap items-center gap-1 sm:gap-1.5 break-words">
-                  <span>Farsi & Dari UK Interpreter</span>
-                  <span className="text-teal-700 font-farsi font-semibold text-xs sm:text-base">| همراه و مترجم بریتانیا</span>
-                </h1>
-              </div>
-              <p className="text-xs xs:text-xs sm:text-xs text-slate-500 font-medium flex flex-wrap items-center gap-1 sm:gap-2 mt-0.5 break-words">
-                <span className="text-teal-700 font-semibold">Understand. Speak. Complete.</span>
-                <span className="text-slate-300 hidden sm:inline">|</span>
-                <span className="text-slate-600 font-farsi">بفهمید. صحبت کنید. تکمیل کنید.</span>
+              <h1 className="font-farsi font-bold text-primary text-lg leading-tight">همیار</h1>
+              <p className="text-sm text-ink-muted leading-tight truncate">
+                Farsi &amp; Dari UK Interpreter
               </p>
             </div>
           </div>

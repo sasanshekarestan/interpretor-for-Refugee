@@ -446,15 +446,12 @@ export default function App() {
       />
       )}
 
-      {/* Navigation Tabs */}
-      {!isFormImmersive && <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />}
-
       {/* Main Container */}
       <main
         className={
           isFormImmersive
             ? 'flex-1 w-full min-w-0'
-            : 'flex-1 max-w-6xl w-full mx-auto p-3.5 sm:p-6 space-y-6 sm:space-y-7 min-w-0'
+            : 'flex-1 max-w-6xl w-full mx-auto p-3.5 sm:p-6 space-y-6 sm:space-y-7 min-w-0 pb-24'
         }
       >
         {/* A failed interpretation used to leave the screen silent: the error
@@ -728,30 +725,40 @@ export default function App() {
         {/* TAB 2: LIVE INTERPRETER */}
         {activeTab === 'interpreter' && (
           <div className="space-y-6">
-            <div className="bg-teal-900 text-white p-6 rounded-3xl shadow-sm border border-teal-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-800 text-teal-200 text-xs font-semibold mb-1">
-                  <Mic className="w-3.5 h-3.5" />
-                  <span>Live Voice Interpreter</span>
-                </div>
-                <h2 className="text-xl sm:text-2xl font-bold">Talk to someone / گفتگو با کسی</h2>
-                <p className="text-xs text-teal-100 mt-1">
-                  Speak in Farsi or Dari. We translate your words aloud into natural British English.
-                </p>
+            {/* Persian block, then English block. This heading used to read
+                "Talk to someone / گفتگو با کسی" on one line, where the two
+                reading directions met in the middle and neither language had a
+                clean place to start. */}
+            <div className="bg-teal-900 text-white p-6 rounded-2xl border border-teal-800">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-800 text-teal-100 text-sm font-semibold mb-3">
+                <Mic className="w-4 h-4" />
+                <span>Live voice interpreter</span>
               </div>
-              <button
-                onClick={() => setIsSayItForMeOpen(true)}
-                className="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1.5 shrink-0"
-              >
-                <Volume2 className="w-4 h-4" />
-                <span>Say It For Me</span>
-              </button>
+              <h2 className="font-farsi text-2xl font-bold leading-tight" dir="rtl">
+                گفتگو با کسی
+              </h2>
+              <p className="font-farsi text-base text-teal-100 mt-1" dir="rtl">
+                به فارسی یا دری صحبت کنید. حرف شما را بلند به انگلیسی می‌گوییم.
+              </p>
+              <p className="text-base text-teal-100/90 mt-3">
+                <span className="block font-bold text-white">Talk to someone</span>
+                Speak in Farsi or Dari. We translate your words aloud into natural British English.
+              </p>
             </div>
 
-            {/* NHS Notice */}
-            <div className="p-4 bg-amber-50 border border-amber-300 rounded-2xl text-xs text-amber-950 space-y-1">
-              <p className="font-bold">NHS & Official Appointments Notice:</p>
-              <p>NHS interpreters are free. Always request an official interpreter for medical or Home Office interviews.</p>
+            {/* A genuine "read this before you continue", so it wears the
+                attention colour, which nothing decorative may now use. */}
+            <div className="p-4 bg-attention-bg border-l-4 border-attention rounded-lg space-y-2">
+              <p className="font-farsi text-base font-bold text-attention" dir="rtl">
+                مترجم NHS رایگان است
+              </p>
+              <p className="font-farsi text-base text-ink" dir="rtl">
+                برای قرارهای پزشکی یا مصاحبهٔ اداره مهاجرت، همیشه مترجم رسمی بخواهید.
+              </p>
+              <p className="text-sm text-ink-muted pt-1">
+                NHS interpreters are free. Always request an official interpreter for medical or Home
+                Office interviews.
+              </p>
             </div>
 
             {inputMode === 'voice' ? (
@@ -882,6 +889,37 @@ export default function App() {
         {/* TAB 8: MORE */}
         {activeTab === 'more' && (
           <div className="max-w-2xl mx-auto space-y-4">
+            {/* The three destinations that came out of the navigation bar when
+                it went from eight to five. They are not buried: this is the
+                first thing on the screen that replaced them. */}
+            <div className="bg-white rounded-3xl p-6 border border-slate-200 space-y-3">
+              <h3 className="font-bold text-slate-900 text-lg font-farsi" dir="rtl">
+                بخش‌های دیگر
+              </h3>
+              <p className="text-ink-muted text-sm -mt-1">Other sections</p>
+              <div className="space-y-2">
+                {[
+                  { tab: 'message_writer' as AppTab, fa: 'نوشتن پیام', en: 'Message writer' },
+                  { tab: 'phrases' as AppTab, fa: 'اصطلاحات بریتانیا', en: 'UK terms and phrases' },
+                  { tab: 'documents' as AppTab, fa: 'مدارک من', en: 'My documents' },
+                ].map((item) => (
+                  <button
+                    key={item.tab}
+                    onClick={() => setActiveTab(item.tab)}
+                    className="w-full min-h-[44px] p-3.5 bg-slate-50 hover:bg-slate-100 rounded-2xl flex items-center justify-between gap-3 cursor-pointer transition"
+                  >
+                    <span className="text-left">
+                      <span className="block font-farsi font-bold text-base text-slate-900" dir="rtl">
+                        {item.fa}
+                      </span>
+                      <span className="block text-sm text-ink-muted">{item.en}</span>
+                    </span>
+                    <ArrowRight className="w-5 h-5 text-ink-muted shrink-0" />
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div className="bg-white rounded-3xl p-6 border border-slate-200 space-y-3">
               <h3 className="font-bold text-slate-900 text-base">More Settings & Resources</h3>
               <div className="space-y-2 text-xs">
@@ -914,6 +952,10 @@ export default function App() {
       </main>
 
       {/* SAY IT FOR ME FLOATING ACTION BUTTON (Moved/hidden appropriately when on form companion to never block bottom next buttons) */}
+      {/* Navigation, fixed under the thumb. Rendered last because that is
+          where it sits on the screen. */}
+      {!isFormImmersive && <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />}
+
       {/* Pinned Details Bar at Bottom */}
       {!isFormImmersive && (
         <PinnedDetailsBar
