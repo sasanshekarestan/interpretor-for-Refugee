@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { TranslationDirection, InterpretationResult, EmbedSettings, QuickPhrase, SavedPhrase, AppTab, UserLanguage } from './types';
 import { Header } from './components/Header';
 import { NavigationTabs } from './components/NavigationTabs';
+import { BackBar } from './components/BackBar';
 import { PrivacyBanner } from './components/PrivacyBanner';
 import { FormCompanion } from './formCompanion/FormCompanion';
 import { MessageWriterView } from './components/MessageWriterView';
@@ -61,6 +62,14 @@ interface AppError {
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<AppTab>('home');
+  /**
+   * The screens behind this one. Every move forward pushes an entry here and a
+   * matching entry into the browser's history, so the phone's back gesture, the
+   * browser's back button and the app's own back button are the same action.
+   * Before this, none of the three worked: the app was tab state and nothing
+   * else, so pressing back left the site.
+   */
+  const [tabTrail, setTabTrail] = useState<AppTab[]>([]);
   const [direction, setDirection] = useState<TranslationDirection>('farsi_to_english');
   const [inputMode, setInputMode] = useState<'voice' | 'text'>('voice');
   const [dialectHint, setDialectHint] = useState<string>('all');
@@ -105,6 +114,67 @@ export default function App() {
 
   const [isEmbedParam, setIsEmbedParam] = useState<boolean>(false);
   const mainInputRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * Move to a screen. Records where we came from, in our own state and in the
+   * browser's, so that back means the same thing whichever back you press.
+   */
+  const goToTab = (tab: AppTab) => {
+    if (tab === activeTab) return;
+    const trail = [...tabTrail, activeTab];
+    setTabTrail(trail);
+    setActiveTab(tab);
+    try {
+      window.history.pushState({ hamyarTab: tab, hamyarTrail: trail }, '');
+    } catch {
+      // Some embedded webviews refuse pushState. The app still navigates; only
+      // the hardware back button loses its way, and the button on screen does not.
+    }
+  };
+
+  /**
+   * Home, without stacking another entry when home is already one step behind.
+   * Otherwise "back to home" would leave a back button pointing forwards.
+   */
+  const goHome = () => {
+    if (tabTrail[tabTrail.length - 1] === 'home') {
+      goBack();
+      return;
+    }
+    goToTab('home');
+  };
+
+  /** One step back, to the screen named on the button. */
+  const goBack = () => {
+    const previous = tabTrail[tabTrail.length - 1];
+    if (!previous) return;
+    const state = window.history.state as { hamyarTab?: AppTab } | null;
+    if (state && state.hamyarTab) {
+      // Let the browser drive, so its back button and ours cannot disagree.
+      window.history.back();
+      return;
+    }
+    setTabTrail((trail) => trail.slice(0, -1));
+    setActiveTab(previous);
+  };
+
+  // The browser's back button, and on Android the hardware one, land here.
+  useEffect(() => {
+    try {
+      window.history.replaceState({ hamyarTab: 'home', hamyarTrail: [] }, '');
+    } catch {
+      /* see goToTab */
+    }
+
+    const onPopState = (event: PopStateEvent) => {
+      const state = (event.state || {}) as { hamyarTab?: AppTab; hamyarTrail?: AppTab[] };
+      setActiveTab(state.hamyarTab || 'home');
+      setTabTrail(state.hamyarTrail || []);
+    };
+
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
 
   useEffect(() => {
     ensureVoicesLoaded().catch((e) => console.warn('Voice pre-load note:', e));
@@ -412,7 +482,7 @@ export default function App() {
   };
 
   const scrollToInput = (mode: 'voice' | 'text') => {
-    setActiveTab('interpreter');
+    goToTab('interpreter');
     setInputMode(mode);
     if (mainInputRef.current) {
       mainInputRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -449,7 +519,13 @@ export default function App() {
       {/* Navigation. A row here on wide screens, a bar at the foot of the
           screen on phones. Rendered once; which one shows is a matter of
           width. */}
-      {!isFormImmersive && <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />}
+      {!isFormImmersive && <NavigationTabs activeTab={activeTab} onTabChange={goToTab} />}
+
+      {/* Back. Directly under the navigation, on every screen that has
+          somewhere to go back to, which is every screen except home. */}
+      {!isFormImmersive && tabTrail.length > 0 && (
+        <BackBar destination={tabTrail[tabTrail.length - 1]} onBack={goBack} />
+      )}
 
       {/* Main Container */}
       <main
@@ -575,7 +651,7 @@ export default function App() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 w-full min-w-0">
               {/* Card 1: Talk to someone */}
               <div
-                onClick={() => setActiveTab('interpreter')}
+                onClick={() => goToTab('interpreter')}
                 className="group bg-gradient-to-b from-teal-50/70 to-teal-50/40 border-2 border-teal-200/90 hover:border-teal-500 rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
               >
                 <div className="space-y-4">
@@ -624,7 +700,7 @@ export default function App() {
                 onClick={() => {
                   setSelectedFormForCompanion(null);
                   setCustomUploadedForm(null);
-                  setActiveTab('form_companion');
+                  goToTab('form_companion');
                 }}
                 className="group bg-gradient-to-b from-teal-50/70 to-slate-50/40 border-2 border-teal-300 hover:border-teal-600 rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
               >
@@ -648,7 +724,7 @@ export default function App() {
 
               {/* Card 4: Write a message */}
               <div
-                onClick={() => setActiveTab('message_writer')}
+                onClick={() => goToTab('message_writer')}
                 className="group bg-teal-50/40 border-2 border-teal-200 hover:border-teal-600 rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
               >
                 <div className="space-y-4">
@@ -675,7 +751,7 @@ export default function App() {
               onClick={() => {
                 setSelectedFormForCompanion(null);
                 setCustomUploadedForm(null);
-                setActiveTab('form_companion');
+                goToTab('form_companion');
               }}
               className="bg-slate-900 text-white rounded-3xl p-4 sm:p-6 border border-slate-800 shadow-sm hover:border-slate-700 transition cursor-pointer flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-farsi dir-rtl group w-full min-w-0"
             >
@@ -705,7 +781,7 @@ export default function App() {
                     e.stopPropagation();
                     setSelectedFormForCompanion(null);
                     setCustomUploadedForm(null);
-                    setActiveTab('form_companion');
+                    goToTab('form_companion');
                   }}
                   className="min-h-[48px] w-full sm:w-auto px-4 sm:px-5 py-2.5 bg-teal-700 hover:bg-teal-600 text-white rounded-2xl text-xs sm:text-sm font-bold transition shadow-xs flex items-center justify-center gap-2 cursor-pointer"
                 >
@@ -741,7 +817,7 @@ export default function App() {
                 isProcessing={isProcessing}
                 onTextSubmit={handleTextSubmit}
                 onChangeDirection={(dir) => setDirection(dir)}
-                onSwitchToVoice={() => setActiveTab('interpreter')}
+                onSwitchToVoice={() => goToTab('interpreter')}
               />
 
               {currentResult && (
@@ -887,7 +963,7 @@ export default function App() {
         {activeTab === 'form_companion' && (
           <FormCompanion
             userLanguage={userLang}
-            onGoBackToHome={() => setActiveTab('home')}
+            onGoBackToHome={goHome}
             onPlayAudio={(txt, lang) => playSpokenAudio(txt, lang)}
             onOpenUploadModal={() => setIsFormUploadOpen(true)}
             onClearCustomForm={() => {
@@ -940,7 +1016,7 @@ export default function App() {
                 ].map((item) => (
                   <button
                     key={item.tab}
-                    onClick={() => setActiveTab(item.tab)}
+                    onClick={() => goToTab(item.tab)}
                     className="w-full min-h-[44px] p-3.5 bg-slate-50 hover:bg-slate-100 rounded-2xl flex items-center justify-between gap-3 cursor-pointer transition"
                   >
                     <span className="text-left">
@@ -1018,7 +1094,7 @@ export default function App() {
             <p className="text-sm text-ink-muted">
               Powered by{' '}
               <a
-                href="https://www.digipezeshk.com"
+                href="https://mehrhealth.co.uk"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-semibold text-primary underline underline-offset-2 hover:no-underline"
@@ -1092,7 +1168,7 @@ export default function App() {
           setIsFormUploadOpen(false);
           setCustomUploadedForm(customFormData || null);
           setSelectedFormForCompanion(formId || null);
-          setActiveTab('form_companion');
+          goToTab('form_companion');
         }}
       />
     </div>
