@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { TranslationDirection, InterpretationResult, EmbedSettings, QuickPhrase, SavedPhrase, AppTab, UserLanguage } from './types';
 import { Header } from './components/Header';
 import { NavigationTabs } from './components/NavigationTabs';
@@ -117,6 +117,19 @@ export default function App() {
   const mainInputRef = useRef<HTMLDivElement>(null);
 
   /**
+   * Where the next screen should be scrolled to once it has rendered.
+   *
+   * Tapping a card from halfway down the home page used to open the next
+   * screen halfway down as well, because nothing moves the window when only
+   * the component changes. On a phone that meant arriving at the middle of a
+   * screen with the heading somewhere above, and having to scroll up to find
+   * out where you were. Going forward this is the top; coming back it is
+   * wherever the person had got to, which is what makes back feel like
+   * returning rather than reloading.
+   */
+  const pendingScroll = useRef<number>(0);
+
+  /**
    * Move to a screen. Records where we came from, in our own state and in the
    * browser's, so that back means the same thing whichever back you press.
    */
@@ -125,8 +138,15 @@ export default function App() {
     const trail = [...tabTrail, activeTab];
     setTabTrail(trail);
     setActiveTab(tab);
+    pendingScroll.current = 0;
     try {
-      window.history.pushState({ hamyarTab: tab, hamyarTrail: trail }, '');
+      // Mark the entry we are leaving with how far down it was, so that back
+      // returns to the card they tapped rather than to the top.
+      window.history.replaceState(
+        { ...(window.history.state || {}), scrollY: window.scrollY },
+        ''
+      );
+      window.history.pushState({ hamyarTab: tab, hamyarTrail: trail, scrollY: 0 }, '');
     } catch {
       // Some embedded webviews refuse pushState. The app still navigates; only
       // the hardware back button loses its way, and the button on screen does not.
@@ -155,20 +175,34 @@ export default function App() {
       window.history.back();
       return;
     }
+    pendingScroll.current = 0;
     setTabTrail((trail) => trail.slice(0, -1));
     setActiveTab(previous);
   };
 
+  // Put the new screen where it belongs, before the browser paints it.
+  useLayoutEffect(() => {
+    window.scrollTo(0, pendingScroll.current);
+  }, [activeTab]);
+
   // The browser's back button, and on Android the hardware one, land here.
   useEffect(() => {
     try {
-      window.history.replaceState({ hamyarTab: 'home', hamyarTrail: [] }, '');
+      // We place the page ourselves; otherwise the browser restores the old
+      // offset a moment after we have set it and the screen jumps.
+      window.history.scrollRestoration = 'manual';
+      window.history.replaceState({ hamyarTab: 'home', hamyarTrail: [], scrollY: 0 }, '');
     } catch {
       /* see goToTab */
     }
 
     const onPopState = (event: PopStateEvent) => {
-      const state = (event.state || {}) as { hamyarTab?: AppTab; hamyarTrail?: AppTab[] };
+      const state = (event.state || {}) as {
+        hamyarTab?: AppTab;
+        hamyarTrail?: AppTab[];
+        scrollY?: number;
+      };
+      pendingScroll.current = state.scrollY || 0;
       setActiveTab(state.hamyarTab || 'home');
       setTabTrail(state.hamyarTrail || []);
     };
