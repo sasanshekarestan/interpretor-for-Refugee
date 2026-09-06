@@ -111,11 +111,11 @@ const UK_TERMS_DATABASE: KeyTermExplanation[] = [
 
 const CATEGORIES = [
   { id: 'all', label: 'All Terms / همه اصطلاحات' },
-  { id: 'asylum', label: '⚖️ Asylum & Home Office' },
-  { id: 'housing', label: '🏠 Housing & Address' },
-  { id: 'healthcare', label: '🩺 NHS & GP' },
-  { id: 'benefits', label: '💷 Benefits & ASPEN' },
-  { id: 'legal', label: '📜 Legal & Solicitors' },
+  { id: 'asylum', label: 'Asylum & Home Office' },
+  { id: 'housing', label: 'Housing & Address' },
+  { id: 'healthcare', label: 'NHS & GP' },
+  { id: 'benefits', label: 'Benefits & ASPEN' },
+  { id: 'legal', label: 'Legal & Solicitors' },
 ];
 
 export const UkTerminologyView: React.FC<UkTerminologyViewProps> = ({ userLanguage, onPlayAudio }) => {
@@ -142,7 +142,7 @@ export const UkTerminologyView: React.FC<UkTerminologyViewProps> = ({ userLangua
             <span>UK Terminology & Culture Library</span>
           </div>
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white flex flex-wrap items-center gap-2">
-            <span>🇬🇧 What does this mean in the UK?</span>
+            <span>What does this mean in the UK?</span>
             <span className="text-teal-300 font-farsi font-normal">| واژه‌نامه اصطلاحات بریتانیا</span>
           </h2>
           <p className="text-xs text-teal-100 max-w-xl">
@@ -190,7 +190,7 @@ export const UkTerminologyView: React.FC<UkTerminologyViewProps> = ({ userLangua
           >
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1">
-                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-800 border border-teal-100">
+                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-800 border border-teal-100">
                   {t.category?.toUpperCase()}
                 </span>
                 <h3 className="font-bold text-slate-900 text-base sm:text-lg flex items-center gap-2 mt-1">
@@ -242,7 +242,7 @@ export const UkTerminologyView: React.FC<UkTerminologyViewProps> = ({ userLangua
                 </div>
               )}
               {t.exampleSentence && (
-                <div className="w-full bg-slate-50 p-2.5 rounded-xl border border-slate-200/60 font-mono text-[11px] text-slate-800">
+                <div className="w-full bg-slate-50 p-2.5 rounded-xl border border-slate-200/60 font-mono text-xs text-slate-800">
                   "{t.exampleSentence}"
                 </div>
               )}

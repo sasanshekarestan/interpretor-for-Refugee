@@ -152,7 +152,7 @@ export const MessageWriterView: React.FC<MessageWriterViewProps> = ({ userLangua
             <span>Message Writer Companion</span>
           </div>
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white flex flex-wrap items-center gap-2">
-            <span>✍️ Write a message</span>
+            <span>Write a message</span>
             <span className="text-amber-300 font-farsi font-normal">| نوشتن پیام واضح و محترمانه</span>
           </h2>
           <p className="text-xs text-amber-100 max-w-xl">
@@ -197,10 +197,10 @@ export const MessageWriterView: React.FC<MessageWriterViewProps> = ({ userLangua
           </label>
           <div className="flex flex-wrap items-center gap-2">
             {[
-              { id: 'polite', labelEn: '🟢 Polite (محترمانه)', desc: 'Warm & courteous' },
-              { id: 'professional', labelEn: '🔵 Professional (رسمی)', desc: 'Formal UK business' },
-              { id: 'firm', labelEn: '🟡 Firm & Urgent (قاطع و فوری)', desc: 'Clear boundaries' },
-              { id: 'simple', labelEn: '⚪ Simple (ساده)', desc: 'Short sentences' },
+              { id: 'polite', labelEn: 'Polite (محترمانه)', desc: 'Warm & courteous' },
+              { id: 'professional', labelEn: 'Professional (رسمی)', desc: 'Formal UK business' },
+              { id: 'firm', labelEn: 'Firm & Urgent (قاطع و فوری)', desc: 'Clear boundaries' },
+              { id: 'simple', labelEn: 'Simple (ساده)', desc: 'Short sentences' },
             ].map((t) => (
               <button
                 key={t.id}
@@ -233,7 +233,7 @@ export const MessageWriterView: React.FC<MessageWriterViewProps> = ({ userLangua
               }`}
             >
               {isListening ? <MicOff className="w-4 h-4 animate-bounce" /> : <Mic className="w-4 h-4 text-amber-700" />}
-              <span>{isListening ? 'در حال شنیدن...' : '🎤 ضبط صوتی (Speak)'}</span>
+              <span>{isListening ? 'در حال شنیدن...' : 'ضبط صوتی (Speak)'}</span>
             </button>
           </div>
 
@@ -277,7 +277,7 @@ export const MessageWriterView: React.FC<MessageWriterViewProps> = ({ userLangua
           {/* Generated English Message */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-700">🇬🇧 Your message in clear UK English:</span>
+              <span className="text-xs font-bold text-slate-700">Your message in clear UK English:</span>
               <div className="flex items-center gap-2">
                 {onPlayAudio && (
                   <button

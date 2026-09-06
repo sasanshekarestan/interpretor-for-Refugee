@@ -15,7 +15,7 @@ interface FormLibraryProps {
 export const FormLibrary: React.FC<FormLibraryProps> = ({ isDari, onSelect, onUpload }) => (
   <div className="max-w-3xl mx-auto px-3.5 py-5 space-y-5 font-farsi" dir="rtl">
     <div className="space-y-1">
-      <h1 className="text-[22px] font-bold text-slate-900 leading-snug text-balance">
+      <h1 className="text-xl font-bold text-slate-900 leading-snug text-balance">
         فرم مورد نظر خود را انتخاب کنید
       </h1>
       <p className="text-[13.5px] text-slate-600 leading-relaxed">
@@ -37,10 +37,10 @@ export const FormLibrary: React.FC<FormLibraryProps> = ({ isDari, onSelect, onUp
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0 space-y-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-mono text-[11px] font-bold text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
+                  <span className="font-mono text-xs font-bold text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
                     {form.code}
                   </span>
-                  <span className="text-[11px] text-slate-500 font-mono">{form.issuer}</span>
+                  <span className="text-xs text-slate-500 font-mono">{form.issuer}</span>
                   {answered > 0 && (
                     <Pill tone={complete ? 'done' : 'neutral'}>
                       {complete && <Check className="w-3 h-3" />}
@@ -49,13 +49,13 @@ export const FormLibrary: React.FC<FormLibraryProps> = ({ isDari, onSelect, onUp
                   )}
                 </div>
                 <h2 className="font-bold text-slate-900 text-[15.5px] leading-snug">{title}</h2>
-                <p className="text-[12px] text-slate-500 text-left leading-snug" dir="ltr">
+                <p className="text-xs text-slate-500 text-left leading-snug" dir="ltr">
                   {form.titleEn}
                 </p>
               </div>
             </div>
 
-            <p className="text-[13px] text-slate-600 leading-relaxed">{form.purposeFa}</p>
+            <p className="text-sm text-slate-600 leading-relaxed">{form.purposeFa}</p>
 
             <Button variant="primary" fullWidth onClick={() => onSelect(form.id)}>
               <span>{answered > 0 ? 'ادامه دهید' : 'شروع فرم'}</span>

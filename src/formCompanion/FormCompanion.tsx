@@ -249,10 +249,10 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
         >
           <FileQuestion className={`w-5 h-5 shrink-0 ${activeField ? t.faint : 'text-white/90'}`} />
           <span className="flex-1 min-w-0">
-            <span className={`block font-farsi font-bold text-[14px] ${activeField ? 'text-slate-800' : 'text-white'}`}>
+            <span className={`block font-farsi font-bold text-sm ${activeField ? 'text-slate-800' : 'text-white'}`}>
               این صفحه چه می‌گوید و باید چکار کنم؟
             </span>
-            <span className={`block text-[11px] ${activeField ? 'text-slate-500' : 'text-white/80'}`}>
+            <span className={`block text-xs ${activeField ? 'text-slate-500' : 'text-white/80'}`}>
               Explain this whole page · صفحه {s.documentPageIndex + 1}
             </span>
           </span>
@@ -281,7 +281,7 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
             dir="rtl"
           >
             <ListChecks className={`w-4 h-4 ${t.faint} shrink-0`} />
-            <span className="font-farsi text-[13px] font-bold text-slate-700 flex-1">
+            <span className="font-farsi text-sm font-bold text-slate-700 flex-1">
               ترجیح می‌دهید قدم‌به‌قدم راهنمایی شوید؟
             </span>
           </button>
@@ -339,7 +339,7 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
           dir="rtl"
         >
           <Hand className={`w-4 h-4 ${t.faint} shrink-0`} />
-          <span className="font-farsi text-[13px] font-bold text-slate-700 flex-1">
+          <span className="font-farsi text-sm font-bold text-slate-700 flex-1">
             به جای این، روی خود فرم بزنید و توضیح بگیرید
           </span>
         </button>
@@ -457,7 +457,7 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
           />
           <div className="relative bg-white rounded-2xl shadow-2xl p-5 max-w-sm w-full space-y-4 font-farsi" dir="rtl">
             <div className="space-y-1.5">
-              <h2 className="font-bold text-[16px] text-slate-900">همه پاسخ‌ها پاک شود؟</h2>
+              <h2 className="font-bold text-base text-slate-900">همه پاسخ‌ها پاک شود؟</h2>
               <p className="text-[13.5px] text-slate-600 leading-relaxed">
                 پاسخ‌هایی که تا الان داده‌اید حذف می‌شود و از سوال اول شروع می‌کنید. این کار برگشت‌پذیر نیست.
               </p>

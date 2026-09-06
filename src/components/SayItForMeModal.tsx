@@ -156,7 +156,7 @@ export const SayItForMeModal: React.FC<SayItForMeModalProps> = ({ isOpen, onClos
               }`}
             >
               {isListening ? <MicOff className="w-3.5 h-3.5 animate-bounce" /> : <Mic className="w-3.5 h-3.5" />}
-              <span>{isListening ? 'شنیدن...' : '🎤 ضبط صوتی (Speak)'}</span>
+              <span>{isListening ? 'شنیدن...' : 'ضبط صوتی (Speak)'}</span>
             </button>
           </div>
           <div className="relative">
@@ -178,14 +178,14 @@ export const SayItForMeModal: React.FC<SayItForMeModalProps> = ({ isOpen, onClos
           className="w-full py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl text-xs font-bold transition flex items-center justify-center gap-2"
         >
           <Sparkles className="w-4 h-4" />
-          <span>{isProcessing ? 'Generating Speech...' : 'Say This Out Loud 🔊'}</span>
+          <span>{isProcessing ? 'Generating Speech...' : 'Say This Out Loud '}</span>
         </button>
 
         {/* Output Card */}
         {result && (
           <div className="p-4 bg-slate-900 text-white rounded-2xl space-y-3 animate-fadeIn">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-teal-400">🇬🇧 Say this out loud:</span>
+              <span className="text-xs font-bold text-teal-400">Say this out loud:</span>
               <div className="flex items-center gap-2">
                 {onPlayAudio && (
                   <button

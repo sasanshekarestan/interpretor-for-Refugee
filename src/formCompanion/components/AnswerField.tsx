@@ -51,7 +51,7 @@ export const AnswerField: React.FC<AnswerFieldProps> = ({
 
   return (
     <div className="space-y-3" dir="rtl">
-      <label htmlFor="answer-field" className="block font-farsi text-[13px] font-bold text-slate-700">
+      <label htmlFor="answer-field" className="block font-farsi text-sm font-bold text-slate-700">
         پاسخ خود را بنویسید یا بگویید
       </label>
 
@@ -67,7 +67,7 @@ export const AnswerField: React.FC<AnswerFieldProps> = ({
           rows={3}
           dir="auto"
           placeholder={placeholderFa}
-          className="w-full bg-transparent resize-none px-3.5 py-3 pl-14 font-farsi text-[15px] leading-relaxed
+          className="w-full bg-transparent resize-none px-3.5 py-3 pl-14 font-farsi text-base leading-relaxed
             text-slate-900 placeholder:text-slate-400 focus:outline-none rounded-2xl"
         />
 
@@ -133,7 +133,7 @@ export const AnswerField: React.FC<AnswerFieldProps> = ({
           </div>
           <p
             dir="ltr"
-            className="text-left font-mono text-[14px] text-slate-900 bg-white border border-slate-200 rounded-xl px-3 py-2.5 break-words select-all"
+            className="text-left font-mono text-sm text-slate-900 bg-white border border-slate-200 rounded-xl px-3 py-2.5 break-words select-all"
           >
             {englishAnswer}
           </p>

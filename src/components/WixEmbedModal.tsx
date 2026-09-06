@@ -105,7 +105,7 @@ export const WixEmbedModal: React.FC<WixEmbedModalProps> = ({
                   }`}
                 >
                   <div className="font-bold text-xs">{style.label}</div>
-                  <div className="text-[11px] text-slate-500 mt-0.5">{style.desc}</div>
+                  <div className="text-xs text-slate-500 mt-0.5">{style.desc}</div>
                 </button>
               ))}
             </div>
@@ -144,7 +144,7 @@ export const WixEmbedModal: React.FC<WixEmbedModalProps> = ({
               </button>
             </div>
 
-            <pre className="p-3.5 bg-slate-900 text-slate-100 font-mono text-[11px] sm:text-xs rounded-xl overflow-x-auto border border-slate-800 leading-relaxed select-all">
+            <pre className="p-3.5 bg-slate-900 text-slate-100 font-mono text-xs sm:text-xs rounded-xl overflow-x-auto border border-slate-800 leading-relaxed select-all">
               {getEmbedCode()}
             </pre>
           </div>

@@ -62,12 +62,12 @@ export const ShamsiDateConverterWidget: React.FC<ShamsiDateConverterWidgetProps>
             <h4 className="text-sm font-black text-slate-900 leading-tight">
               مبدل خودکار تاریخ تولد (شمسی به میلادی)
             </h4>
-            <p className="text-[11px] text-teal-800">
+            <p className="text-xs text-teal-800">
               اگر تاریخ تولد خود را به شمسی می‌دانید، اینجا انتخاب کنید تا به تاریخ میلادی بریتانیا تبدیل شود:
             </p>
           </div>
         </div>
-        <span className="text-[10px] font-bold px-2.5 py-1 bg-teal-100 text-teal-800 rounded-full border border-teal-200 shrink-0">
+        <span className="text-xs font-bold px-2.5 py-1 bg-teal-100 text-teal-800 rounded-full border border-teal-200 shrink-0">
           Shamsi ➔ UK Date
         </span>
       </div>
@@ -76,7 +76,7 @@ export const ShamsiDateConverterWidget: React.FC<ShamsiDateConverterWidgetProps>
       <div className="grid grid-cols-3 gap-2 pt-1">
         {/* Day */}
         <div className="space-y-1">
-          <label className="block text-[11px] font-bold text-slate-700">روز:</label>
+          <label className="block text-xs font-bold text-slate-700">روز:</label>
           <input
             type="number"
             min={1}
@@ -90,7 +90,7 @@ export const ShamsiDateConverterWidget: React.FC<ShamsiDateConverterWidgetProps>
 
         {/* Month */}
         <div className="space-y-1">
-          <label className="block text-[11px] font-bold text-slate-700">ماه:</label>
+          <label className="block text-xs font-bold text-slate-700">ماه:</label>
           <select
             value={shamsiMonth}
             onChange={(e) => setShamsiMonth(parseInt(e.target.value, 10))}
@@ -106,7 +106,7 @@ export const ShamsiDateConverterWidget: React.FC<ShamsiDateConverterWidgetProps>
 
         {/* Year */}
         <div className="space-y-1">
-          <label className="block text-[11px] font-bold text-slate-700">سال شمسی:</label>
+          <label className="block text-xs font-bold text-slate-700">سال شمسی:</label>
           <input
             type="number"
             min={1300}
@@ -123,7 +123,7 @@ export const ShamsiDateConverterWidget: React.FC<ShamsiDateConverterWidgetProps>
       {convertedResult ? (
         <div className="p-3 bg-white rounded-2xl border border-teal-300 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs">
           <div className="space-y-0.5 text-right w-full sm:w-auto">
-            <span className="text-[11px] font-bold text-teal-700 flex items-center gap-1">
+            <span className="text-xs font-bold text-teal-700 flex items-center gap-1">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
               <span>معادل تاریخ میلادی بریتانیا:</span>
             </span>

@@ -38,12 +38,12 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
     <section className={`${t.surface} border rounded-2xl p-4 space-y-3.5`} dir="rtl">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 min-w-0">
-          <span className="font-mono text-[11px] font-bold text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md shrink-0 tabular-nums">
+          <span className="font-mono text-xs font-bold text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md shrink-0 tabular-nums">
             {index + 1}/{total}
           </span>
-          <span className="font-farsi text-[11px] text-slate-500 truncate">{question.section}</span>
+          <span className="font-farsi text-xs text-slate-500 truncate">{question.section}</span>
           {isAnswered && (
-            <span className={`inline-flex items-center gap-1 text-[11px] font-bold ${t.doneText} shrink-0`}>
+            <span className={`inline-flex items-center gap-1 text-xs font-bold ${t.doneText} shrink-0`}>
               <Check className="w-3.5 h-3.5" />
               پاسخ داده شد
             </span>
@@ -63,10 +63,10 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
       </div>
 
       <div className="space-y-1.5">
-        <h2 className="font-farsi font-bold text-slate-900 text-[19px] leading-relaxed text-balance">
+        <h2 className="font-farsi font-bold text-slate-900 text-lg leading-relaxed text-balance">
           {questionFa}
         </h2>
-        <p className="text-[13px] text-slate-500 leading-snug text-left" dir="ltr">
+        <p className="text-sm text-slate-500 leading-snug text-left" dir="ltr">
           {question.questionEn}
         </p>
       </div>
@@ -83,7 +83,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         onClick={() => setShowHelp((s) => !s)}
         aria-expanded={showHelp}
         className={`w-full flex items-center gap-2 text-right px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200
-          text-[13px] font-farsi font-bold text-slate-700 hover:bg-slate-100 cursor-pointer transition ${t.focus}`}
+          text-sm font-farsi font-bold text-slate-700 hover:bg-slate-100 cursor-pointer transition ${t.focus}`}
       >
         <HelpCircle className={`w-4 h-4 ${t.faint}`} />
         <span className="flex-1">{showHelp ? 'بستن توضیح' : 'نمی‌فهمم — ساده توضیح بده'}</span>
@@ -126,7 +126,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                 </span>
                 <span className="flex-1 min-w-0">
                   <span className="block font-farsi text-[13.5px] font-bold leading-snug">{option.labelFa}</span>
-                  <span className="block text-[12px] text-slate-500 text-left" dir="ltr">{option.labelEn}</span>
+                  <span className="block text-xs text-slate-500 text-left" dir="ltr">{option.labelEn}</span>
                 </span>
               </button>
             );

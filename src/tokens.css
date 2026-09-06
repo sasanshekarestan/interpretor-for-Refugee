@@ -1,0 +1,188 @@
+/**
+ * The design system, as values.
+ *
+ * design.md decides these; this file is where the code reads them. Nothing in a
+ * component should contain a colour, a radius or a shadow that is not defined
+ * here, so that changing the system is one edit rather than a hunt through the
+ * app.
+ *
+ * Two layers on purpose:
+ *
+ *   --hamyar-*   the raw values, redefined per theme
+ *   @theme       hands them to Tailwind, so `bg-primary` and `text-fault`
+ *                resolve to the right value in whichever theme is showing
+ *
+ * Every contrast ratio noted below is measured, not estimated, and holds for
+ * both themes. Text clears 4.5:1 and control boundaries clear 3:1, per WCAG 2.2
+ * AA.
+ */
+
+:root {
+  /* Ground and structure ---------------------------------------- */
+  --hamyar-page: #f4f6f5;          /* slightly desaturated, to cut glare */
+  --hamyar-surface: #ffffff;
+  --hamyar-text: #1a2320;          /* 14.8:1 on page */
+  --hamyar-text-muted: #55625e;    /*  5.9:1 on page */
+  --hamyar-border: #d5dcda;        /* decorative separation only */
+  --hamyar-border-control: #7c8b86; /* 3.3:1 - required on inputs and controls */
+
+  /* The app acting ---------------------------------------------- */
+  --hamyar-primary: #0e6e64;       /*  5.6:1 on page, 6.1:1 under white */
+  --hamyar-primary-press: #0a544c;
+  --hamyar-on-primary: #ffffff;
+
+  /* Read this before continuing --------------------------------- */
+  --hamyar-attention: #8a5a00;     /*  5.5:1 on page */
+  --hamyar-attention-bg: #fff4d6;
+
+  /* Something went wrong ---------------------------------------- */
+  --hamyar-fault: #b3261e;         /*  6.0:1 on page, 6.5:1 under white */
+  --hamyar-fault-bg: #fdecea;
+
+  /* Not ours. Only ever inside a rendered official document. ----- */
+  --hamyar-document-blue: #005eb8;
+
+  /* One shadow, and a border is preferred to it. ----------------- */
+  --hamyar-shadow: 0 1px 2px rgb(26 35 32 / 0.08);
+
+  color-scheme: light;
+}
+
+/*
+ * Dark is a designed theme, not an inversion. Both palettes are declared in
+ * full, and no colour exists only inside this block.
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --hamyar-page: #121614;
+    --hamyar-surface: #1a201e;
+    --hamyar-text: #e8edeb;          /* 15.4:1 on page */
+    --hamyar-text-muted: #9aa8a4;    /*  7.4:1 on page */
+    --hamyar-border: #2c3634;
+    --hamyar-border-control: #606d69; /* 3.4:1 */
+
+    --hamyar-primary: #4fbfb0;       /*  8.2:1 on page */
+    --hamyar-primary-press: #6fd3c4;
+    --hamyar-on-primary: #0b2e2a;    /*  6.5:1 on the primary */
+
+    --hamyar-attention: #e8b04b;     /*  9.3:1 on page */
+    --hamyar-attention-bg: #2b2413;
+
+    --hamyar-fault: #f0938b;         /*  8.0:1 on page */
+    --hamyar-fault-bg: #2e1917;
+
+    --hamyar-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --hamyar-page: #121614;
+  --hamyar-surface: #1a201e;
+  --hamyar-text: #e8edeb;
+  --hamyar-text-muted: #9aa8a4;
+  --hamyar-border: #2c3634;
+  --hamyar-border-control: #606d69;
+
+  --hamyar-primary: #4fbfb0;
+  --hamyar-primary-press: #6fd3c4;
+  --hamyar-on-primary: #0b2e2a;
+
+  --hamyar-attention: #e8b04b;
+  --hamyar-attention-bg: #2b2413;
+
+  --hamyar-fault: #f0938b;
+  --hamyar-fault-bg: #2e1917;
+
+  --hamyar-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+
+  color-scheme: dark;
+}
+
+@theme {
+  /* Colour ------------------------------------------------------- */
+  --color-page: var(--hamyar-page);
+  --color-surface: var(--hamyar-surface);
+  --color-ink: var(--hamyar-text);
+  --color-ink-muted: var(--hamyar-text-muted);
+  --color-edge: var(--hamyar-border);
+  --color-edge-control: var(--hamyar-border-control);
+
+  --color-primary: var(--hamyar-primary);
+  --color-primary-press: var(--hamyar-primary-press);
+  --color-on-primary: var(--hamyar-on-primary);
+
+  --color-attention: var(--hamyar-attention);
+  --color-attention-bg: var(--hamyar-attention-bg);
+
+  --color-fault: var(--hamyar-fault);
+  --color-fault-bg: var(--hamyar-fault-bg);
+
+  --color-document: var(--hamyar-document-blue);
+
+  /*
+   * Type ---------------------------------------------------------
+   *
+   * The whole scale moves up. 16px is the floor for anything a person
+   * must read: below it mobile Safari zooms the page on focus, and
+   * Persian loses the marks its meaning hangs on. Redefining the steps
+   * here lifts every existing usage in the app at once.
+   *
+   * Persian gets its leading from the rule further down rather than a
+   * separate scale, so a bilingual block stays on one rhythm.
+   */
+  --text-xs: 0.875rem;      /* 14px, was 12 - meta only, never an instruction */
+  --text-xs--line-height: 1.5;
+  --text-sm: 1rem;          /* 16px, was 14 - the floor */
+  --text-sm--line-height: 1.5;
+  --text-base: 1.0625rem;   /* 17px, was 16 - body */
+  --text-base--line-height: 1.55;
+  --text-lg: 1.1875rem;     /* 19px, was 18 - instructions, the question asked */
+  --text-lg--line-height: 1.5;
+  --text-xl: 1.375rem;      /* 22px */
+  --text-xl--line-height: 1.35;
+  --text-2xl: 1.5rem;       /* 24px - card and screen titles */
+  --text-2xl--line-height: 1.3;
+  --text-3xl: 1.875rem;     /* 30px - one per screen at most */
+  --text-3xl--line-height: 1.2;
+
+  /* Shape and space ---------------------------------------------- */
+  --radius-hamyar: 0.5rem;  /* the one radius */
+  --shadow-hamyar: var(--hamyar-shadow);
+}
+
+@layer base {
+  /*
+   * Persian needs more leading than Latin at the same size. Arabic script
+   * carries meaning in marks above and below the line, and they collide
+   * when lines are set tight.
+   */
+  [dir='rtl'],
+  .font-farsi {
+    line-height: 1.85;
+  }
+
+  /*
+   * A yellow focus ring alone reaches only 1.3:1 on a light ground. The
+   * dark outline around it is what makes it visible on any background,
+   * which is the same reason GOV.UK pairs the two.
+   */
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--hamyar-text);
+    outline-offset: 0;
+    box-shadow: 0 0 0 4px #ffd54a;
+    border-radius: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

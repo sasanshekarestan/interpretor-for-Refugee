@@ -210,11 +210,11 @@ export const AudioVoiceInput: React.FC<AudioVoiceInputProps> = ({
               <span className="text-xs font-bold text-slate-900 font-farsi">
                 حالت گفتگو ۲ نفره (پناهجو ↔ کارشناس)
               </span>
-              <span className="text-[10px] font-bold text-teal-800 bg-teal-100/80 px-2 py-0.5 rounded-full">
+              <span className="text-xs font-bold text-teal-800 bg-teal-100/80 px-2 py-0.5 rounded-full">
                 Two-Party Live Mode
               </span>
             </div>
-            <p className="text-[11px] text-slate-600 font-farsi mt-0.5">
+            <p className="text-xs text-slate-600 font-farsi mt-0.5">
               پشتیبانی همزمان از زبان انگلیسی و فارسی / دری با تشخیص هوشمند لهجه‌ها
             </p>
           </div>
@@ -318,8 +318,8 @@ export const AudioVoiceInput: React.FC<AudioVoiceInputProps> = ({
             >
               <Mic className="w-5 h-5 text-teal-200" />
               <div className="flex flex-col items-center leading-tight">
-                <span className="font-farsi text-base font-bold">🎤 فارسی صحبت کنید</span>
-                <span className="text-[10px] opacity-80 uppercase tracking-wide font-sans">Press to speak Farsi / Dari</span>
+                <span className="font-farsi text-base font-bold">فارسی صحبت کنید</span>
+                <span className="text-xs opacity-80 uppercase tracking-wide font-sans">Press to speak Farsi / Dari</span>
               </div>
             </button>
           </div>
@@ -364,8 +364,8 @@ export const AudioVoiceInput: React.FC<AudioVoiceInputProps> = ({
             >
               <Mic className="w-5 h-5 text-indigo-200" />
               <div className="flex flex-col items-center leading-tight">
-                <span className="text-base font-bold">🎤 Speak English</span>
-                <span className="text-[10px] font-farsi opacity-90">صحبت کنید (ترجمه به فارسی)</span>
+                <span className="text-base font-bold">Speak English</span>
+                <span className="text-xs font-farsi opacity-90">صحبت کنید (ترجمه به فارسی)</span>
               </div>
             </button>
           </div>

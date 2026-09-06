@@ -29,7 +29,7 @@ export const PinnedDetailsBar: React.FC<PinnedDetailsBarProps> = ({
           <div className="p-1 bg-amber-500/20 text-amber-400 rounded-lg border border-amber-500/30">
             <Pin className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </div>
-          <span className="text-[11px] sm:text-xs font-bold text-slate-200">
+          <span className="text-xs sm:text-xs font-bold text-slate-200">
             Pinned <span className="font-farsi font-normal text-slate-400 hidden sm:inline">| اطلاعات سنجاق‌شده:</span>
           </span>
         </div>

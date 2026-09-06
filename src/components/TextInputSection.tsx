@@ -148,7 +148,7 @@ export const TextInputSection: React.FC<TextInputSectionProps> = ({
           className="inline-flex items-center gap-1.5 text-xs font-bold text-teal-800 bg-teal-50 hover:bg-teal-100 border border-teal-200/80 px-3 py-1.5 rounded-xl transition font-farsi"
         >
           <Mic className="w-4 h-4 text-teal-700" />
-          <span>{isFarsiToEnglish ? '🎤 حالت ضبط صوتی (Voice Recording)' : 'Switch to Full Voice Mode'}</span>
+          <span>{isFarsiToEnglish ? 'حالت ضبط صوتی (Voice Recording)' : 'Switch to Full Voice Mode'}</span>
         </button>
       </div>
 
@@ -182,7 +182,7 @@ export const TextInputSection: React.FC<TextInputSectionProps> = ({
             ) : (
               <>
                 <Mic className="w-4 h-4" />
-                <span>🎤 صحبت کنید (Audio Input)</span>
+                <span>صحبت کنید (Audio Input)</span>
               </>
             )}
           </button>
@@ -220,7 +220,7 @@ export const TextInputSection: React.FC<TextInputSectionProps> = ({
               title="Speak voice input / صحبت کردن صوتی"
             >
               <Mic className="w-4 h-4 text-teal-700" />
-              <span className="text-[11px] font-farsi hidden sm:inline">صحبت کنید</span>
+              <span className="text-xs font-farsi hidden sm:inline">صحبت کنید</span>
             </button>
 
             {text && (

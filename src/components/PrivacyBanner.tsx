@@ -27,14 +27,14 @@ export const PrivacyBanner: React.FC<PrivacyBannerProps> = ({ onOpenPrivacyModal
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                 <h3 className="font-bold text-xs sm:text-sm md:text-base text-white flex flex-wrap items-center gap-1.5 break-words">
-                  <span>🔒 Your conversations are private</span>
+                  <span>Your conversations are private</span>
                 </h3>
                 <span className="text-teal-300 font-farsi text-xs font-semibold break-words">| گفتگوهای شما کاملاً خصوصی است</span>
               </div>
-              <p className="text-[11px] sm:text-xs text-slate-300 mt-1 max-w-3xl leading-relaxed break-words">
+              <p className="text-xs sm:text-xs text-slate-300 mt-1 max-w-3xl leading-relaxed break-words">
                 Your information is handled securely. We do not share your conversations with your caseworker, Home Office, landlord or other organisations unless you explicitly choose to share something.
               </p>
-              <p className="text-[11px] text-teal-200 font-farsi mt-1 dir-rtl text-right break-words">
+              <p className="text-xs text-teal-200 font-farsi mt-1 dir-rtl text-right break-words">
                 اطلاعات شما امن است. گفتگوهای شما به پرونده، اداره مهاجرت (Home Office)، صاحب‌خانه یا سازمان دیگری فرستاده نمی‌شود.
               </p>
             </div>

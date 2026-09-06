@@ -440,6 +440,7 @@ export default function App() {
         onUpdateSettings={(newVals) => setSettings((prev) => ({ ...prev, ...newVals }))}
         onOpenQuickPhrases={() => setIsQuickPhrasesOpen(true)}
         onOpenSettings={() => setIsSettingsOpen(true)}
+        onOpenSayItForMe={() => setIsSayItForMeOpen(true)}
         selectedDialectHint={dialectHint}
         onSelectDialectHint={setDialectHint}
       />
@@ -477,10 +478,10 @@ export default function App() {
                   printed under their message. */}
               {errorMessage.detail && (
                 <details className="pt-0.5">
-                  <summary className="text-[11px] text-rose-500 cursor-pointer select-none">
+                  <summary className="text-xs text-rose-500 cursor-pointer select-none">
                     جزئیات فنی · Technical details
                   </summary>
-                  <p className="text-[11px] text-rose-500 break-words pt-1">{errorMessage.detail}</p>
+                  <p className="text-xs text-rose-500 break-words pt-1">{errorMessage.detail}</p>
                 </details>
               )}
             </div>
@@ -655,11 +656,11 @@ export default function App() {
                     <h3 className="font-bold text-sm sm:text-base md:text-lg text-white group-hover:text-amber-200 transition break-words">
                       همراه تکمیل فرم‌های رسمی (NHS, Home Office, Council)
                     </h3>
-                    <span className="text-[10px] font-bold text-emerald-300 bg-emerald-950/90 px-2 py-0.5 rounded-md border border-emerald-800/80 shrink-0">
+                    <span className="text-xs font-bold text-emerald-300 bg-emerald-950/90 px-2 py-0.5 rounded-md border border-emerald-800/80 shrink-0">
                       آرشیو رسمی و آپلود
                     </span>
                   </div>
-                  <p className="text-[11px] sm:text-xs text-slate-300 leading-relaxed break-words">
+                  <p className="text-xs sm:text-xs text-slate-300 leading-relaxed break-words">
                     راهنمای خانه‌به‌خانه، ترجمه پرسش‌ها به فارسی و دری، و بررسی خط‌به‌خط مدارک کاغذی.
                   </p>
                 </div>
@@ -697,7 +698,7 @@ export default function App() {
                   className="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs rounded-xl transition shadow-2xs flex items-center gap-1.5 shrink-0 cursor-pointer"
                 >
                   <Volume2 className="w-4 h-4" />
-                  <span>SAY IT FOR ME 🔊</span>
+                  <span>SAY IT FOR ME </span>
                 </button>
               </div>
 
@@ -749,7 +750,7 @@ export default function App() {
 
             {/* NHS Notice */}
             <div className="p-4 bg-amber-50 border border-amber-300 rounded-2xl text-xs text-amber-950 space-y-1">
-              <p className="font-bold">⚠️ NHS & Official Appointments Notice:</p>
+              <p className="font-bold">NHS & Official Appointments Notice:</p>
               <p>NHS interpreters are free. Always request an official interpreter for medical or Home Office interviews.</p>
             </div>
 
@@ -888,21 +889,21 @@ export default function App() {
                   onClick={() => setIsSettingsOpen(true)}
                   className="w-full p-3.5 bg-slate-50 hover:bg-slate-100 rounded-2xl text-left font-bold text-slate-800 flex items-center justify-between"
                 >
-                  <span>⚙️ App Settings & Voice Preferences</span>
+                  <span>App Settings & Voice Preferences</span>
                   <span>→</span>
                 </button>
                 <button
                   onClick={() => setIsSavedPhrasesOpen(true)}
                   className="w-full p-3.5 bg-slate-50 hover:bg-slate-100 rounded-2xl text-left font-bold text-slate-800 flex items-center justify-between"
                 >
-                  <span>⭐ Saved Phrases ({savedPhrases.length})</span>
+                  <span>Saved Phrases ({savedPhrases.length})</span>
                   <span>→</span>
                 </button>
                 <button
                   onClick={() => setIsLexiconOpen(true)}
                   className="w-full p-3.5 bg-slate-50 hover:bg-slate-100 rounded-2xl text-left font-bold text-slate-800 flex items-center justify-between"
                 >
-                  <span>📖 Refugee Lexicon Modal</span>
+                  <span>Refugee Lexicon Modal</span>
                   <span>→</span>
                 </button>
               </div>
@@ -913,17 +914,6 @@ export default function App() {
       </main>
 
       {/* SAY IT FOR ME FLOATING ACTION BUTTON (Moved/hidden appropriately when on form companion to never block bottom next buttons) */}
-      {activeTab !== 'form_companion' && (
-        <button
-          onClick={() => setIsSayItForMeOpen(true)}
-          className="fixed right-5 bottom-20 z-40 px-4 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-full shadow-lg border border-amber-300 flex items-center gap-2 transition hover:scale-105"
-          title="Say It For Me"
-        >
-          <Volume2 className="w-4 h-4" />
-          <span className="hidden sm:inline">SAY IT FOR ME 🔊</span>
-        </button>
-      )}
-
       {/* Pinned Details Bar at Bottom */}
       {!isFormImmersive && (
         <PinnedDetailsBar
@@ -938,11 +928,11 @@ export default function App() {
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-600 w-full min-w-0">
           <div className="flex items-center gap-2 text-left min-w-0">
             <Info className="w-4 h-4 text-slate-400 shrink-0" />
-            <p className="text-[11px] leading-tight break-words">
+            <p className="text-xs leading-tight break-words">
               This app provides translation and general information only. It is not a solicitor and does not replace legal advice.
             </p>
           </div>
-          <p dir="rtl" className="font-farsi text-[11px] text-right break-words min-w-0">
+          <p dir="rtl" className="font-farsi text-xs text-right break-words min-w-0">
             این برنامه فقط ترجمه و اطلاعات عمومی ارائه می‌دهد و جایگزین مشاوره حقوقی نیست.
           </p>
         </div>

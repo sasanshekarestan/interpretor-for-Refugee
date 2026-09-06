@@ -70,7 +70,7 @@ export const Notice: React.FC<{
   dismissLabel?: string;
 }> = ({ tone = 'info', children, onDismiss, dismissLabel = 'بستن' }) => (
   <div
-    className={`${TONES[tone]} border rounded-xl px-3.5 py-2.5 flex items-start gap-3 text-[13px] leading-relaxed font-farsi`}
+    className={`${TONES[tone]} border rounded-xl px-3.5 py-2.5 flex items-start gap-3 text-sm leading-relaxed font-farsi`}
     dir="rtl"
   >
     <div className="flex-1 min-w-0">{children}</div>
@@ -92,7 +92,7 @@ export const Pill: React.FC<{ tone?: 'done' | 'neutral'; children: React.ReactNo
   children,
 }) => (
   <span
-    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${
+    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${
       tone === 'done' ? t.doneSoft : 'bg-slate-100 text-slate-700 border-slate-200'
     }`}
   >

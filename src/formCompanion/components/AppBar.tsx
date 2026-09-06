@@ -42,7 +42,7 @@ export const AppBar: React.FC<AppBarProps> = ({
   }, [menuOpen]);
 
   const item =
-    'w-full text-right px-4 py-3 text-[13px] font-farsi flex items-center gap-3 hover:bg-slate-50 cursor-pointer transition';
+    'w-full text-right px-4 py-3 text-sm font-farsi flex items-center gap-3 hover:bg-slate-50 cursor-pointer transition';
 
   return (
     <header
@@ -55,7 +55,7 @@ export const AppBar: React.FC<AppBarProps> = ({
       </IconButton>
 
       <div className="flex-1 min-w-0 flex items-center gap-2">
-        <span className="font-mono text-[11px] font-bold text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md shrink-0">
+        <span className="font-mono text-xs font-bold text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md shrink-0">
           {code}
         </span>
         <h1 className="font-farsi font-bold text-[13.5px] text-slate-900 truncate leading-tight">

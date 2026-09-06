@@ -363,7 +363,7 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
               <span className="font-bold text-white text-sm line-clamp-1">{titleEn}</span>
               {titleFa && <span className="text-xs text-amber-300 font-farsi dir-rtl font-semibold">({titleFa})</span>}
             </div>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-xs text-slate-400">
               Official PDF • {displayTotalPages} {displayTotalPages === 1 ? 'Page' : 'Pages'} total
             </p>
           </div>
@@ -409,7 +409,7 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
             >
               <ZoomOut className="w-4 h-4" />
             </button>
-            <span className="px-2 font-mono text-[11px] text-slate-300 font-semibold">{zoom}%</span>
+            <span className="px-2 font-mono text-xs text-slate-300 font-semibold">{zoom}%</span>
             <button
               type="button"
               onClick={handleZoomIn}
@@ -445,7 +445,7 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
           >
             <Printer className="w-3.5 h-3.5 shrink-0" />
             <span className="font-farsi font-bold">چاپ و ذخیره PDF</span>
-            <span className="text-[10px] text-blue-200 hidden sm:inline font-farsi">(برگه جدید / تب نو)</span>
+            <span className="text-xs text-blue-200 hidden sm:inline font-farsi">(برگه جدید / تب نو)</span>
           </a>
         </div>
       </div>
@@ -486,13 +486,13 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
 
             {/* Path Information Box */}
             <div className="w-full bg-slate-900 p-4 rounded-xl border border-slate-800 text-left font-mono text-xs text-slate-300 space-y-2 dir-ltr">
-              <div className="text-slate-400 text-[11px] uppercase tracking-wider font-sans font-bold">
+              <div className="text-slate-400 text-xs uppercase tracking-wider font-sans font-bold">
                 Required Static File Path:
               </div>
               <div className="bg-slate-950 p-2.5 rounded border border-slate-700 font-bold text-amber-300 select-all break-all">
                 {displayPath}
               </div>
-              <p className="text-[11px] text-slate-400 font-sans leading-normal">
+              <p className="text-xs text-slate-400 font-sans leading-normal">
                 To display the official government PDF, place the valid PDF file at the path above inside the project public directory.
               </p>
             </div>
@@ -521,7 +521,7 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
             </div>
 
             <div className="p-3 bg-blue-950/40 border border-blue-900/60 rounded-xl text-xs text-blue-300 font-farsi dir-rtl">
-              💡 دستیار هوشمند و راهنمای فارسی سوالات فرم کاملاً فعال و قابل استفاده است.
+              دستیار هوشمند و راهنمای فارسی سوالات فرم کاملاً فعال و قابل استفاده است.
             </div>
           </div>
         )}

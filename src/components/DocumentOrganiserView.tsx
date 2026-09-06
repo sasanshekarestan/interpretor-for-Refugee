@@ -71,7 +71,7 @@ export const DocumentOrganiserView: React.FC<DocumentOrganiserViewProps> = ({ us
             <span>My Documents & History</span>
           </div>
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white flex flex-wrap items-center gap-2">
-            <span>📁 Document Organiser</span>
+            <span>Document Organiser</span>
             <span className="text-teal-300 font-farsi font-normal">| مدیریت مدارک من</span>
           </h2>
           <p className="text-xs text-slate-300 max-w-xl">
@@ -115,7 +115,7 @@ export const DocumentOrganiserView: React.FC<DocumentOrganiserViewProps> = ({ us
             <div key={doc.id} className="bg-white rounded-3xl p-5 border border-slate-200 shadow-2xs space-y-3">
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1">
-                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-800">
+                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-800">
                     {doc.category}
                   </span>
                   <h3 className="font-bold text-slate-900 text-base">{doc.title}</h3>

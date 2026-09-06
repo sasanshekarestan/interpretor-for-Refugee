@@ -1,4 +1,6 @@
 @import "tailwindcss";
+/* The design system's values. See design.md for what they mean. */
+@import "./tokens.css";
 
 @layer base {
   html, body {

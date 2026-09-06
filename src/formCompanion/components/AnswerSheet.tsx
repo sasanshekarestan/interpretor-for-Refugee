@@ -46,12 +46,12 @@ export const AnswerSheet: React.FC<AnswerSheetProps> = ({
 
       <header className="bg-white border border-slate-200 rounded-2xl p-4 space-y-1">
         <div className="flex items-center gap-2">
-          <span className="font-mono text-[11px] font-bold text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
+          <span className="font-mono text-xs font-bold text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
             {code}
           </span>
-          <h1 className="font-bold text-slate-900 text-[16px] leading-snug">{titleFa}</h1>
+          <h1 className="font-bold text-slate-900 text-base leading-snug">{titleFa}</h1>
         </div>
-        <p className="text-[12px] text-slate-500 text-left" dir="ltr">{titleEn}</p>
+        <p className="text-xs text-slate-500 text-left" dir="ltr">{titleEn}</p>
         <p className="text-[12.5px] text-slate-600 pt-1.5 leading-relaxed">
           پاسخ‌های زیر را با همین ترتیب روی فرم کاغذی خود بنویسید. این برگه فرم رسمی نیست.
         </p>
@@ -83,7 +83,7 @@ export const AnswerSheet: React.FC<AnswerSheetProps> = ({
           return (
             <li key={q.fieldKey} className="bg-white border border-slate-200 rounded-2xl p-3.5 space-y-2">
               <div className="flex items-start gap-2.5">
-                <span className="font-mono text-[11px] font-bold text-slate-700 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded shrink-0 tabular-nums">
+                <span className="font-mono text-xs font-bold text-slate-700 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded shrink-0 tabular-nums">
                   {index + 1}
                 </span>
                 <div className="min-w-0 flex-1 space-y-0.5">

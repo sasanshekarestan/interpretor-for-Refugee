@@ -97,7 +97,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               aria-label="Voice Pace Speed / سرعت پخش صوتی"
               className="w-full accent-teal-700 cursor-pointer"
             />
-            <div className="flex justify-between text-[11px] text-slate-400">
+            <div className="flex justify-between text-xs text-slate-400">
               <span>Slower & Clear (0.7x)</span>
               <span>Normal (1.0x)</span>
               <span>Brisk (1.3x)</span>
@@ -108,7 +108,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           <div className="flex items-center justify-between pt-2 border-t border-slate-100">
             <div>
               <div className="font-bold text-slate-800">Auto-Voice Playback</div>
-              <div className="text-[11px] text-slate-500">
+              <div className="text-xs text-slate-500">
                 Automatically read translations aloud after recording
               </div>
             </div>
@@ -146,7 +146,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   <BookOpen className="w-4 h-4 text-teal-700" />
                   <div>
                     <div className="font-bold text-slate-900">UK Terminology Lookup</div>
-                    <div className="text-[11px] text-slate-500 font-farsi">راهنمای اصطلاحات هوم آفیس و خدمات بهداشتی (NHS)</div>
+                    <div className="text-xs text-slate-500 font-farsi">راهنمای اصطلاحات هوم آفیس و خدمات بهداشتی (NHS)</div>
                   </div>
                 </div>
                 <span className="text-xs font-semibold text-teal-700">Open ➔</span>
@@ -166,7 +166,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   <BarChart3 className="w-4 h-4 text-emerald-700" />
                   <div>
                     <div className="font-bold text-slate-900">Visitor & Usage Stats</div>
-                    <div className="text-[11px] text-slate-500 font-farsi">آمار استفاده و ارزیابی سیستم</div>
+                    <div className="text-xs text-slate-500 font-farsi">آمار استفاده و ارزیابی سیستم</div>
                   </div>
                 </div>
                 <span className="text-xs font-semibold text-emerald-700">Open ➔</span>

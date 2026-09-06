@@ -39,8 +39,8 @@ export const FieldGuide: React.FC<FieldGuideProps> = ({
         dir="rtl"
       >
         <Hand className={`w-6 h-6 mx-auto ${t.faint}`} />
-        <p className="font-bold text-[14px] text-slate-800">روی هر قسمت از فرم بزنید</p>
-        <p className="text-[13px] text-slate-600 leading-relaxed">
+        <p className="font-bold text-sm text-slate-800">روی هر قسمت از فرم بزنید</p>
+        <p className="text-sm text-slate-600 leading-relaxed">
           هر جای فرم را که لمس کنید، توضیح همان قسمت به زبان ساده اینجا نشان داده می‌شود.
         </p>
       </div>
@@ -67,7 +67,7 @@ export const FieldGuide: React.FC<FieldGuideProps> = ({
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2 flex-wrap min-w-0">
           {parsed.reference && (
-            <span className="font-mono text-[11px] font-bold text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
+            <span className="font-mono text-xs font-bold text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
               {parsed.reference}
             </span>
           )}
@@ -106,7 +106,7 @@ export const FieldGuide: React.FC<FieldGuideProps> = ({
         <p className="font-farsi text-[11.5px] font-bold text-slate-500" dir="rtl">
           متن روی فرم
         </p>
-        <p dir="ltr" className="text-left text-[13px] text-slate-800 leading-relaxed select-all break-words">
+        <p dir="ltr" className="text-left text-sm text-slate-800 leading-relaxed select-all break-words">
           {formText}
         </p>
         <div className="flex items-center gap-2">
@@ -126,7 +126,7 @@ export const FieldGuide: React.FC<FieldGuideProps> = ({
             onClick={copyFormText}
             aria-label="کپی متن"
             className={`min-h-[40px] px-3 inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-300
-              bg-white text-slate-700 text-[12px] font-bold cursor-pointer hover:bg-slate-50 transition ${t.focus}`}
+              bg-white text-slate-700 text-xs font-bold cursor-pointer hover:bg-slate-50 transition ${t.focus}`}
           >
             {copied ? <Check className={`w-4 h-4 ${t.doneText}`} /> : <Copy className="w-4 h-4" />}
             <span className="font-farsi">{copied ? 'کپی شد' : 'کپی'}</span>
@@ -135,7 +135,7 @@ export const FieldGuide: React.FC<FieldGuideProps> = ({
       </div>
 
       {status === 'loading' && (
-        <div className="flex items-center gap-2.5 py-2 font-farsi text-[13px] text-slate-500">
+        <div className="flex items-center gap-2.5 py-2 font-farsi text-sm text-slate-500">
           <Loader2 className="w-4 h-4 animate-spin" />
           در حال آماده کردن توضیح این قسمت…
         </div>
@@ -149,11 +149,11 @@ export const FieldGuide: React.FC<FieldGuideProps> = ({
 
       {explanation && (
         <div className="space-y-3">
-          <h2 className="font-farsi font-bold text-slate-900 text-[18px] leading-relaxed text-balance">
+          <h2 className="font-farsi font-bold text-slate-900 text-lg leading-relaxed text-balance">
             {explanation.labelFa}
           </h2>
 
-          <p className="font-farsi text-[14px] text-slate-700 leading-relaxed">{explanation.meaningFa}</p>
+          <p className="font-farsi text-sm text-slate-700 leading-relaxed">{explanation.meaningFa}</p>
 
           {explanation.whatToWriteFa && (
             <div className="rounded-xl bg-slate-50 border border-slate-200 p-3 space-y-1.5">
@@ -167,7 +167,7 @@ export const FieldGuide: React.FC<FieldGuideProps> = ({
               {explanation.exampleAnswer && (
                 <p
                   dir="ltr"
-                  className="text-left font-mono text-[13px] text-slate-800 bg-white border border-slate-200 rounded-lg px-3 py-2 mt-1.5"
+                  className="text-left font-mono text-sm text-slate-800 bg-white border border-slate-200 rounded-lg px-3 py-2 mt-1.5"
                 >
                   {explanation.exampleAnswer}
                 </p>

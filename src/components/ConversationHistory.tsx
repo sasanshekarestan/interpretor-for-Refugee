@@ -183,10 +183,10 @@ export const ConversationHistory: React.FC<ConversationHistoryProps> = ({
             >
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-teal-800 bg-teal-100/60 px-2 py-0.5 rounded text-[11px]">
+                  <span className="font-bold text-teal-800 bg-teal-100/60 px-2 py-0.5 rounded text-xs">
                     {item.detectedDialect || (isFarsi ? 'Farsi/Dari' : 'English')}
                   </span>
-                  <span className="text-[11px] text-slate-400 flex items-center gap-1">
+                  <span className="text-xs text-slate-400 flex items-center gap-1">
                     <Clock className="w-3 h-3" />
                     {new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
@@ -226,14 +226,14 @@ export const ConversationHistory: React.FC<ConversationHistoryProps> = ({
               {/* Text preview */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 border-t border-slate-200/50">
                 <div dir={isFarsi ? 'rtl' : 'ltr'}>
-                  <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">Original:</span>
+                  <span className="text-xs text-slate-400 uppercase font-bold block mb-0.5">Original:</span>
                   <p className={`text-slate-800 ${isFarsi ? 'font-farsi font-medium' : 'font-sans'}`}>
                     {item.sourceText}
                   </p>
                 </div>
 
                 <div>
-                  <span className="text-[10px] text-teal-800 uppercase font-bold block mb-0.5">British Translation:</span>
+                  <span className="text-xs text-teal-800 uppercase font-bold block mb-0.5">British Translation:</span>
                   <p className="text-slate-900 font-semibold">
                     {item.britishPhrasing || item.translatedText}
                   </p>

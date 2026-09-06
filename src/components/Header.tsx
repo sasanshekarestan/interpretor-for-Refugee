@@ -2,7 +2,8 @@ import React from 'react';
 import { TranslationDirection, EmbedSettings, UserLanguage } from '../types';
 import { 
   Globe2,
-  SlidersHorizontal
+  SlidersHorizontal,
+  Volume2
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -12,6 +13,8 @@ interface HeaderProps {
   onUpdateSettings: (settings: Partial<EmbedSettings>) => void;
   onOpenQuickPhrases: () => void;
   onOpenSettings: () => void;
+  /** Speak a prepared phrase out loud for the person in front of them. */
+  onOpenSayItForMe?: () => void;
   selectedDialectHint: string;
   onSelectDialectHint: (hint: string) => void;
   isCompactMode?: boolean;
@@ -23,6 +26,7 @@ export const Header: React.FC<HeaderProps> = ({
   settings,
   onUpdateSettings,
   onOpenSettings,
+  onOpenSayItForMe,
   selectedDialectHint,
   onSelectDialectHint,
   isCompactMode = false,
@@ -45,7 +49,7 @@ export const Header: React.FC<HeaderProps> = ({
                   <span className="text-teal-700 font-farsi font-semibold text-xs sm:text-base">| همراه و مترجم بریتانیا</span>
                 </h1>
               </div>
-              <p className="text-[10px] xs:text-[11px] sm:text-xs text-slate-500 font-medium flex flex-wrap items-center gap-1 sm:gap-2 mt-0.5 break-words">
+              <p className="text-xs xs:text-xs sm:text-xs text-slate-500 font-medium flex flex-wrap items-center gap-1 sm:gap-2 mt-0.5 break-words">
                 <span className="text-teal-700 font-semibold">Understand. Speak. Complete.</span>
                 <span className="text-slate-300 hidden sm:inline">|</span>
                 <span className="text-slate-600 font-farsi">بفهمید. صحبت کنید. تکمیل کنید.</span>
@@ -53,15 +57,29 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </div>
 
-          {/* Controls: Settings */}
+          {/* Controls. These live up here rather than floating over the page:
+              a fixed button in the corner lands on top of whatever happens to
+              be scrolled under it, which on the home screen was the link that
+              starts a conversation. */}
           <div className="flex items-center gap-2 shrink-0">
+            {onOpenSayItForMe && (
+              <button
+                id="btn-say-it-for-me"
+                onClick={onOpenSayItForMe}
+                title="Say it for me / برای من بگو"
+                aria-label="Say it for me / برای من بگو"
+                className="min-h-[44px] min-w-[44px] p-2 rounded-full text-on-primary bg-primary hover:bg-primary-press transition shrink-0 cursor-pointer flex items-center justify-center"
+              >
+                <Volume2 className="w-5 h-5" />
+              </button>
+            )}
             {/* Settings */}
             <button
               id="btn-settings"
               onClick={onOpenSettings}
               title="Settings / تنظیمات"
               aria-label="Settings / تنظیمات"
-              className="p-2 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition shrink-0 cursor-pointer"
+              className="min-h-[44px] min-w-[44px] p-2 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition shrink-0 cursor-pointer flex items-center justify-center"
             >
               <SlidersHorizontal className="w-4 h-4" />
             </button>

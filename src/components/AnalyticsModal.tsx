@@ -111,7 +111,7 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ isOpen, onClose 
               <div className="text-2xl font-black text-slate-900">
                 {isLoading ? '...' : (stats?.totalVisits || 0)}
               </div>
-              <span className="text-[11px] text-teal-800/80 font-medium">All visits recorded</span>
+              <span className="text-xs text-teal-800/80 font-medium">All visits recorded</span>
             </div>
 
             {/* Unique Visitors */}
@@ -123,7 +123,7 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ isOpen, onClose 
               <div className="text-2xl font-black text-slate-900">
                 {isLoading ? '...' : (stats?.uniqueVisitors || 0)}
               </div>
-              <span className="text-[11px] text-blue-800/80 font-medium">Individual devices</span>
+              <span className="text-xs text-blue-800/80 font-medium">Individual devices</span>
             </div>
 
             {/* Total Translations */}
@@ -135,7 +135,7 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ isOpen, onClose 
               <div className="text-2xl font-black text-slate-900">
                 {isLoading ? '...' : (stats?.totalTranslations || 0)}
               </div>
-              <span className="text-[11px] text-purple-800/80 font-medium">Translations done</span>
+              <span className="text-xs text-purple-800/80 font-medium">Translations done</span>
             </div>
 
             {/* Voice vs Text */}
@@ -147,7 +147,7 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ isOpen, onClose 
               <div className="text-2xl font-black text-slate-900">
                 {isLoading ? '...' : (stats?.voiceTranslations || 0)}
               </div>
-              <span className="text-[11px] text-amber-800/80 font-medium">{stats?.textTranslations || 0} via text typing</span>
+              <span className="text-xs text-amber-800/80 font-medium">{stats?.textTranslations || 0} via text typing</span>
             </div>
           </div>
 

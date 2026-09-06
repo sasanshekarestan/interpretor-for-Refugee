@@ -340,7 +340,7 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
             <div className="p-3.5 bg-amber-50 border border-amber-300 rounded-2xl text-amber-950 text-xs space-y-1 font-farsi dir-rtl">
               <div className="flex items-center gap-2 font-bold text-amber-900">
                 <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
-                <span>⚠️ هشدار کیفیت تصویر / تاریکی عکس</span>
+                <span>هشدار کیفیت تصویر / تاریکی عکس</span>
               </div>
               <p>
                 برخی از عکس‌ها تاریک یا کم‌نور به نظر می‌رسند. برای دقت ۱۰۰٪ در خواندن سوالات فرم کاغذی، بهتر است عکس را در نور کافی بگیرید. ما هرگز متن‌های تار را حدس نمی‌زنیم.
@@ -422,12 +422,12 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
                             {isDocx ? (
                               <div className="w-12 h-14 bg-blue-100 border border-blue-300 rounded-lg flex flex-col items-center justify-center text-blue-700 shrink-0">
                                 <FileText className="w-6 h-6" />
-                                <span className="text-[9px] font-black font-mono mt-0.5">DOCX</span>
+                                <span className="text-xs font-black font-mono mt-0.5">DOCX</span>
                               </div>
                             ) : isPdf ? (
                               <div className="w-12 h-14 bg-rose-100 border border-rose-300 rounded-lg flex flex-col items-center justify-center text-rose-700 shrink-0">
                                 <FileText className="w-6 h-6" />
-                                <span className="text-[9px] font-black font-mono mt-0.5">PDF</span>
+                                <span className="text-xs font-black font-mono mt-0.5">PDF</span>
                               </div>
                             ) : (
                               <img
@@ -440,12 +440,12 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
                               <span className="text-xs font-bold text-slate-900 block">
                                 Page {p.pageNumber} {isDocx ? '(Word)' : isPdf ? '(PDF)' : ''}
                               </span>
-                              <span className="text-[11px] text-slate-500 truncate block">
+                              <span className="text-xs text-slate-500 truncate block">
                                 {p.fileName}
                               </span>
                               {p.isBlurryOrDark && (
-                                <span className="text-[10px] text-amber-700 font-farsi block font-bold">
-                                  ⚠️ کیفیت عکس کم‌نور
+                                <span className="text-xs text-amber-700 font-farsi block font-bold">
+                                  کیفیت عکس کم‌نور
                                 </span>
                               )}
                             </div>
@@ -523,7 +523,7 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
                   <FileText className="w-4 h-4 text-teal-700" />
                   <div className="text-left">
                     <p className="font-bold text-slate-900">Try with standard UK form template</p>
-                    <p dir="rtl" className="font-farsi text-teal-800 text-[11px]">امتحان با نمونه فرم رسمی بریتانیا (ARC, HC1, GP)</p>
+                    <p dir="rtl" className="font-farsi text-teal-800 text-xs">امتحان با نمونه فرم رسمی بریتانیا (ARC, HC1, GP)</p>
                   </div>
                 </div>
                 <ArrowRight className="w-4 h-4 text-teal-700" />

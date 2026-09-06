@@ -34,11 +34,11 @@ export const QuickPhrasesDrawer: React.FC<QuickPhrasesDrawerProps> = ({
 
   const categories = [
     { id: 'all', label: 'همه (All)' },
-    { id: 'health', label: '🏥 GP & NHS Healthcare (پزشک و درمان)' },
-    { id: 'housing', label: '🏠 Housing & Accommodation (مسکن و اقامتگاه)' },
-    { id: 'support', label: '💳 Money & Benefits (مالی و کمک‌هزینه)' },
-    { id: 'home_office', label: '🏛️ Appointments & Home Office (قرار ملاقات و هوم آفیس)' },
-    { id: 'emergency', label: '🚨 Everyday & Emergency (روزمره و اضطراری)' },
+    { id: 'health', label: 'GP & NHS Healthcare (پزشک و درمان)' },
+    { id: 'housing', label: 'Housing & Accommodation (مسکن و اقامتگاه)' },
+    { id: 'support', label: 'Money & Benefits (مالی و کمک‌هزینه)' },
+    { id: 'home_office', label: 'Appointments & Home Office (قرار ملاقات و هوم آفیس)' },
+    { id: 'emergency', label: 'Everyday & Emergency (روزمره و اضطراری)' },
   ];
 
   const filtered = QUICK_PHRASES.filter((item) => {
@@ -146,7 +146,7 @@ export const QuickPhrasesDrawer: React.FC<QuickPhrasesDrawerProps> = ({
                   <p className="font-semibold text-teal-950 text-xs sm:text-sm pt-1">
                     {item.englishText}
                   </p>
-                  <p className="text-[11px] text-slate-400 font-mono italic">
+                  <p className="text-xs text-slate-400 font-mono italic">
                     {item.phonetic}
                   </p>
                 </div>

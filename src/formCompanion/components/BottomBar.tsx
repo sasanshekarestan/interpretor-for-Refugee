@@ -28,7 +28,7 @@ export const BottomBar: React.FC<BottomBarProps> = ({ view, onChange, answered, 
           ${active ? 'text-slate-900' : 'text-slate-500 hover:text-slate-700'} ${t.focus}`}
       >
         <span className={active ? t.primaryText : ''}>{icon}</span>
-        <span className="font-farsi text-[11px] font-bold leading-none">{fa}</span>
+        <span className="font-farsi text-xs font-bold leading-none">{fa}</span>
         <span className="sr-only">{en}</span>
       </button>
     );
@@ -55,7 +55,7 @@ export const BottomBar: React.FC<BottomBarProps> = ({ view, onChange, answered, 
         {tab('questions', <ListChecks className="w-5 h-5" />, 'سوال‌ها', 'Questions')}
       </div>
 
-      <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-[11px] text-slate-500 tabular-nums pointer-events-none">
+      <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-xs text-slate-500 tabular-nums pointer-events-none">
         {answered}/{total}
       </span>
     </nav>

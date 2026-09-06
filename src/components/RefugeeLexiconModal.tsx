@@ -113,17 +113,17 @@ export const RefugeeLexiconModal: React.FC<RefugeeLexiconModalProps> = ({
                     <h3 className="font-bold text-teal-950 text-sm sm:text-base">
                       {item.english}
                     </h3>
-                    <span className="text-[10px] font-semibold bg-slate-200/80 text-slate-700 px-2 py-0.5 rounded">
+                    <span className="text-xs font-semibold bg-slate-200/80 text-slate-700 px-2 py-0.5 rounded">
                       {item.category}
                     </span>
                   </div>
                   <div className="flex flex-wrap items-center gap-3 mt-1 text-xs">
                     <span className="font-farsi font-semibold text-slate-900">
-                      🇮🇷 فارسی: {item.farsi}
+                      فارسی: {item.farsi}
                     </span>
                     <span className="text-slate-300">|</span>
                     <span className="font-farsi font-semibold text-teal-800">
-                      🇦🇫 دری: {item.dari}
+                      دری: {item.dari}
                     </span>
                   </div>
                 </div>

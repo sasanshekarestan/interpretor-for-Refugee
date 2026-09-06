@@ -40,11 +40,11 @@ const Section: React.FC<{
       >
         <span className="text-slate-400 shrink-0">{icon}</span>
         <span className="flex-1 min-w-0">
-          <span className="block font-farsi font-bold text-[14px] text-slate-900">{titleFa}</span>
+          <span className="block font-farsi font-bold text-sm text-slate-900">{titleFa}</span>
           <span className="block text-[11.5px] text-slate-500">{titleEn}</span>
         </span>
         {typeof count === 'number' && count > 0 && (
-          <span className="shrink-0 text-[11px] font-bold text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full tabular-nums">
+          <span className="shrink-0 text-xs font-bold text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full tabular-nums">
             {count}
           </span>
         )}
@@ -249,8 +249,8 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
             <Camera className="w-5 h-5" />
           </div>
           <div className="flex-1 min-w-0">
-            <h2 className="font-bold text-indigo-950 text-[15px] leading-tight">Understand a Letter</h2>
-            <p className="font-farsi font-bold text-indigo-900 text-[14px] leading-tight" dir="rtl">
+            <h2 className="font-bold text-indigo-950 text-base leading-tight">Understand a Letter</h2>
+            <p className="font-farsi font-bold text-indigo-900 text-sm leading-tight" dir="rtl">
               فهمیدن یک نامه
             </p>
           </div>
@@ -289,7 +289,7 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
                       className="max-h-56 mx-auto rounded-xl border border-indigo-200 shadow-sm object-contain bg-white"
                     />
 
-                    <div className="flex items-center justify-center gap-2 text-[11px] text-slate-600">
+                    <div className="flex items-center justify-center gap-2 text-xs text-slate-600">
                       {isPdf ? <FileText className="w-3.5 h-3.5 text-indigo-600" /> : <Camera className="w-3.5 h-3.5 text-indigo-600" />}
                       <span className="font-mono truncate max-w-[220px]">{fileName}</span>
                       {isPdf && pdfPageCount > 0 && (
@@ -298,7 +298,7 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
                     </div>
 
                     {isPdf && pdfPageCount > 1 && (
-                      <p className="text-[11px] text-slate-500 font-farsi" dir="rtl">
+                      <p className="text-xs text-slate-500 font-farsi" dir="rtl">
                         همه {pdfPageCount} صفحه خوانده می‌شود. اینجا فقط صفحه اول را می‌بینید.
                       </p>
                     )}
@@ -328,7 +328,7 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
                       <p className="text-xs text-indigo-700 font-farsi" dir="rtl">
                         از نامه عکس بگیرید، یا فایل عکس یا PDF آن را انتخاب کنید.
                       </p>
-                      <p className="text-[11px] text-indigo-700/80">Take a photo, or choose an image or PDF file.</p>
+                      <p className="text-xs text-indigo-700/80">Take a photo, or choose an image or PDF file.</p>
                     </div>
 
                     <div className="flex flex-col sm:flex-row items-stretch justify-center gap-2.5">
@@ -355,7 +355,7 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
 
                     {/* bdi keeps the Latin "PDF" from jumping to the wrong
                         end of the Persian phrase */}
-                    <p className="text-[11px] text-slate-500">
+                    <p className="text-xs text-slate-500">
                       JPG, PNG or PDF · <bdi dir="rtl" className="font-farsi">عکس یا فایل PDF</bdi>
                     </p>
                   </div>
@@ -408,7 +408,7 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
               </button>
 
               {isAnalyzing && (
-                <p className="text-[11px] text-center text-slate-500 font-farsi leading-relaxed" dir="rtl">
+                <p className="text-xs text-center text-slate-500 font-farsi leading-relaxed" dir="rtl">
                   خواندن یک نامه چند صفحه‌ای ممکن است تا یک دقیقه طول بکشد. لطفاً صفحه را نبندید.
                 </p>
               )}
@@ -424,7 +424,7 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
                       under it, because the reader may know very little. */}
                   <span
                     dir="rtl"
-                    className="inline-block px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-900 font-farsi font-bold text-[12px]"
+                    className="inline-block px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-900 font-farsi font-bold text-xs"
                   >
                     {result.letterTypeFa || result.letterType || 'نامه رسمی'}
                   </span>
@@ -457,7 +457,7 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
                 <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
                   <p className="font-farsi text-[12.5px] font-bold text-slate-600" dir="rtl">
                     این نامه چیست؟
-                    <span className="font-sans font-semibold text-slate-400 text-[11px]"> · What is this?</span>
+                    <span className="font-sans font-semibold text-slate-400 text-xs"> · What is this?</span>
                   </p>
                   {result.whatIsThisFa && (
                     <p dir="rtl" className="font-farsi text-[14.5px] text-slate-900 leading-loose">
@@ -474,16 +474,16 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
               {result.whatDoesItSayFa && (
                 <div className="p-4 bg-teal-50 border border-teal-200 rounded-2xl space-y-2.5">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="font-farsi font-bold text-teal-950 text-[13px]">این نامه چه می‌گوید</p>
+                    <p className="font-farsi font-bold text-teal-950 text-sm">این نامه چه می‌گوید</p>
                     <button
                       onClick={() => playSpokenAudio(spokenSummary, 'fa-IR')}
-                      className="shrink-0 px-2.5 py-1.5 bg-white border border-teal-200 rounded-lg text-teal-800 text-[11px] font-bold flex items-center gap-1.5 hover:bg-teal-100/50"
+                      className="shrink-0 px-2.5 py-1.5 bg-white border border-teal-200 rounded-lg text-teal-800 text-xs font-bold flex items-center gap-1.5 hover:bg-teal-100/50"
                     >
                       <Volume2 className="w-3.5 h-3.5" />
                       <span className="font-farsi">شنیدن</span>
                     </button>
                   </div>
-                  <p dir="rtl" className="font-farsi text-[15px] text-slate-900 leading-loose">
+                  <p dir="rtl" className="font-farsi text-base text-slate-900 leading-loose">
                     {result.whatDoesItSayFa}
                   </p>
                 </div>
@@ -491,26 +491,26 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
 
               {result.whatDoesItSayEn && (
                 <div className="p-4 bg-white border border-slate-200 rounded-2xl space-y-1">
-                  <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">In simple English</p>
-                  <p className="text-[13px] text-slate-700 leading-relaxed">{result.whatDoesItSayEn}</p>
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wide">In simple English</p>
+                  <p className="text-sm text-slate-700 leading-relaxed">{result.whatDoesItSayEn}</p>
                 </div>
               )}
 
               {/* 3. What you must do — the part that has consequences */}
               {result.whatDoINeedToDo?.length > 0 && (
                 <div className="space-y-2">
-                  <p className="font-farsi font-bold text-[13px] text-slate-900" dir="rtl">
+                  <p className="font-farsi font-bold text-sm text-slate-900" dir="rtl">
                     کاری که باید انجام دهید
                   </p>
                   {result.whatDoINeedToDo.map((item, i) => (
                     <div key={i} className={`p-3.5 border rounded-2xl space-y-1.5 ${urgencyStyle(item.urgency)}`}>
                       <div className="flex items-start gap-2.5" dir="rtl">
-                        <span className="shrink-0 w-5 h-5 rounded-full bg-white border border-slate-300 text-[11px] font-bold text-slate-700 inline-flex items-center justify-center tabular-nums mt-0.5">
+                        <span className="shrink-0 w-5 h-5 rounded-full bg-white border border-slate-300 text-xs font-bold text-slate-700 inline-flex items-center justify-center tabular-nums mt-0.5">
                           {i + 1}
                         </span>
-                        <p className="font-farsi text-[14px] text-slate-900 leading-relaxed flex-1">{item.fa}</p>
+                        <p className="font-farsi text-sm text-slate-900 leading-relaxed flex-1">{item.fa}</p>
                       </div>
-                      <p className="text-[12px] text-slate-600 leading-snug ps-8">{item.en}</p>
+                      <p className="text-xs text-slate-600 leading-snug ps-8">{item.en}</p>
                       {item.urgency === 'high' && (
                         <p className="font-farsi text-[11.5px] font-bold text-rose-700 ps-8" dir="rtl">
                           فوری است
@@ -527,17 +527,17 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
                   <div className="flex items-center gap-2 font-bold text-amber-950 text-[12.5px]">
                     <Calendar className="w-4 h-4 text-amber-700" />
                     <span className="font-farsi">تاریخ‌های مهم</span>
-                    <span className="text-amber-800/80 font-semibold text-[11px]">Dates that matter</span>
+                    <span className="text-amber-800/80 font-semibold text-xs">Dates that matter</span>
                   </div>
                   {result.importantDates.map((d, i) => (
                     <div key={i} className="bg-white p-3 rounded-xl border border-amber-200 space-y-1">
-                      <span className="font-mono font-bold text-[12px] text-amber-900 bg-amber-100 px-2 py-0.5 rounded">
+                      <span className="font-mono font-bold text-xs text-amber-900 bg-amber-100 px-2 py-0.5 rounded">
                         {d.date}
                       </span>
                       {d.faAction && (
                         <p dir="rtl" className="font-farsi text-[13.5px] text-slate-900 leading-relaxed">{d.faAction}</p>
                       )}
-                      {d.action && <p className="text-[12px] text-slate-600 leading-snug">{d.action}</p>}
+                      {d.action && <p className="text-xs text-slate-600 leading-snug">{d.action}</p>}
                     </div>
                   ))}
                 </div>
@@ -548,8 +548,8 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
                 <Section icon={<Phone className="w-4 h-4" />} titleFa="شماره‌ها و افراد مهم" titleEn="Who to contact" count={result.importantNamesContact.length}>
                   {result.importantNamesContact.map((c, i) => (
                     <div key={i} className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-0.5">
-                      <p className="font-bold text-[13px] text-slate-900">{c.nameOrOrg}</p>
-                      {c.roleOrDetail && <p className="text-[12px] text-slate-600">{c.roleOrDetail}</p>}
+                      <p className="font-bold text-sm text-slate-900">{c.nameOrOrg}</p>
+                      {c.roleOrDetail && <p className="text-xs text-slate-600">{c.roleOrDetail}</p>}
                       {c.contactInfo && (
                         <p dir="ltr" className="font-mono text-[12.5px] text-slate-900 select-all">{c.contactInfo}</p>
                       )}
@@ -564,7 +564,7 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
                     <div key={i} className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
                       <p className="font-mono font-bold text-[12.5px] text-slate-900">{t.term}</p>
                       {t.faExplanation && (
-                        <p dir="rtl" className="font-farsi text-[13px] text-slate-800 leading-relaxed">{t.faExplanation}</p>
+                        <p dir="rtl" className="font-farsi text-sm text-slate-800 leading-relaxed">{t.faExplanation}</p>
                       )}
                       {t.simpleEn && <p className="text-[11.5px] text-slate-500 leading-snug">{t.simpleEn}</p>}
                     </div>
@@ -577,7 +577,7 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
                   {result.questionsToAsk.map((q, i) => (
                     <div key={i} className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
                       <p dir="rtl" className="font-farsi text-[13.5px] text-slate-900 leading-relaxed">{q.questionFa}</p>
-                      <p className="text-[12px] text-slate-600 select-all">{q.questionEn}</p>
+                      <p className="text-xs text-slate-600 select-all">{q.questionEn}</p>
                     </div>
                   ))}
                 </Section>
@@ -587,7 +587,7 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
                 <Section icon={<ClipboardList className="w-4 h-4" />} titleFa="مرحله‌های بعدی" titleEn="What happens next" count={result.timelineSteps.length}>
                   {result.timelineSteps.map((s, i) => (
                     <div key={i} className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1" dir="rtl">
-                      <p className="font-farsi font-bold text-[13px] text-slate-900">
+                      <p className="font-farsi font-bold text-sm text-slate-900">
                         {s.step ?? i + 1}. {s.titleFa}
                       </p>
                       {s.descriptionFa && (
@@ -614,14 +614,14 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
                     <span className="font-farsi">{copiedResponse ? '| کپی شد' : '| کپی کردن'}</span>
                   </button>
                   {result.suggestedResponseFa && (
-                    <p dir="rtl" className="font-farsi text-[12px] text-slate-600 leading-relaxed">
+                    <p dir="rtl" className="font-farsi text-xs text-slate-600 leading-relaxed">
                       ترجمه: {result.suggestedResponseFa}
                     </p>
                   )}
                 </Section>
               )}
 
-              <p className="text-[11px] text-slate-500 leading-relaxed pt-1">
+              <p className="text-xs text-slate-500 leading-relaxed pt-1">
                 {result.legalNotice ||
                   'This application provides translation and general guidance. It is not a solicitor and does not replace professional legal advice.'}
               </p>

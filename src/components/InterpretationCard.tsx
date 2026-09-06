@@ -167,7 +167,7 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
 
           {/* Urgency / Tone */}
           {result.toneOrEmotion && (
-            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-medium">
+            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-medium">
               <Flame className="w-3 h-3 text-amber-600" />
               <span>{result.toneOrEmotion}</span>
             </div>
@@ -250,7 +250,7 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
               <span className={isFarsiToEnglish ? 'font-farsi text-sm text-teal-800' : 'font-sans text-xs uppercase tracking-wide text-indigo-800'}>
                 {isFarsiToEnglish ? 'شما گفتید (Farsi / Dari Transcript):' : 'You Said (English Transcript):'}
               </span>
-              <span className="text-[11px] text-slate-400">Verbatim</span>
+              <span className="text-xs text-slate-400">Verbatim</span>
             </div>
             <p
               dir={isFarsiToEnglish ? 'rtl' : 'ltr'}
@@ -278,7 +278,7 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
             )}
 
             {result.dialectNotes && (
-              <div className="flex items-center gap-1 text-[11px] text-slate-500">
+              <div className="flex items-center gap-1 text-xs text-slate-500">
                 <Info className="w-3 h-3 text-teal-600" />
                 <span>{result.dialectNotes}</span>
               </div>
@@ -297,7 +297,7 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
 
               {/* View style toggle */}
               {isFarsiToEnglish && (
-                <div className="flex items-center gap-1 text-[11px]">
+                <div className="flex items-center gap-1 text-xs">
                   <button
                     id="btn-tab-standard"
                     onClick={() => setViewMode('standard')}
@@ -344,7 +344,7 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
                   >
                     {isFarsiToEnglish ? (result.formalPhrasing || result.translatedText) : result.translatedText}
                   </p>
-                  <p className="text-[11px] text-teal-800 font-medium mt-1">
+                  <p className="text-xs text-teal-800 font-medium mt-1">
                     * Official phrasing for NHS, Home Office, or Legal Solicitors.
                   </p>
                 </div>
@@ -356,7 +356,7 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
               when the device has no Persian voice the reason is shown here. */}
           {noFarsiVoice && (
             <p
-              className="mt-3 text-[11px] font-farsi text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 leading-relaxed"
+              className="mt-3 text-xs font-farsi text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 leading-relaxed"
               dir="rtl"
               role="status"
             >
@@ -414,7 +414,7 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
                   <span className="text-slate-400">➔</span>
                   <span className="font-farsi text-slate-800">{term.farsi}</span>
                 </div>
-                <p className="text-[11px] text-slate-600 mt-1 leading-snug">
+                <p className="text-xs text-slate-600 mt-1 leading-snug">
                   {term.explanation}
                 </p>
               </div>
