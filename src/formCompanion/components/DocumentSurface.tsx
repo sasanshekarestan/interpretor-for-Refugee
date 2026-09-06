@@ -80,12 +80,12 @@ export const DocumentSurface: React.FC<DocumentSurfaceProps> = ({
                 className={`absolute rounded-[3px] transition cursor-pointer
                   ${
                     isActive
-                      ? 'bg-[#005EB8]/25 ring-2 ring-[#005EB8]'
+                      ? 'bg-[#0E6E64]/25 ring-2 ring-[#0E6E64]'
                       : isAnswered
                       ? 'bg-teal-500/20 hover:bg-teal-500/30'
                       : f.source === 'widget'
-                      ? 'bg-[#005EB8]/8 hover:bg-[#005EB8]/20'
-                      : 'bg-transparent hover:bg-[#005EB8]/15'
+                      ? 'bg-[#0E6E64]/8 hover:bg-[#0E6E64]/20'
+                      : 'bg-transparent hover:bg-[#0E6E64]/15'
                   }`}
                 style={{
                   left: f.left,

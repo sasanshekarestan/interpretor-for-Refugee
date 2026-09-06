@@ -12,19 +12,26 @@
  *   (slate)   everything structural: surfaces, borders, text
  */
 
+/**
+ * The document's own colour, and never the app's. It appears inside a rendered
+ * form because the form is printed in it, not because we chose it.
+ */
 export const NHS_BLUE = '#005EB8';
 
 export const t = {
-  // The single primary action.
-  primary: 'bg-[#005EB8] text-white hover:bg-[#004a92] active:bg-[#003d78]',
-  primaryText: 'text-[#005EB8]',
-  primaryRing: 'focus-visible:ring-[#005EB8]',
+  // The single primary action. The same teal as the rest of the app: this used
+  // to be NHS blue, from when Form Companion was trying to look like the paper
+  // it sits next to, which made the app and the document hard to tell apart.
+  primary: 'bg-primary text-on-primary hover:bg-primary-press',
+  primaryText: 'text-primary',
+  primaryRing: 'focus-visible:ring-[#0E6E64]',
 
-  // Answered / complete.
-  done: 'bg-emerald-600 text-white',
-  doneText: 'text-emerald-700',
-  doneSoft: 'bg-emerald-50 text-emerald-800 border-emerald-200',
-  doneFill: 'bg-emerald-500',
+  // Answered. There is no separate success colour: a second green beside a
+  // teal brand reads as an accident, so done is the brand plus a tick.
+  done: 'bg-primary text-on-primary',
+  doneText: 'text-primary',
+  doneSoft: 'bg-teal-50 text-teal-900 border-teal-200',
+  doneFill: 'bg-primary',
 
   // Check this before writing it down.
   attention: 'bg-amber-50 text-amber-900 border-amber-300',
@@ -46,7 +53,7 @@ export const t = {
   line: 'border-slate-200',
 
   // Shared shapes.
-  focus: 'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#005EB8]',
+  focus: 'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0E6E64]',
   tapTarget: 'min-h-[48px]',
 } as const;
 

@@ -430,7 +430,7 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
               className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium rounded-xl transition flex items-center gap-1.5 text-xs"
               title="Open official GOV.UK / NHS website source"
             >
-              <ExternalLink className="w-3.5 h-3.5 text-blue-400" />
+              <ExternalLink className="w-3.5 h-3.5 text-teal-400" />
               <span className="hidden md:inline">GOV / NHS Source</span>
             </a>
           )}
@@ -440,12 +440,12 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
             href={webUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-3.5 py-1.5 bg-[#005EB8] hover:bg-blue-600 text-white font-bold rounded-xl transition flex items-center gap-2 text-xs shadow-xs cursor-pointer"
+            className="px-3.5 py-1.5 bg-primary hover:bg-primary-press text-white font-bold rounded-xl transition flex items-center gap-2 text-xs shadow-xs cursor-pointer"
             title="باز کردن فایل PDF در برگه جدید مرورگر برای چاپ و ذخیره (چاپ و ثبت در برگه نو) / Open PDF in new browser tab to print or save"
           >
             <Printer className="w-3.5 h-3.5 shrink-0" />
             <span className="font-farsi font-bold">چاپ و ذخیره PDF</span>
-            <span className="text-xs text-blue-200 hidden sm:inline font-farsi">(برگه جدید / تب نو)</span>
+            <span className="text-xs text-teal-200 hidden sm:inline font-farsi">(برگه جدید / تب نو)</span>
           </a>
         </div>
       </div>
@@ -504,7 +504,7 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
                   href={officialSourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition flex items-center gap-2 shadow-sm"
+                  className="px-4 py-2 bg-primary hover:bg-primary-press text-white font-bold rounded-xl text-xs transition flex items-center gap-2 shadow-sm"
                 >
                   <Download className="w-4 h-4" />
                   <span>Download PDF from official website</span>
@@ -520,7 +520,7 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
               </button>
             </div>
 
-            <div className="p-3 bg-blue-950/40 border border-blue-900/60 rounded-xl text-xs text-blue-300 font-farsi dir-rtl">
+            <div className="p-3 bg-teal-950/40 border border-teal-900/60 rounded-xl text-xs text-teal-300 font-farsi dir-rtl">
               دستیار هوشمند و راهنمای فارسی سوالات فرم کاملاً فعال و قابل استفاده است.
             </div>
           </div>

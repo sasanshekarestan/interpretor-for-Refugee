@@ -44,10 +44,7 @@ export const Header: React.FC<HeaderProps> = ({
               and each still starts from its own side. */}
           <div className="min-w-0">
             <HamyarWordmark className="h-6 sm:h-7 w-auto text-primary" title="Hamyar / همیار" />
-            <p className="font-farsi text-sm text-ink-muted leading-snug mt-1" dir="rtl">
-              همراهی برای زندگی آسان‌تر در بریتانیا
-            </p>
-            <p className="text-sm text-ink-muted leading-snug">
+            <p className="text-sm text-ink-muted leading-snug mt-1">
               A companion for easy integration in the UK
             </p>
           </div>
@@ -63,9 +60,14 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={onOpenSayItForMe}
                 title="Say it for me / برای من بگو"
                 aria-label="Say it for me / برای من بگو"
-                className="min-h-[44px] min-w-[44px] p-2 rounded-full text-on-primary bg-primary hover:bg-primary-press transition shrink-0 cursor-pointer flex items-center justify-center"
+                className="min-h-[44px] px-3 sm:px-4 rounded-full text-on-primary bg-primary hover:bg-primary-press transition shrink-0 cursor-pointer flex items-center gap-2"
               >
-                <Volume2 className="w-5 h-5" />
+                <Volume2 className="w-5 h-5 shrink-0" />
+                {/* An icon on its own said nothing about what pressing it does. */}
+                <span className="font-farsi text-sm font-bold whitespace-nowrap">برای من بگو</span>
+                <span className="hidden lg:inline text-sm font-semibold whitespace-nowrap">
+                  Say it for me
+                </span>
               </button>
             )}
             {/* Settings */}

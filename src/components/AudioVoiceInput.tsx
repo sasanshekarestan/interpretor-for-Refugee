@@ -294,9 +294,6 @@ export const AudioVoiceInput: React.FC<AudioVoiceInputProps> = ({
               <h3 className="text-base font-bold text-slate-900 font-farsi">
                 فارسی یا دری صحبت کنید
               </h3>
-              <p className="text-xs text-slate-600 mt-1.5 font-farsi leading-relaxed">
-                گفتار شما به لهجه‌های مختلف (کابلی، هراتی، هزارگی، تهرانی) به انگلیسی روان ترجمه می‌شود.
-              </p>
 
               <div className="mt-3 flex items-center gap-2 text-xs text-teal-700 font-semibold font-farsi">
                 <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 shrink-0" />
@@ -340,9 +337,6 @@ export const AudioVoiceInput: React.FC<AudioVoiceInputProps> = ({
               <h3 className="text-base font-bold text-slate-900">
                 Speak English
               </h3>
-              <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
-                Speak clearly in English. Your speech is translated into clear spoken Farsi and Dari.
-              </p>
 
               <div className="mt-3 flex items-center gap-2 text-xs text-teal-700 font-semibold">
                 <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 shrink-0" />

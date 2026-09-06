@@ -124,7 +124,7 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({
           aria-label="سوال خود را از دستیار بپرسید"
           placeholder="سوال خود را بنویسید…"
           className="flex-1 min-h-[44px] max-h-28 resize-none rounded-xl border border-slate-300 px-3.5 py-3
-            font-farsi text-[13.5px] text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#005EB8]/30"
+            font-farsi text-[13.5px] text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0E6E64]/30"
         />
         <button
           type="button"

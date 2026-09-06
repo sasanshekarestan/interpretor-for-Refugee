@@ -527,18 +527,48 @@ export default function App() {
         {/* TAB 1: HOME HUB */}
         {activeTab === 'home' && (
           <div className="space-y-6 sm:space-y-7 w-full min-w-0">
+            {/* What this is, before anything else. Someone arriving here has
+                usually been sent by a support worker and does not yet know
+                what the app does. Persian block, then English block. */}
+            <section className="grid md:grid-cols-[1fr_auto] items-center gap-6 md:gap-8">
+              <div className="space-y-4 order-2 md:order-1">
+                <div dir="rtl" className="space-y-2">
+                  <h2 className="font-farsi text-2xl sm:text-3xl font-bold text-ink leading-tight">
+                    تازه به بریتانیا آمده‌اید؟
+                  </h2>
+                  <p className="font-farsi text-lg text-ink-muted leading-relaxed">
+                    همیار به شما کمک می‌کند حرفتان را بزنید، نامه‌های رسمی را بفهمید و
+                    فرم‌های NHS و اداره مهاجرت را پر کنید. به فارسی و دری.
+                  </p>
+                </div>
+                <div className="space-y-1 border-t border-edge pt-4">
+                  <h3 className="text-xl font-bold text-ink">Just arrived in the UK?</h3>
+                  <p className="text-base text-ink-muted leading-relaxed">
+                    Hamyar helps you be understood, read the letters you are sent, and fill in NHS
+                    and Home Office forms, in Farsi and Dari.
+                  </p>
+                </div>
+              </div>
+              <img
+                src="/brand/just-arrived-in-the-uk.png"
+                alt=""
+                width={1187}
+                height={959}
+                className="order-1 md:order-2 w-full max-w-[260px] sm:max-w-[300px] h-auto mx-auto"
+              />
+            </section>
+
             {/* Privacy & Trust Banner */}
             <PrivacyBanner />
 
             {/* HEADING SECTION */}
             <div className="text-center space-y-1.5 pt-1 w-full min-w-0 px-2">
-              <h2 className="text-lg xs:text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight break-words">
+              <p dir="rtl" className="font-farsi font-bold text-ink text-xl break-words">
+                امروز چه کمکی از ما ساخته است؟
+              </p>
+              <h2 className="text-lg font-bold text-ink-muted tracking-tight break-words">
                 How can we help you today?
               </h2>
-              <p dir="rtl" className="font-farsi font-semibold text-slate-700 text-sm sm:text-base md:text-lg break-words">
-                امروز چگونه می‌توانیم کمک کنیم؟
-              </p>
-              <div className="w-12 h-1 bg-teal-500 rounded-full mx-auto mt-2"></div>
             </div>
 
             {/* 4 PRIMARY ACTION CARDS GRID */}
@@ -555,7 +585,7 @@ export default function App() {
                   <div>
                     <h3 className="text-base font-bold text-slate-900 break-words">Talk to someone</h3>
                     <p className="text-xs text-slate-500 font-medium break-words">Live audio interpretation</p>
-                    <h4 dir="rtl" className="font-farsi font-bold text-teal-800 text-base mt-2 break-words">صحبت با کسی</h4>
+                    <h4 dir="rtl" className="font-farsi font-bold text-teal-800 text-base mt-2 break-words">با کسی صحبت کنید</h4>
                     <p dir="rtl" className="font-farsi text-xs text-slate-500 break-words">ترجمه زنده و همزمان</p>
                   </div>
                 </div>
@@ -578,7 +608,7 @@ export default function App() {
                   <div>
                     <h3 className="text-base font-bold text-slate-900 break-words">Understand a letter</h3>
                     <p className="text-xs text-slate-500 font-medium break-words">Photo analysis & deadlines</p>
-                    <h4 dir="rtl" className="font-farsi font-bold text-teal-900 text-base mt-2 break-words">فهمیدن یک نامه</h4>
+                    <h4 dir="rtl" className="font-farsi font-bold text-teal-900 text-base mt-2 break-words">یک نامه را بفهمید</h4>
                     <p dir="rtl" className="font-farsi text-xs text-slate-500 break-words">عکس نامه و خلاصه فارسی</p>
                   </div>
                 </div>
@@ -605,7 +635,7 @@ export default function App() {
                   <div>
                     <h3 className="text-base font-bold text-slate-900 break-words">Fill in a form</h3>
                     <p className="text-xs text-slate-500 font-medium break-words">Guided question-by-question</p>
-                    <h4 dir="rtl" className="font-farsi font-bold text-teal-950 text-base mt-2 break-words">تکمیـل فرم</h4>
+                    <h4 dir="rtl" className="font-farsi font-bold text-teal-950 text-base mt-2 break-words">یک فرم را تکمیل کنید</h4>
                     <p dir="rtl" className="font-farsi text-xs text-slate-500 break-words">پاسخ صوتی و بررسی پاسخ‌ها</p>
                   </div>
                 </div>
@@ -628,7 +658,7 @@ export default function App() {
                   <div>
                     <h3 className="text-base font-bold text-slate-900 break-words">Write a message</h3>
                     <p className="text-xs text-slate-500 font-medium break-words">Polite UK English messages</p>
-                    <h4 dir="rtl" className="font-farsi font-bold text-teal-900 text-base mt-2 break-words">نوشتن یک پیام</h4>
+                    <h4 dir="rtl" className="font-farsi font-bold text-teal-900 text-base mt-2 break-words">یک پیام را بنویسید</h4>
                     <p dir="rtl" className="font-farsi text-xs text-slate-500 break-words">ارسال پیام به مسئول پرونده</p>
                   </div>
                 </div>
@@ -966,18 +996,37 @@ export default function App() {
         />
       )}
 
-      {/* Footer Disclaimer */}
-      <footer className={`mt-auto border-t border-slate-200 bg-white/90 py-4 px-4 text-center text-xs text-slate-500 print:hidden w-full max-w-full overflow-hidden ${isFormImmersive ? 'hidden' : ''}`}>
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-600 w-full min-w-0">
-          <div className="flex items-center gap-2 text-left min-w-0">
-            <Info className="w-4 h-4 text-slate-400 shrink-0" />
-            <p className="text-xs leading-tight break-words">
-              This app provides translation and general information only. It is not a solicitor and does not replace legal advice.
+      {/* Footer. The phone navigation is fixed over the bottom of the page,
+          so the footer needs to clear it or it never fully appears. */}
+      <footer
+        className={`mt-auto border-t border-edge bg-surface py-6 px-4 print:hidden w-full max-w-full pb-28 md:pb-6 ${
+          isFormImmersive ? 'hidden' : ''
+        }`}
+      >
+        <div className="max-w-6xl mx-auto space-y-4 w-full min-w-0">
+          <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-8">
+            <p dir="rtl" className="font-farsi text-sm text-ink-muted leading-relaxed flex-1 min-w-0">
+              این برنامه فقط ترجمه و اطلاعات عمومی ارائه می‌دهد و جایگزین مشاورهٔ حقوقی نیست.
+            </p>
+            <p className="text-sm text-ink-muted leading-relaxed flex-1 min-w-0">
+              This app provides translation and general information only. It is not a solicitor and
+              does not replace legal advice.
             </p>
           </div>
-          <p dir="rtl" className="font-farsi text-xs text-right break-words min-w-0">
-            این برنامه فقط ترجمه و اطلاعات عمومی ارائه می‌دهد و جایگزین مشاوره حقوقی نیست.
-          </p>
+
+          <div className="border-t border-edge pt-4 text-center">
+            <p className="text-sm text-ink-muted">
+              Powered by{' '}
+              <a
+                href="https://www.digipezeshk.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-primary underline underline-offset-2 hover:no-underline"
+              >
+                Mehr Health CIC
+              </a>
+            </p>
+          </div>
         </div>
       </footer>
 

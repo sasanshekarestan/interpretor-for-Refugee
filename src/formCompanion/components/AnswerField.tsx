@@ -57,7 +57,7 @@ export const AnswerField: React.FC<AnswerFieldProps> = ({
 
       <div
         className={`relative rounded-2xl border bg-white transition
-          ${isRecording ? 'border-[#005EB8] ring-2 ring-[#005EB8]/25' : 'border-slate-300'}`}
+          ${isRecording ? 'border-[#0E6E64] ring-2 ring-[#0E6E64]/25' : 'border-slate-300'}`}
       >
         <textarea
           id="answer-field"
@@ -78,7 +78,7 @@ export const AnswerField: React.FC<AnswerFieldProps> = ({
           aria-pressed={isRecording}
           className={`absolute left-2.5 bottom-2.5 w-10 h-10 inline-flex items-center justify-center rounded-xl
             cursor-pointer transition ${t.focus}
-            ${isRecording ? 'bg-[#005EB8] text-white' : 'text-slate-500 hover:bg-slate-100'}`}
+            ${isRecording ? 'bg-[#0E6E64] text-white' : 'text-slate-500 hover:bg-slate-100'}`}
         >
           {isRecording ? <Square className="w-4 h-4" fill="currentColor" /> : <Mic className="w-5 h-5" />}
         </button>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Lock, ArrowRight, X, Database, Server, UserX, EyeOff } from 'lucide-react';
+import { ShieldCheck, Lock, X, Database, UserX, EyeOff } from 'lucide-react';
 
 interface PrivacyBannerProps {
   onOpenPrivacyModal?: () => void;
@@ -18,39 +18,47 @@ export const PrivacyBanner: React.FC<PrivacyBannerProps> = ({ onOpenPrivacyModal
 
   return (
     <>
-      <div className="bg-gradient-to-r from-teal-900 via-slate-900 to-teal-950 text-white rounded-2xl p-3.5 sm:p-5 shadow-sm border border-teal-800/40 relative overflow-hidden w-full max-w-full">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 relative z-10 w-full min-w-0">
-          <div className="flex items-start gap-2.5 sm:gap-3 min-w-0 flex-1">
-            <div className="p-2 sm:p-2.5 rounded-xl bg-teal-800/60 border border-teal-600/30 text-teal-300 shrink-0 mt-0.5">
-              <Lock className="w-4 h-4 sm:w-5 sm:h-5" />
-            </div>
-            <div className="min-w-0 flex-1">
-              {/* Persian heading first, English under it. The pipe that used
-                  to separate them was a join between two directions, and it
-                  read as a stray mark at the start of the Persian line. */}
-              <div className="flex flex-col gap-0.5">
-                <h3 className="font-farsi font-bold text-lg text-teal-300 leading-tight" dir="rtl">
-                  گفتگوهای شما کاملاً خصوصی است
-                </h3>
-                <p className="font-bold text-base text-white">Your conversations are private</p>
-              </div>
-              <p className="text-xs sm:text-xs text-slate-300 mt-1 max-w-3xl leading-relaxed break-words">
-                Your information is handled securely. We do not share your conversations with your caseworker, Home Office, landlord or other organisations unless you explicitly choose to share something.
-              </p>
-              <p className="text-xs text-teal-200 font-farsi mt-1 dir-rtl text-right break-words">
-                اطلاعات شما امن است. گفتگوهای شما به پرونده، اداره مهاجرت (Home Office)، صاحب‌خانه یا سازمان دیگری فرستاده نمی‌شود.
-              </p>
-            </div>
-          </div>
+      {/* A notice, in the shape design.md gives every notice: a rule down the
+          edge, a heading, and one language per block. It was a dark slab with
+          a three-stop gradient across it, and the Persian carried a class
+          called "dir-rtl", which is not a thing - so the one paragraph that
+          most needed right-to-left was never actually set to it, and read as
+          scrambled punctuation. */}
+      <div className="bg-surface border border-edge border-l-4 border-l-primary rounded-lg p-4 sm:p-5 w-full max-w-full">
+        <div className="flex items-start gap-3">
+          <Lock className="w-5 h-5 text-primary shrink-0 mt-1" aria-hidden="true" />
 
-          <button
-            id="btn-privacy-details"
-            onClick={handleOpen}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-semibold transition shrink-0 self-start sm:self-center cursor-pointer"
-          >
-            <span>Privacy & data</span>
-            <span className="font-farsi">→</span>
-          </button>
+          <div className="min-w-0 flex-1 space-y-4">
+            <div dir="rtl" className="space-y-1">
+              <h3 className="font-farsi font-bold text-lg text-ink leading-tight">
+                گفتگوهای شما کاملاً خصوصی است
+              </h3>
+              <p className="font-farsi text-base text-ink-muted leading-relaxed">
+                اطلاعات شما امن است. گفتگوهای شما به پرونده، اداره مهاجرت
+                (<span dir="ltr">Home Office</span>)، صاحب‌خانه یا سازمان دیگری فرستاده نمی‌شود،
+                مگر خودتان بخواهید.
+              </p>
+            </div>
+
+            <div className="space-y-1 border-t border-edge pt-3">
+              <h4 className="font-bold text-base text-ink">Your conversations are private</h4>
+              <p className="text-base text-ink-muted leading-relaxed">
+                Your information is handled securely. We do not share your conversations with your
+                caseworker, Home Office, landlord or other organisations unless you explicitly
+                choose to share something.
+              </p>
+            </div>
+
+            <button
+              id="btn-privacy-details"
+              onClick={handleOpen}
+              className="inline-flex items-center gap-2 min-h-[44px] px-4 rounded-lg border border-edge-control
+                         text-ink hover:bg-page transition cursor-pointer text-sm font-semibold"
+            >
+              <span className="font-farsi">حریم خصوصی و داده‌ها</span>
+              <span className="text-ink-muted">Privacy and data</span>
+            </button>
+          </div>
         </div>
       </div>
 
