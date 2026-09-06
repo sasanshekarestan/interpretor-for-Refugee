@@ -166,7 +166,7 @@ export const SavedPhrasesModal: React.FC<SavedPhrasesModalProps> = ({
                       title="Copy phrase"
                       className="p-1 rounded text-slate-400 hover:text-slate-700 hover:bg-slate-200/50"
                     >
-                      {copiedId === phrase.id ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                      {copiedId === phrase.id ? <Check className="w-3.5 h-3.5 text-teal-600" /> : <Copy className="w-3.5 h-3.5" />}
                     </button>
                     <button
                       onClick={() => onDeletePhrase(phrase.id)}

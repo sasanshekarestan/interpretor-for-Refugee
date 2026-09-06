@@ -69,40 +69,86 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({ activeTab, onTab
   ];
 
   return (
-    <nav
-      className="fixed bottom-0 inset-x-0 z-30 bg-surface border-t border-edge print:hidden
-                 pb-[env(safe-area-inset-bottom)]"
-      aria-label="بخش‌های برنامه / Sections"
-    >
-      <ul className="max-w-6xl mx-auto flex items-stretch">
-        {tabs.map((tab) => {
-          const isActive = activeTab === tab.id;
-          return (
-            <li key={tab.id} className="flex-1">
-              <button
-                id={`tab-nav-${tab.id}`}
-                onClick={() => onTabChange(tab.id)}
-                aria-current={isActive ? 'page' : undefined}
-                aria-label={`${tab.fullFa} / ${tab.fullEn}`}
-                className={`w-full min-h-[60px] flex flex-col items-center justify-center gap-1 px-1 py-2
-                  transition cursor-pointer
-                  ${isActive ? 'text-primary' : 'text-ink-muted hover:text-ink'}`}
-              >
-                {/* The active destination is marked by weight and a rule, not
-                    by colour alone. */}
-                <span aria-hidden="true">{tab.icon}</span>
-                <span className={`font-farsi text-xs leading-none ${isActive ? 'font-bold' : 'font-medium'}`}>
-                  {tab.short}
-                </span>
-                <span
-                  aria-hidden="true"
-                  className={`block h-0.5 w-6 rounded-full ${isActive ? 'bg-primary' : 'bg-transparent'}`}
-                />
-              </button>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
+    <>
+      {/* Wide screens: a row under the header, which is where a person looks
+          for a menu on a desktop. A bar pinned to the bottom of a large window
+          is a long way from the content and reads as a phone app that has been
+          stretched. There is room here for the full name of each destination,
+          so it gets it. */}
+      <nav
+        className="hidden md:block bg-surface border-b border-edge print:hidden"
+        aria-label="بخش‌های برنامه / Sections"
+      >
+        <ul className="max-w-6xl mx-auto flex items-stretch gap-1 px-6">
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <li key={tab.id}>
+                <button
+                  id={`tab-nav-${tab.id}`}
+                  onClick={() => onTabChange(tab.id)}
+                  aria-current={isActive ? 'page' : undefined}
+                  aria-label={`${tab.fullFa} / ${tab.fullEn}`}
+                  className={`min-h-[56px] flex items-center gap-2.5 px-4 border-b-2 transition cursor-pointer
+                    ${
+                      isActive
+                        ? 'border-primary text-primary'
+                        : 'border-transparent text-ink-muted hover:text-ink'
+                    }`}
+                >
+                  <span aria-hidden="true">{tab.icon}</span>
+                  <span className="text-left leading-tight">
+                    <span
+                      className={`block font-farsi text-base ${isActive ? 'font-bold' : 'font-medium'}`}
+                    >
+                      {tab.fullFa}
+                    </span>
+                    <span className="block text-xs opacity-80">{tab.fullEn}</span>
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+
+      {/* Phones: under the thumb, where the reach is. */}
+      <nav
+        className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-surface border-t border-edge print:hidden
+                   pb-[env(safe-area-inset-bottom)]"
+        aria-label="بخش‌های برنامه / Sections"
+      >
+        <ul className="flex items-stretch">
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <li key={tab.id} className="flex-1">
+                <button
+                  id={`tab-nav-mobile-${tab.id}`}
+                  onClick={() => onTabChange(tab.id)}
+                  aria-current={isActive ? 'page' : undefined}
+                  aria-label={`${tab.fullFa} / ${tab.fullEn}`}
+                  className={`w-full min-h-[60px] flex flex-col items-center justify-center gap-1 px-1 py-2
+                    transition cursor-pointer
+                    ${isActive ? 'text-primary' : 'text-ink-muted hover:text-ink'}`}
+                >
+                  {/* Marked by weight and a rule, not by colour alone. */}
+                  <span aria-hidden="true">{tab.icon}</span>
+                  <span
+                    className={`font-farsi text-xs leading-none ${isActive ? 'font-bold' : 'font-medium'}`}
+                  >
+                    {tab.short}
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    className={`block h-0.5 w-6 rounded-full ${isActive ? 'bg-primary' : 'bg-transparent'}`}
+                  />
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+    </>
   );
 };

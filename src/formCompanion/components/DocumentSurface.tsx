@@ -82,7 +82,7 @@ export const DocumentSurface: React.FC<DocumentSurfaceProps> = ({
                     isActive
                       ? 'bg-[#005EB8]/25 ring-2 ring-[#005EB8]'
                       : isAnswered
-                      ? 'bg-emerald-500/20 hover:bg-emerald-500/30'
+                      ? 'bg-teal-500/20 hover:bg-teal-500/30'
                       : f.source === 'widget'
                       ? 'bg-[#005EB8]/8 hover:bg-[#005EB8]/20'
                       : 'bg-transparent hover:bg-[#005EB8]/15'

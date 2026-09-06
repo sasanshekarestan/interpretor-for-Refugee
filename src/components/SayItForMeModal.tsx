@@ -197,7 +197,7 @@ export const SayItForMeModal: React.FC<SayItForMeModalProps> = ({ isOpen, onClos
                   </button>
                 )}
                 <button onClick={handleCopy} className="p-1 text-slate-400 hover:text-white">
-                  {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                  {copied ? <Check className="w-4 h-4 text-teal-400" /> : <Copy className="w-4 h-4" />}
                 </button>
               </div>
             </div>

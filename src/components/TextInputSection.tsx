@@ -131,7 +131,7 @@ export const TextInputSection: React.FC<TextInputSectionProps> = ({
             aria-label="English to Farsi & Dari Translation / ترجمه انگلیسی به فارسی و دری"
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
               !isFarsiToEnglish
-                ? 'bg-indigo-700 text-white shadow-xs'
+                ? 'bg-teal-700 text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -251,7 +251,7 @@ export const TextInputSection: React.FC<TextInputSectionProps> = ({
                 ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
                 : isFarsiToEnglish
                 ? 'bg-teal-700 hover:bg-teal-800 text-white shadow-teal-700/20 active:scale-98'
-                : 'bg-indigo-700 hover:bg-indigo-800 text-white shadow-indigo-700/20 active:scale-98'
+                : 'bg-teal-700 hover:bg-teal-800 text-white shadow-teal-700/20 active:scale-98'
             }`}
           >
             <span>

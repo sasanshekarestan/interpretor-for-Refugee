@@ -49,7 +49,7 @@ export const PinnedDetailsBar: React.FC<PinnedDetailsBarProps> = ({
               >
                 <span>{item}</span>
                 {copiedItem === item ? (
-                  <Check className="w-3 h-3 text-emerald-400" />
+                  <Check className="w-3 h-3 text-teal-400" />
                 ) : (
                   <Copy className="w-3 h-3 text-slate-400 group-hover:text-slate-200" />
                 )}

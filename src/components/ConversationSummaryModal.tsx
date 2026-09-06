@@ -146,7 +146,7 @@ export const ConversationSummaryModal: React.FC<ConversationSummaryModalProps> =
               onClick={handleCopy}
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs transition"
             >
-              {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+              {copied ? <Check className="w-4 h-4 text-teal-400" /> : <Copy className="w-4 h-4" />}
               <span>{copied ? 'Copied Summary' : 'Copy Summary'}</span>
             </button>
             <button

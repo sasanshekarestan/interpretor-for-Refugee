@@ -103,7 +103,7 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ isOpen, onClose 
           {/* Top Key Metrics Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {/* Total Visits */}
-            <div className="bg-gradient-to-br from-teal-50 to-emerald-50/40 p-4 rounded-xl border border-teal-100/80">
+            <div className="bg-gradient-to-br from-teal-50 to-teal-50/40 p-4 rounded-xl border border-teal-100/80">
               <div className="flex items-center justify-between text-teal-700 mb-1">
                 <span className="text-xs font-semibold uppercase tracking-wider">Total Pageviews</span>
                 <Globe2 className="w-4 h-4" />
@@ -115,31 +115,31 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ isOpen, onClose 
             </div>
 
             {/* Unique Visitors */}
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50/40 p-4 rounded-xl border border-blue-100/80">
-              <div className="flex items-center justify-between text-blue-700 mb-1">
+            <div className="bg-gradient-to-br from-teal-50 to-teal-50/40 p-4 rounded-xl border border-teal-100/80">
+              <div className="flex items-center justify-between text-teal-700 mb-1">
                 <span className="text-xs font-semibold uppercase tracking-wider">Unique Visitors</span>
                 <Users className="w-4 h-4" />
               </div>
               <div className="text-2xl font-black text-slate-900">
                 {isLoading ? '...' : (stats?.uniqueVisitors || 0)}
               </div>
-              <span className="text-xs text-blue-800/80 font-medium">Individual devices</span>
+              <span className="text-xs text-teal-800/80 font-medium">Individual devices</span>
             </div>
 
             {/* Total Translations */}
-            <div className="bg-gradient-to-br from-purple-50 to-fuchsia-50/40 p-4 rounded-xl border border-purple-100/80">
-              <div className="flex items-center justify-between text-purple-700 mb-1">
+            <div className="bg-gradient-to-br from-teal-50 to-teal-50/40 p-4 rounded-xl border border-teal-100/80">
+              <div className="flex items-center justify-between text-teal-700 mb-1">
                 <span className="text-xs font-semibold uppercase tracking-wider">Interpreted</span>
                 <TrendingUp className="w-4 h-4" />
               </div>
               <div className="text-2xl font-black text-slate-900">
                 {isLoading ? '...' : (stats?.totalTranslations || 0)}
               </div>
-              <span className="text-xs text-purple-800/80 font-medium">Translations done</span>
+              <span className="text-xs text-teal-800/80 font-medium">Translations done</span>
             </div>
 
             {/* Voice vs Text */}
-            <div className="bg-gradient-to-br from-amber-50 to-orange-50/40 p-4 rounded-xl border border-amber-100/80">
+            <div className="bg-gradient-to-br from-amber-50 to-teal-50/40 p-4 rounded-xl border border-amber-100/80">
               <div className="flex items-center justify-between text-amber-700 mb-1">
                 <span className="text-xs font-semibold uppercase tracking-wider">Voice Sessions</span>
                 <Mic className="w-4 h-4" />
@@ -163,7 +163,7 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ isOpen, onClose 
                   <div className="text-xs text-slate-500 font-medium">Wix Embedded Site Views</div>
                   <div className="text-lg font-bold text-slate-800">{stats?.wixEmbedViews || 0}</div>
                 </div>
-                <span className="text-xs font-semibold bg-emerald-100 text-emerald-800 px-2 py-1 rounded">
+                <span className="text-xs font-semibold bg-teal-100 text-teal-800 px-2 py-1 rounded">
                   Embedded
                 </span>
               </div>
@@ -172,7 +172,7 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ isOpen, onClose 
                   <div className="text-xs text-slate-500 font-medium">Direct Standalone Visits</div>
                   <div className="text-lg font-bold text-slate-800">{stats?.directVisits || 0}</div>
                 </div>
-                <span className="text-xs font-semibold bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                <span className="text-xs font-semibold bg-teal-100 text-teal-800 px-2 py-1 rounded">
                   Direct Link
                 </span>
               </div>

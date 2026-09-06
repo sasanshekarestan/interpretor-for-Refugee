@@ -308,19 +308,19 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-fade-in max-h-[90vh]">
         {/* Modal Header */}
-        <div className="p-5 border-b border-indigo-100 bg-gradient-to-r from-indigo-900 to-slate-900 text-white flex items-center justify-between">
+        <div className="p-5 border-b border-teal-100 bg-gradient-to-r from-teal-900 to-slate-900 text-white flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shrink-0 shadow-md">
+            <div className="w-10 h-10 rounded-2xl bg-teal-600 flex items-center justify-center text-white shrink-0 shadow-md">
               <Upload className="w-5 h-5" />
             </div>
             <div>
               <h3 className="font-bold text-base sm:text-lg">آپلود یا عکاسی از فرم • Upload Form</h3>
-              <p className="text-xs text-indigo-200">عکس یا فایل صفحات فرم کاغذی خود را اضافه کنید</p>
+              <p className="text-xs text-teal-200">عکس یا فایل صفحات فرم کاغذی خود را اضافه کنید</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-white/10 text-indigo-200 hover:text-white transition"
+            className="p-2 rounded-full hover:bg-white/10 text-teal-200 hover:text-white transition"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
@@ -349,13 +349,13 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
           )}
 
           {isAnalyzing ? (
-            <div className="py-12 px-6 text-center space-y-4 animate-fade-in bg-indigo-50/50 rounded-3xl border border-indigo-100">
-              <div className="w-16 h-16 mx-auto rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 shadow-md">
+            <div className="py-12 px-6 text-center space-y-4 animate-fade-in bg-teal-50/50 rounded-3xl border border-teal-100">
+              <div className="w-16 h-16 mx-auto rounded-full bg-teal-100 flex items-center justify-center text-teal-600 shadow-md">
                 <RefreshCw className="w-8 h-8 animate-spin" />
               </div>
               <div className="space-y-1">
                 <h4 className="font-bold text-slate-900 text-base">Reading Your Paper Form...</h4>
-                <p dir="rtl" className="font-farsi text-indigo-900 font-bold text-sm">
+                <p dir="rtl" className="font-farsi text-teal-900 font-bold text-sm">
                   در حال بررسی و استخراج خانه و فیلدهای برگه فرم کاغذی...
                 </p>
                 <p className="text-xs text-slate-500 pt-1">Preparing Form Companion side-by-side view...</p>
@@ -375,16 +375,16 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
               {/* Upload Dropzone */}
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-indigo-300 hover:border-indigo-600 bg-indigo-50/40 hover:bg-indigo-50/80 rounded-3xl p-6 text-center cursor-pointer transition flex flex-col items-center justify-center space-y-2 group"
+                className="border-2 border-dashed border-teal-300 hover:border-teal-600 bg-teal-50/40 hover:bg-teal-50/80 rounded-3xl p-6 text-center cursor-pointer transition flex flex-col items-center justify-center space-y-2 group"
               >
-                <div className="w-14 h-14 rounded-full bg-indigo-100 group-hover:bg-indigo-200 text-indigo-700 flex items-center justify-center transition shadow-xs">
+                <div className="w-14 h-14 rounded-full bg-teal-100 group-hover:bg-teal-200 text-teal-700 flex items-center justify-center transition shadow-xs">
                   <ImagePlus className="w-7 h-7" />
                 </div>
                 <div>
                   <p className="font-bold text-slate-900 text-sm sm:text-base">
                     Take photo, upload PDF, DOCX or Word document
                   </p>
-                  <p dir="rtl" className="font-farsi font-bold text-indigo-900 text-xs mt-0.5">
+                  <p dir="rtl" className="font-farsi font-bold text-teal-900 text-xs mt-0.5">
                     عکس، اسکن، فایل PDF یا اسناد Word (DOCX) را انتخاب کنید (پشتیبانی از چندین فایل)
                   </p>
                 </div>
@@ -400,7 +400,7 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="text-xs text-indigo-700 font-bold hover:underline flex items-center gap-1"
+                      className="text-xs text-teal-700 font-bold hover:underline flex items-center gap-1"
                     >
                       <ImagePlus className="w-3.5 h-3.5" />
                       <span>افزودن صفحه دیگر</span>
@@ -420,7 +420,7 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
                         >
                           <div className="flex items-center gap-2.5 overflow-hidden">
                             {isDocx ? (
-                              <div className="w-12 h-14 bg-blue-100 border border-blue-300 rounded-lg flex flex-col items-center justify-center text-blue-700 shrink-0">
+                              <div className="w-12 h-14 bg-teal-100 border border-teal-300 rounded-lg flex flex-col items-center justify-center text-teal-700 shrink-0">
                                 <FileText className="w-6 h-6" />
                                 <span className="text-xs font-black font-mono mt-0.5">DOCX</span>
                               </div>
@@ -495,7 +495,7 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
                   className={`w-full py-3.5 px-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 transition shadow-sm font-farsi ${
                     pages.length === 0
                       ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                      : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                      : 'bg-teal-600 hover:bg-teal-700 text-white'
                   }`}
                 >
                   <Sparkles className="w-4 h-4 text-amber-300" />
@@ -532,14 +532,14 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
           ) : (
             /* Result Confirmation */
             <div className="space-y-4">
-              <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between">
-                <div className="flex items-center gap-2 text-emerald-950 font-bold text-xs sm:text-sm">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+              <div className="p-4 bg-teal-50 border border-teal-200 rounded-2xl flex items-center justify-between">
+                <div className="flex items-center gap-2 text-teal-950 font-bold text-xs sm:text-sm">
+                  <CheckCircle2 className="w-5 h-5 text-teal-600 shrink-0" />
                   <span>Form Uploaded & Analyzed</span>
                 </div>
                 <button
                   onClick={handleReset}
-                  className="text-xs text-indigo-700 font-bold hover:underline"
+                  className="text-xs text-teal-700 font-bold hover:underline"
                 >
                   Upload Different Pages
                 </button>
@@ -561,7 +561,7 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
                     onStartPresetForm('custom_uploaded', extractedCustomForm);
                   }
                 }}
-                className="w-full py-3.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition font-farsi"
+                className="w-full py-3.5 px-4 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition font-farsi"
               >
                 <span>ورود به محیط همزمان فرم و مترجم (Form Companion) ←</span>
               </button>

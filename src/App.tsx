@@ -446,12 +446,17 @@ export default function App() {
       />
       )}
 
+      {/* Navigation. A row here on wide screens, a bar at the foot of the
+          screen on phones. Rendered once; which one shows is a matter of
+          width. */}
+      {!isFormImmersive && <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />}
+
       {/* Main Container */}
       <main
         className={
           isFormImmersive
             ? 'flex-1 w-full min-w-0'
-            : 'flex-1 max-w-6xl w-full mx-auto p-3.5 sm:p-6 space-y-6 sm:space-y-7 min-w-0 pb-24'
+            : 'flex-1 max-w-6xl w-full mx-auto p-3.5 sm:p-6 space-y-6 sm:space-y-7 min-w-0 pb-24 md:pb-6'
         }
       >
         {/* A failed interpretation used to leave the screen silent: the error
@@ -541,7 +546,7 @@ export default function App() {
               {/* Card 1: Talk to someone */}
               <div
                 onClick={() => setActiveTab('interpreter')}
-                className="group bg-gradient-to-b from-teal-50/70 to-emerald-50/40 border-2 border-teal-200/90 hover:border-teal-500 rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
+                className="group bg-gradient-to-b from-teal-50/70 to-teal-50/40 border-2 border-teal-200/90 hover:border-teal-500 rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
               >
                 <div className="space-y-4">
                   <div className="w-12 h-12 rounded-2xl bg-teal-600 flex items-center justify-center text-white shadow-md shadow-teal-600/20 group-hover:scale-105 transition">
@@ -564,21 +569,21 @@ export default function App() {
               {/* Card 2: Understand a letter */}
               <div
                 onClick={() => setIsLetterScannerOpen(true)}
-                className="group bg-gradient-to-b from-indigo-50/70 to-slate-50/40 border-2 border-indigo-200/90 hover:border-indigo-500 rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
+                className="group bg-gradient-to-b from-teal-50/70 to-slate-50/40 border-2 border-teal-200/90 hover:border-teal-500 rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
               >
                 <div className="space-y-4">
-                  <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/20 group-hover:scale-105 transition">
+                  <div className="w-12 h-12 rounded-2xl bg-teal-600 flex items-center justify-center text-white shadow-md shadow-teal-600/20 group-hover:scale-105 transition">
                     <Camera className="w-6 h-6" />
                   </div>
                   <div>
                     <h3 className="text-base font-bold text-slate-900 break-words">Understand a letter</h3>
                     <p className="text-xs text-slate-500 font-medium break-words">Photo analysis & deadlines</p>
-                    <h4 dir="rtl" className="font-farsi font-bold text-indigo-900 text-base mt-2 break-words">فهمیدن یک نامه</h4>
+                    <h4 dir="rtl" className="font-farsi font-bold text-teal-900 text-base mt-2 break-words">فهمیدن یک نامه</h4>
                     <p dir="rtl" className="font-farsi text-xs text-slate-500 break-words">عکس نامه و خلاصه فارسی</p>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-indigo-200/60 flex items-center justify-between text-xs font-bold text-indigo-800">
+                <div className="pt-3 border-t border-teal-200/60 flex items-center justify-between text-xs font-bold text-teal-800">
                   <span>Scan letter now →</span>
                   <span className="font-farsi">اسکن نامه</span>
                 </div>
@@ -591,21 +596,21 @@ export default function App() {
                   setCustomUploadedForm(null);
                   setActiveTab('form_companion');
                 }}
-                className="group bg-gradient-to-b from-indigo-50/70 to-slate-50/40 border-2 border-indigo-300 hover:border-indigo-600 rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
+                className="group bg-gradient-to-b from-teal-50/70 to-slate-50/40 border-2 border-teal-300 hover:border-teal-600 rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
               >
                 <div className="space-y-4">
-                  <div className="w-12 h-12 rounded-2xl bg-indigo-700 flex items-center justify-center text-white shadow-md shadow-indigo-700/20 group-hover:scale-105 transition">
+                  <div className="w-12 h-12 rounded-2xl bg-teal-700 flex items-center justify-center text-white shadow-md shadow-teal-700/20 group-hover:scale-105 transition">
                     <CheckSquare className="w-6 h-6" />
                   </div>
                   <div>
                     <h3 className="text-base font-bold text-slate-900 break-words">Fill in a form</h3>
                     <p className="text-xs text-slate-500 font-medium break-words">Guided question-by-question</p>
-                    <h4 dir="rtl" className="font-farsi font-bold text-indigo-950 text-base mt-2 break-words">تکمیـل فرم</h4>
+                    <h4 dir="rtl" className="font-farsi font-bold text-teal-950 text-base mt-2 break-words">تکمیـل فرم</h4>
                     <p dir="rtl" className="font-farsi text-xs text-slate-500 break-words">پاسخ صوتی و بررسی پاسخ‌ها</p>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-indigo-300/60 flex items-center justify-between text-xs font-bold text-indigo-900">
+                <div className="pt-3 border-t border-teal-300/60 flex items-center justify-between text-xs font-bold text-teal-900">
                   <span>Start form guide →</span>
                   <span className="font-farsi">تکمیل فرم</span>
                 </div>
@@ -614,21 +619,21 @@ export default function App() {
               {/* Card 4: Write a message */}
               <div
                 onClick={() => setActiveTab('message_writer')}
-                className="group bg-gradient-to-b from-amber-50/70 to-slate-50/40 border-2 border-amber-300 hover:border-amber-600 rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
+                className="group bg-teal-50/40 border-2 border-teal-200 hover:border-teal-600 rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
               >
                 <div className="space-y-4">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-600 flex items-center justify-center text-white shadow-md shadow-amber-600/20 group-hover:scale-105 transition">
+                  <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-on-primary group-hover:scale-105 transition">
                     <Edit3 className="w-6 h-6" />
                   </div>
                   <div>
                     <h3 className="text-base font-bold text-slate-900 break-words">Write a message</h3>
                     <p className="text-xs text-slate-500 font-medium break-words">Polite UK English messages</p>
-                    <h4 dir="rtl" className="font-farsi font-bold text-amber-900 text-base mt-2 break-words">نوشتن یک پیام</h4>
+                    <h4 dir="rtl" className="font-farsi font-bold text-teal-900 text-base mt-2 break-words">نوشتن یک پیام</h4>
                     <p dir="rtl" className="font-farsi text-xs text-slate-500 break-words">ارسال پیام به مسئول پرونده</p>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-amber-300/60 flex items-center justify-between text-xs font-bold text-amber-900">
+                <div className="pt-3 border-t border-teal-300/60 flex items-center justify-between text-xs font-bold text-teal-900">
                   <span>Write message →</span>
                   <span className="font-farsi">نوشتن پیام</span>
                 </div>
@@ -653,7 +658,7 @@ export default function App() {
                     <h3 className="font-bold text-sm sm:text-base md:text-lg text-white group-hover:text-amber-200 transition break-words">
                       همراه تکمیل فرم‌های رسمی (NHS, Home Office, Council)
                     </h3>
-                    <span className="text-xs font-bold text-emerald-300 bg-emerald-950/90 px-2 py-0.5 rounded-md border border-emerald-800/80 shrink-0">
+                    <span className="text-xs font-bold text-teal-300 bg-teal-950/90 px-2 py-0.5 rounded-md border border-teal-800/80 shrink-0">
                       آرشیو رسمی و آپلود
                     </span>
                   </div>
@@ -802,20 +807,20 @@ export default function App() {
         {/* TAB 3: LETTER SCANNER */}
         {activeTab === 'letter_scanner' && (
           <div className="space-y-6">
-            <div className="bg-indigo-900 text-white p-6 rounded-3xl border border-indigo-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="bg-teal-900 text-white p-6 rounded-3xl border border-teal-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="space-y-1">
                 <h2 className="text-xl font-bold">Understand a letter</h2>
                 <p className="text-lg font-bold font-farsi" dir="rtl">فهمیدن یک نامه</p>
-                <p className="text-xs text-indigo-200 font-farsi leading-relaxed" dir="rtl">
+                <p className="text-xs text-teal-200 font-farsi leading-relaxed" dir="rtl">
                   از نامه عکس بگیرید یا فایل PDF آن را اضافه کنید تا به زبان ساده برایتان توضیح دهیم.
                 </p>
-                <p className="text-xs text-indigo-200/90">
+                <p className="text-xs text-teal-200/90">
                   Take a photo or add a PDF, and get it explained in plain English and Farsi.
                 </p>
               </div>
               <button
                 onClick={() => setIsLetterScannerOpen(true)}
-                className="px-5 py-3 bg-indigo-500 hover:bg-indigo-400 text-white rounded-xl text-xs font-bold transition shadow-xs shrink-0 flex items-center gap-2"
+                className="px-5 py-3 bg-teal-500 hover:bg-teal-400 text-white rounded-xl text-xs font-bold transition shadow-xs shrink-0 flex items-center gap-2"
               >
                 <span>Start</span>
                 <span className="font-farsi">| شروع</span>
@@ -823,7 +828,7 @@ export default function App() {
             </div>
 
             <div className="bg-white rounded-3xl p-8 text-center border border-slate-200 space-y-4">
-              <Camera className="w-12 h-12 text-indigo-600 mx-auto" />
+              <Camera className="w-12 h-12 text-teal-600 mx-auto" />
               <div className="space-y-1">
                 <h3 className="font-bold text-slate-900 text-base">Add an official letter</h3>
                 <p className="font-bold text-slate-900 text-base font-farsi" dir="rtl">نامه رسمی خود را اضافه کنید</p>
@@ -838,7 +843,7 @@ export default function App() {
               </p>
               <button
                 onClick={() => setIsLetterScannerOpen(true)}
-                className="px-6 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-2xl shadow-xs inline-flex items-center gap-2"
+                className="px-6 py-3.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-2xl shadow-xs inline-flex items-center gap-2"
               >
                 <Camera className="w-4 h-4" />
                 <span>Take a photo or add a PDF</span>
@@ -952,10 +957,6 @@ export default function App() {
       </main>
 
       {/* SAY IT FOR ME FLOATING ACTION BUTTON (Moved/hidden appropriately when on form companion to never block bottom next buttons) */}
-      {/* Navigation, fixed under the thumb. Rendered last because that is
-          where it sits on the screen. */}
-      {!isFormImmersive && <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />}
-
       {/* Pinned Details Bar at Bottom */}
       {!isFormImmersive && (
         <PinnedDetailsBar

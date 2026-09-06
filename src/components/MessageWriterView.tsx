@@ -290,9 +290,9 @@ export const MessageWriterView: React.FC<MessageWriterViewProps> = ({ userLangua
                 )}
                 <button
                   onClick={handleCopy}
-                  className="inline-flex items-center gap-1 text-xs text-indigo-700 hover:underline font-semibold"
+                  className="inline-flex items-center gap-1 text-xs text-teal-700 hover:underline font-semibold"
                 >
-                  {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                  {copied ? <Check className="w-4 h-4 text-teal-600" /> : <Copy className="w-4 h-4" />}
                   <span>{copied ? 'Copied!' : 'Copy'}</span>
                 </button>
               </div>

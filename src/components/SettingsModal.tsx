@@ -163,13 +163,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 transition text-left"
               >
                 <div className="flex items-center gap-2.5">
-                  <BarChart3 className="w-4 h-4 text-emerald-700" />
+                  <BarChart3 className="w-4 h-4 text-teal-700" />
                   <div>
                     <div className="font-bold text-slate-900">Visitor & Usage Stats</div>
                     <div className="text-xs text-slate-500 font-farsi">آمار استفاده و ارزیابی سیستم</div>
                   </div>
                 </div>
-                <span className="text-xs font-semibold text-emerald-700">Open ➔</span>
+                <span className="text-xs font-semibold text-teal-700">Open ➔</span>
               </button>
             )}
           </div>

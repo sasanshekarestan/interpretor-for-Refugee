@@ -59,7 +59,7 @@ export const WixEmbedModal: React.FC<WixEmbedModalProps> = ({
         {/* Header */}
         <div className="p-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-800">
+            <div className="w-8 h-8 rounded-lg bg-teal-100 flex items-center justify-center text-teal-800">
               <Code2 className="w-4 h-4" />
             </div>
             <div>
@@ -100,7 +100,7 @@ export const WixEmbedModal: React.FC<WixEmbedModalProps> = ({
                   aria-label={`Layout style: ${style.label} / سبک طرح‌بندی: ${style.label}`}
                   className={`p-3 rounded-xl text-left border transition ${
                     embedMode === style.id
-                      ? 'border-indigo-600 bg-indigo-50/70 text-indigo-950 ring-1 ring-indigo-600 font-semibold'
+                      ? 'border-teal-600 bg-teal-50/70 text-teal-950 ring-1 ring-teal-600 font-semibold'
                       : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
                   }`}
                 >
@@ -118,7 +118,7 @@ export const WixEmbedModal: React.FC<WixEmbedModalProps> = ({
                 onChange={(e) => setAutoSpeakDefault(e.target.checked)}
                 title="Auto-play British voice / پخش صوتی خودکار"
                 aria-label="Auto-play British voice / پخش صوتی خودکار"
-                className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500"
+                className="w-4 h-4 text-teal-600 rounded border-slate-300 focus:ring-teal-500"
               />
               <label htmlFor="check-autospeak-wix" className="text-xs text-slate-700 cursor-pointer font-medium">
                 Auto-play British voice interpretation when result is ready
@@ -137,7 +137,7 @@ export const WixEmbedModal: React.FC<WixEmbedModalProps> = ({
                 onClick={handleCopy}
                 title="Copy HTML Embed Code / کپی کد HTML جایگذاری"
                 aria-label="Copy HTML Embed Code / کپی کد HTML جایگذاری"
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-indigo-700 hover:bg-indigo-800 text-white font-semibold text-xs transition shadow-sm"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-teal-700 hover:bg-teal-800 text-white font-semibold text-xs transition shadow-sm"
               >
                 {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                 <span>{copied ? 'Copied to Clipboard!' : 'Copy Code'}</span>
@@ -152,7 +152,7 @@ export const WixEmbedModal: React.FC<WixEmbedModalProps> = ({
           {/* Step-by-Step Wix Studio Instructions */}
           <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2.5">
             <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <CheckCircle2 className="w-4 h-4 text-teal-600" />
               How to add this to your Wix Studio site:
             </h4>
             <ol className="list-decimal list-inside space-y-1.5 text-xs text-slate-600 leading-relaxed">

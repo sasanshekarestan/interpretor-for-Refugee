@@ -244,13 +244,13 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-stretch sm:items-center justify-center sm:p-4">
       <div className="bg-white w-full sm:max-w-2xl sm:rounded-2xl shadow-2xl border-slate-200 sm:border overflow-hidden flex flex-col h-full sm:h-auto sm:max-h-[90vh]">
         {/* Header */}
-        <div className="px-4 py-3 border-b border-slate-200 bg-indigo-50/70 flex items-center gap-3 shrink-0">
-          <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shrink-0">
+        <div className="px-4 py-3 border-b border-slate-200 bg-teal-50/70 flex items-center gap-3 shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-teal-600 flex items-center justify-center text-white shrink-0">
             <Camera className="w-5 h-5" />
           </div>
           <div className="flex-1 min-w-0">
-            <h2 className="font-bold text-indigo-950 text-base leading-tight">Understand a Letter</h2>
-            <p className="font-farsi font-bold text-indigo-900 text-sm leading-tight" dir="rtl">
+            <h2 className="font-bold text-teal-950 text-base leading-tight">Understand a Letter</h2>
+            <p className="font-farsi font-bold text-teal-900 text-sm leading-tight" dir="rtl">
               فهمیدن یک نامه
             </p>
           </div>
@@ -268,7 +268,7 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
           {/* Input Options */}
           {!result && (
             <div className="space-y-4">
-              <div className="border-2 border-dashed border-indigo-200 rounded-2xl p-5 bg-indigo-50/20 text-center transition">
+              <div className="border-2 border-dashed border-teal-200 rounded-2xl p-5 bg-teal-50/20 text-center transition">
                 {/* Photos and PDFs both, and a camera that is offered rather
                     than forced - `capture` on the only input used to stop
                     people choosing a file they already have. */}
@@ -276,7 +276,7 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
                 <input type="file" accept="image/*" capture="environment" ref={cameraInputRef} onChange={handleFileChange} className="hidden" />
 
                 {isPreparing ? (
-                  <div className="py-8 space-y-2 text-indigo-800">
+                  <div className="py-8 space-y-2 text-teal-800">
                     <Loader2 className="w-7 h-7 mx-auto animate-spin" />
                     <p className="text-xs font-semibold">Opening your file…</p>
                     <p className="text-xs font-farsi" dir="rtl">در حال باز کردن فایل شما…</p>
@@ -286,11 +286,11 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
                     <img
                       src={previewUrl}
                       alt={isPdf ? 'First page of the PDF you chose' : 'The photo of the letter you chose'}
-                      className="max-h-56 mx-auto rounded-xl border border-indigo-200 shadow-sm object-contain bg-white"
+                      className="max-h-56 mx-auto rounded-xl border border-teal-200 shadow-sm object-contain bg-white"
                     />
 
                     <div className="flex items-center justify-center gap-2 text-xs text-slate-600">
-                      {isPdf ? <FileText className="w-3.5 h-3.5 text-indigo-600" /> : <Camera className="w-3.5 h-3.5 text-indigo-600" />}
+                      {isPdf ? <FileText className="w-3.5 h-3.5 text-teal-600" /> : <Camera className="w-3.5 h-3.5 text-teal-600" />}
                       <span className="font-mono truncate max-w-[220px]">{fileName}</span>
                       {isPdf && pdfPageCount > 0 && (
                         <span className="font-semibold">{pdfPageCount} {pdfPageCount === 1 ? 'page' : 'pages'}</span>
@@ -323,33 +323,33 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
                 ) : (
                   <div className="space-y-4 py-2">
                     <div className="space-y-1">
-                      <p className="font-bold text-indigo-950 text-sm sm:text-base">Add your letter</p>
-                      <p className="text-sm text-indigo-900 font-farsi font-bold" dir="rtl">نامه خود را اضافه کنید</p>
-                      <p className="text-xs text-indigo-700 font-farsi" dir="rtl">
+                      <p className="font-bold text-teal-950 text-sm sm:text-base">Add your letter</p>
+                      <p className="text-sm text-teal-900 font-farsi font-bold" dir="rtl">نامه خود را اضافه کنید</p>
+                      <p className="text-xs text-teal-700 font-farsi" dir="rtl">
                         از نامه عکس بگیرید، یا فایل عکس یا PDF آن را انتخاب کنید.
                       </p>
-                      <p className="text-xs text-indigo-700/80">Take a photo, or choose an image or PDF file.</p>
+                      <p className="text-xs text-teal-700/80">Take a photo, or choose an image or PDF file.</p>
                     </div>
 
                     <div className="flex flex-col sm:flex-row items-stretch justify-center gap-2.5">
                       <button
                         type="button"
                         onClick={() => cameraInputRef.current?.click()}
-                        className="flex-1 min-h-[52px] px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition"
+                        className="flex-1 min-h-[52px] px-4 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition"
                       >
                         <Camera className="w-4 h-4 shrink-0" />
                         <span>Take a photo</span>
-                        <span className="font-farsi font-semibold text-indigo-100">| عکس گرفتن</span>
+                        <span className="font-farsi font-semibold text-teal-100">| عکس گرفتن</span>
                       </button>
 
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="flex-1 min-h-[52px] px-4 rounded-xl bg-white border border-indigo-300 hover:bg-indigo-50 text-indigo-800 font-bold text-xs flex items-center justify-center gap-2 transition"
+                        className="flex-1 min-h-[52px] px-4 rounded-xl bg-white border border-teal-300 hover:bg-teal-50 text-teal-800 font-bold text-xs flex items-center justify-center gap-2 transition"
                       >
                         <Upload className="w-4 h-4 shrink-0" />
                         <span>Choose a file</span>
-                        <span className="font-farsi font-semibold text-indigo-600">| انتخاب فایل</span>
+                        <span className="font-farsi font-semibold text-teal-600">| انتخاب فایل</span>
                       </button>
                     </div>
 
@@ -374,7 +374,7 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
                   onChange={(e) => setTypedText(e.target.value)}
                   placeholder="متن نامه را اینجا بنویسید — Dear applicant, your Home Office interview is on 14 October at 10:30am in Croydon…"
                   rows={3}
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none"
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:ring-2 focus:ring-teal-500 outline-none"
                 />
               </div>
 
@@ -391,17 +391,17 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
                 className={`w-full py-3.5 rounded-xl text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md transition ${
                   isAnalyzing || (!selectedImage && !typedText.trim())
                     ? 'bg-slate-300 cursor-not-allowed'
-                    : 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/20'
+                    : 'bg-teal-600 hover:bg-teal-700 shadow-teal-600/20'
                 }`}
               >
                 {isAnalyzing ? (
                   <>
-                    <Loader2 className="w-5 h-5 animate-spin text-indigo-100" />
+                    <Loader2 className="w-5 h-5 animate-spin text-teal-100" />
                     <span>Reading your letter… | در حال خواندن نامه شما…</span>
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-5 h-5 text-indigo-200" />
+                    <Sparkles className="w-5 h-5 text-teal-200" />
                     <span>Explain This Letter | توضیح و ترجمه نامه</span>
                   </>
                 )}
@@ -424,7 +424,7 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
                       under it, because the reader may know very little. */}
                   <span
                     dir="rtl"
-                    className="inline-block px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-900 font-farsi font-bold text-xs"
+                    className="inline-block px-2.5 py-1 rounded-full bg-teal-100 text-teal-900 font-farsi font-bold text-xs"
                   >
                     {result.letterTypeFa || result.letterType || 'نامه رسمی'}
                   </span>
@@ -445,7 +445,7 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
                 </div>
                 <button
                   onClick={startAgain}
-                  className="shrink-0 inline-flex items-center gap-1.5 text-[11.5px] text-indigo-700 font-bold hover:underline"
+                  className="shrink-0 inline-flex items-center gap-1.5 text-[11.5px] text-teal-700 font-bold hover:underline"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span className="font-farsi">نامه جدید</span>
@@ -607,9 +607,9 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
                   </p>
                   <button
                     onClick={handleCopyReply}
-                    className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition"
+                    className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold transition"
                   >
-                    {copiedResponse ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copiedResponse ? <Check className="w-3.5 h-3.5 text-teal-300" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{copiedResponse ? 'Copied' : 'Copy this reply'}</span>
                     <span className="font-farsi">{copiedResponse ? '| کپی شد' : '| کپی کردن'}</span>
                   </button>

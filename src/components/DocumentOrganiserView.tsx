@@ -115,7 +115,7 @@ export const DocumentOrganiserView: React.FC<DocumentOrganiserViewProps> = ({ us
             <div key={doc.id} className="bg-white rounded-3xl p-5 border border-slate-200 shadow-2xs space-y-3">
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1">
-                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-800">
+                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-800">
                     {doc.category}
                   </span>
                   <h3 className="font-bold text-slate-900 text-base">{doc.title}</h3>

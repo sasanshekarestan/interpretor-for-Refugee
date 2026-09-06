@@ -200,7 +200,7 @@ export const AudioVoiceInput: React.FC<AudioVoiceInputProps> = ({
   return (
     <div className="w-full bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-7 shadow-sm transition-all">
       {/* 2-Person Conversation Header & Dual Language Badge */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 bg-gradient-to-r from-teal-50 via-sky-50 to-indigo-50 border border-teal-200/80 rounded-xl mb-6">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 bg-gradient-to-r from-teal-50 via-teal-50 to-teal-50 border border-teal-200/80 rounded-xl mb-6">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-white rounded-lg border border-teal-200 shadow-2xs text-teal-700">
             <Languages className="w-5 h-5" />
@@ -325,14 +325,14 @@ export const AudioVoiceInput: React.FC<AudioVoiceInputProps> = ({
           </div>
 
           {/* PERSON 2: CASEWORKER SIDE (English Only in Panel) */}
-          <div className="flex flex-col justify-between p-5 bg-gradient-to-br from-indigo-500/10 via-indigo-50/30 to-white border-2 border-indigo-200 hover:border-indigo-400 rounded-2xl transition shadow-xs group">
+          <div className="flex flex-col justify-between p-5 bg-gradient-to-br from-teal-500/10 via-teal-50/30 to-white border-2 border-teal-200 hover:border-teal-400 rounded-2xl transition shadow-xs group">
             <div>
               <div className="flex items-center justify-between mb-3">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-900 text-xs font-bold">
-                  <User className="w-3.5 h-3.5 text-indigo-700" />
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-teal-100 text-teal-900 text-xs font-bold">
+                  <User className="w-3.5 h-3.5 text-teal-700" />
                   <span>Caseworker Section</span>
                 </span>
-                <span className="inline-flex items-center gap-1 text-xs font-bold text-indigo-800 bg-white border border-indigo-200 px-2 py-0.5 rounded-md">
+                <span className="inline-flex items-center gap-1 text-xs font-bold text-teal-800 bg-white border border-teal-200 px-2 py-0.5 rounded-md">
                   English
                 </span>
               </div>
@@ -344,8 +344,8 @@ export const AudioVoiceInput: React.FC<AudioVoiceInputProps> = ({
                 Speak clearly in English. Your speech is translated into clear spoken Farsi and Dari.
               </p>
 
-              <div className="mt-3 flex items-center gap-2 text-xs text-indigo-700 font-semibold">
-                <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+              <div className="mt-3 flex items-center gap-2 text-xs text-teal-700 font-semibold">
+                <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 shrink-0" />
                 <span>Automatic voice playback active</span>
               </div>
             </div>
@@ -359,10 +359,10 @@ export const AudioVoiceInput: React.FC<AudioVoiceInputProps> = ({
               className={`mt-5 w-full py-3.5 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-3 transition shadow-md ${
                 isProcessing
                   ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                  : 'bg-indigo-700 hover:bg-indigo-800 text-white shadow-indigo-700/20 active:scale-98 group-hover:shadow-lg'
+                  : 'bg-teal-700 hover:bg-teal-800 text-white shadow-teal-700/20 active:scale-98 group-hover:shadow-lg'
               }`}
             >
-              <Mic className="w-5 h-5 text-indigo-200" />
+              <Mic className="w-5 h-5 text-teal-200" />
               <div className="flex flex-col items-center leading-tight">
                 <span className="text-base font-bold">Speak English</span>
                 <span className="text-xs font-farsi opacity-90">صحبت کنید (ترجمه به فارسی)</span>

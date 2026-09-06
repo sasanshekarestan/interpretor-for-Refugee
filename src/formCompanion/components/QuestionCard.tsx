@@ -120,7 +120,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
               >
                 <span
                   className={`w-5 h-5 shrink-0 rounded-md border-2 inline-flex items-center justify-center
-                    ${checked ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300'}`}
+                    ${checked ? 'bg-teal-600 border-teal-600 text-white' : 'border-slate-300'}`}
                 >
                   {checked && <Check className="w-3.5 h-3.5" strokeWidth={3} />}
                 </span>

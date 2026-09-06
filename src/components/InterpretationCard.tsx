@@ -182,9 +182,9 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
             onClick={() => setShowHandOverModal(true)}
             title="Hand-it-over Mode (Display large text) / نمایش بزرگ روی صفحه"
             aria-label="Hand-it-over Mode (Display large text) / نمایش بزرگ روی صفحه"
-            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border border-indigo-200 transition"
+            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-teal-50 hover:bg-teal-100 text-teal-900 border border-teal-200 transition"
           >
-            <Maximize2 className="w-3.5 h-3.5 text-indigo-700" />
+            <Maximize2 className="w-3.5 h-3.5 text-teal-700" />
             <span>Hand-it-Over</span>
             <span className="font-farsi hidden sm:inline">| نمایش بزرگ</span>
           </button>
@@ -213,7 +213,7 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
             aria-label="Copy translation result / کپی متن ترجمه"
             className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 transition"
           >
-            {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+            {copied ? <Check className="w-3.5 h-3.5 text-teal-600" /> : <Copy className="w-3.5 h-3.5" />}
             <span>{copied ? 'Copied' : 'Copy'}</span>
           </button>
 
@@ -224,7 +224,7 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
               onClick={() => handleRate('up')}
               title="Accurate translation / ترجمه دقیق بود"
               aria-label="Accurate translation / ترجمه دقیق بود"
-              className={`p-1 rounded hover:bg-slate-100 transition ${userRating === 'up' ? 'text-emerald-600 font-bold' : 'text-slate-400'}`}
+              className={`p-1 rounded hover:bg-slate-100 transition ${userRating === 'up' ? 'text-teal-600 font-bold' : 'text-slate-400'}`}
             >
               <ThumbsUp className="w-3.5 h-3.5" />
             </button>
@@ -247,7 +247,7 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
         <div className="flex flex-col justify-between p-4 bg-slate-50 border border-slate-200 rounded-xl">
           <div>
             <div className="flex items-center justify-between text-xs font-bold text-slate-700 mb-2">
-              <span className={isFarsiToEnglish ? 'font-farsi text-sm text-teal-800' : 'font-sans text-xs uppercase tracking-wide text-indigo-800'}>
+              <span className={isFarsiToEnglish ? 'font-farsi text-sm text-teal-800' : 'font-sans text-xs uppercase tracking-wide text-teal-800'}>
                 {isFarsiToEnglish ? 'شما گفتید (Farsi / Dari Transcript):' : 'You Said (English Transcript):'}
               </span>
               <span className="text-xs text-slate-400">Verbatim</span>
@@ -287,7 +287,7 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
         </div>
 
         {/* Translation Output Card */}
-        <div className="flex flex-col justify-between p-4 bg-gradient-to-br from-teal-50/40 via-white to-sky-50/30 border border-teal-200 rounded-xl shadow-xs">
+        <div className="flex flex-col justify-between p-4 bg-gradient-to-br from-teal-50/40 via-white to-teal-50/30 border border-teal-200 rounded-xl shadow-xs">
           <div>
             <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-teal-900 mb-2">
               <div className="flex items-center gap-1.5">
@@ -429,7 +429,7 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
           {/* Header Bar */}
           <div className="flex items-center justify-between border-b border-slate-800 pb-4">
             <div className="flex items-center gap-2">
-              <span className="px-3 py-1 bg-indigo-600 rounded-full text-xs font-bold uppercase tracking-wider">
+              <span className="px-3 py-1 bg-teal-600 rounded-full text-xs font-bold uppercase tracking-wider">
                 Hand-it-Over Mode
               </span>
               <span className="text-xs text-slate-400 font-farsi">نمایش بزرگ متن جهت ارائه به طرف مقابل</span>
