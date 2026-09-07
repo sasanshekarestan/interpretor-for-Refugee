@@ -248,76 +248,134 @@ export const OFFICIAL_FORMS: OfficialForm[] = [
   {
     id: 'gp_registration',
     code: 'GMS1',
-    titleEn: 'Family Doctor Services Registration (GMS1)',
-    titleFa: 'فرم ثبت‌نام پزشک عمومی خانواده (پزشک GP)',
-    titleDari: 'فرم ثبت‌نام داکتر فامیلی (داکتر GP)',
-    issuer: 'NHS England / Department of Health',
+    titleEn: 'Register with a GP Surgery (PRF1, formerly GMS1)',
+    titleFa: 'ثبت‌نام در مطب پزشک عمومی (GP)',
+    titleDari: 'ثبت‌نام نزد داکتر عمومی (GP)',
+    issuer: 'NHS England',
     category: 'nhs',
-    purposeFa: 'ثبت‌نام رایگان در درمانگاه GP برای دریافت خدمات درمانی و دارویی NHS',
-    purposeEn: 'Register with a local NHS General Practitioner (GP) surgery for free healthcare access.',
+    purposeFa: 'ثبت‌نام رایگان در مطب پزشک عمومی (GP) برای دریافت خدمات درمانی و دارویی NHS',
+    purposeEn: 'Register with a local NHS GP surgery for free healthcare access.',
     pdfPath: 'public/forms/gms1.pdf',
     officialSourceUrl: 'https://www.nhs.uk/nhs-services/gps/how-to-register-with-a-gp-surgery/',
-    pageCount: 2,
+    pageCount: 8,
     delivery: 'paper',
+    // The six sections of the real document, in its own order. The four
+    // questions here before this were invented: they described a two-page
+    // GMS1 that the NHS has since replaced with this eight-page form, and
+    // none of their section numbers matched the paper a person was holding.
     questions: [
       {
         id: 'gms1_q1',
         number: 1,
         questionCode: 'Section 1',
-        section: 'Patient Details',
-        questionEn: 'What is your Surname, First Name, Date of Birth, Sex and NHS Number?',
-        simpleEnglish: 'Write your full legal name, date of birth (DD/MM/YYYY) and NHS number if known.',
-        farsiTranslation: 'نام خانوادگی، نام کوچک، تاریخ تولد، جنسیت و شماره NHS شما چیست؟',
-        dariTranslation: 'تخلص، نام، تاریخ تولد، جنسیت و نمبر NHS شما چیست؟',
-        explanationFa: 'مشخصات فردی متقاضی ثبت نام در مطب پزشک GP.',
-        whatTypeInfoNeeded: 'نام کامل، تاریخ تولد میلادی، جنسیت و شماره NHS',
-        exampleFormat: 'Surname: AHMADI / First Name: Ali / DOB: 10/05/1990 / Male',
-        fieldKey: 'gms1_patient_name',
+        section: 'Who is registering',
+        questionEn: 'Are you registering yourself, or someone else?',
+        simpleEnglish:
+          'Tick "Yourself" and go straight to Section 2. Only fill in your name, phone number and relationship if you are registering another person.',
+        farsiTranslation: 'خودتان را ثبت‌نام می‌کنید یا شخص دیگری را؟',
+        dariTranslation: 'خودتان را راجستر می‌کنید یا کس دیگری را؟',
+        explanationFa:
+          'اگر برای خودتان است، گزینهٔ Yourself را علامت بزنید و مستقیم به بخش ۲ بروید. سه کادر بعدی فقط برای کسی است که دارد شخص دیگری را ثبت‌نام می‌کند.',
+        whatTypeInfoNeeded: 'Yourself یا Someone else؛ در حالت دوم نام، تلفن و نسبت شما',
+        exampleFormat: 'Yourself ✗',
+        fieldKey: 'gms1_who_registering',
         required: true
       },
       {
         id: 'gms1_q2',
         number: 2,
         questionCode: 'Section 2',
-        section: 'Address & Contact',
-        questionEn: 'What is your current UK home address, postcode, phone number and email?',
-        simpleEnglish: 'Where do you live in the UK? Provide house number, street, city and postcode.',
-        farsiTranslation: 'آدرس کامل محل سکونت، کد پستی، شماره تلفن و ایمیل شما در بریتانیا چیست؟',
-        dariTranslation: 'آدرس مکمل، کد پستی و شماره تماس شما در بریتانیا چیست؟',
-        explanationFa: 'آدرس دقیق برای ارسال نامه‌های نوبت‌دهی بیمارستان و آزمایشگاه‌ها استفاده می‌شود.',
-        whatTypeInfoNeeded: 'آدرس، کد پستی ۶ یا ۷ کاراکتری، شماره موبایل بریتانیا',
-        exampleFormat: 'Flat 4, 25 Park Lane, Manchester, M14 5TP / Tel: 07700 900123',
-        fieldKey: 'gms1_address',
+        section: 'Patient details',
+        questionEn:
+          'Your name, date of birth, sex as recorded on your NHS record, NHS number if you have it, place and country of birth, current address and phone numbers.',
+        simpleEnglish:
+          'Twenty four boxes of personal details. Use BLOCK CAPITALS. If a box does not apply, write N/A. There is a "No fixed address" box if you have nowhere settled.',
+        farsiTranslation:
+          'نام، تاریخ تولد، جنسیت ثبت‌شده در پروندهٔ NHS، شمارهٔ NHS در صورت داشتن، شهر و کشور محل تولد، آدرس فعلی و شماره‌های تماس شما.',
+        dariTranslation:
+          'نام، تاریخ تولد، جنسیت، نمبر NHS در صورت داشتن، شهر و کشور تولد، آدرس فعلی و نمبرهای تماس شما.',
+        explanationFa:
+          'این بخش مشخصات خود بیمار است. با حروف بزرگ انگلیسی بنویسید. اگر کادری به شما ربطی ندارد، N/A بنویسید. اگر آدرس ثابتی ندارید، کادر No fixed address هست.',
+        whatTypeInfoNeeded: 'نام کامل، تاریخ تولد میلادی، آدرس و کد پستی، شماره موبایل بریتانیا',
+        exampleFormat: 'AHMADI / ALI / 10 05 1990 / 25 PARK LANE, MANCHESTER, M14 5TP',
+        fieldKey: 'gms1_patient_details',
         required: true
       },
       {
         id: 'gms1_q3',
         number: 3,
         questionCode: 'Section 3',
-        section: 'Previous GP & History',
-        questionEn: 'Who was your previous GP surgery in the UK, or are you arriving from abroad?',
-        simpleEnglish: 'Name of your last UK doctor or town, or date you entered the UK if arriving from abroad.',
-        farsiTranslation: 'نام پزشک عمومی قبلی شما در بریتانیا چه بوده است یا چه تاریخی وارد بریتانیا شدید؟',
-        dariTranslation: 'داکتر قبلی شما در بریتانیا چه نام داشت یا چه زمانی وارد بریتانیا شدید؟',
-        explanationFa: 'در صورتی که تازه به بریتانیا رسیده‌اید، تاریخ ورود به کشور را بنویسید تا پرونده جدید ایجاد شود.',
-        whatTypeInfoNeeded: 'نام درمانگاه قبلی یا تاریخ ورود به بریتانیا',
-        exampleFormat: 'Arrived from abroad on 15/01/2026',
-        fieldKey: 'gms1_previous_gp'
+        section: 'Patients under 18',
+        questionEn:
+          'For a patient under 18: where they were born, nursery or school, anyone involved in their care, and their routine vaccinations.',
+        simpleEnglish:
+          'Skip this whole section if the patient is 18 or over. Two of its questions are for babies under 12 months only.',
+        farsiTranslation:
+          'برای بیمار زیر ۱۸ سال: محل تولد، مهدکودک یا مدرسه، افرادی که در مراقبت از او نقش دارند، و واکسن‌های معمول.',
+        dariTranslation:
+          'برای مریض زیر ۱۸ سال: محل تولد، کودکستان یا مکتب، کسانی که در مراقبت او دخیل‌اند، و واکسین‌های معمول.',
+        explanationFa:
+          'اگر بیمار ۱۸ سال یا بیشتر دارد، تمام این بخش را رد کنید. دو پرسش آن فقط برای نوزاد زیر ۱۲ ماه است.',
+        whatTypeInfoNeeded: 'فقط در صورتی که بیمار زیر ۱۸ سال باشد',
+        exampleFormat: 'N/A',
+        fieldKey: 'gms1_under_18'
       },
       {
         id: 'gms1_q4',
         number: 4,
         questionCode: 'Section 4',
-        section: 'Organ Donation & Declaration',
-        questionEn: 'Organ Donor Registration & Signature',
-        simpleEnglish: 'Sign and date to confirm you want to register with this GP surgery.',
-        farsiTranslation: 'امضا و تایید ثبت‌نام در مطب GP',
-        dariTranslation: 'امضا و تایید ثبت‌نام داکتر GP',
-        explanationFa: 'امضای متقاضی جهت موافقت با ثبت‌نام و انتقال پرونده پزشکی.',
-        whatTypeInfoNeeded: 'امضا و تاریخ میلادی',
-        exampleFormat: 'Signed: A. Ahmadi / Date: 27/08/2026',
-        fieldKey: 'gms1_signature',
-        required: true
+        section: 'Additional information',
+        questionEn:
+          'Ethnic group, whether you have registered with a UK GP before, the date you arrived in the UK, armed forces service, whether you need an interpreter and in which language, carer details, and your chosen pharmacy.',
+        simpleEnglish:
+          'Question 5 asks whether you need an interpreter at appointments, and question 6 asks which language. Question 3 asks the date you arrived in the UK.',
+        farsiTranslation:
+          'گروه قومی، اینکه قبلاً در بریتانیا نزد پزشک عمومی ثبت‌نام کرده‌اید یا نه، تاریخ ورود شما به بریتانیا، سابقهٔ خدمت در ارتش، اینکه در قرارها مترجم لازم دارید یا نه و به چه زبانی، اطلاعات مراقب، و داروخانهٔ انتخابی شما.',
+        dariTranslation:
+          'گروه قومی، ثبت‌نام قبلی نزد داکتر در بریتانیا، تاریخ ورود شما به بریتانیا، خدمت در اردو، ضرورت به ترجمان و زبان آن، معلومات مراقبت‌کننده، و دواخانهٔ انتخابی شما.',
+        explanationFa:
+          'پرسش ۵ می‌پرسد آیا برای قرارهایتان مترجم لازم دارید و پرسش ۶ می‌پرسد به چه زبانی. پرسش ۳ تاریخ ورود شما به بریتانیا را می‌خواهد.',
+        whatTypeInfoNeeded: 'تاریخ ورود میلادی، زبان مورد نیاز برای ترجمه، نام و کد پستی داروخانه',
+        exampleFormat: 'Arrived 15 01 2026 / Interpreter: Yes, Farsi',
+        fieldKey: 'gms1_additional_info'
+      },
+      {
+        id: 'gms1_q5',
+        number: 5,
+        questionCode: 'Section 5 (Part B)',
+        section: 'Patient health',
+        questionEn:
+          'Past conditions, smoking, alcohol, height and weight, allergies, mental health, medication, disabilities, and any accessible format or reasonable adjustment you need.',
+        simpleEnglish:
+          'The form says you do not have to complete this section. Anything you do give helps the GP care for you.',
+        farsiTranslation:
+          'بیماری‌های گذشته، سیگار، الکل، قد و وزن، حساسیت‌ها، سلامت روان، داروها، ناتوانی‌ها، و هر شکل دسترس‌پذیر یا تسهیلاتی که لازم دارید.',
+        dariTranslation:
+          'مریضی‌های گذشته، سگرت، الکول، قد و وزن، حساسیت‌ها، صحت روانی، دواها، معلولیت‌ها، و هر تسهیلاتی که ضرورت دارید.',
+        explanationFa:
+          'خود فرم نوشته پر کردن این بخش اجباری نیست. هرچه بنویسید به پزشک کمک می‌کند مراقبت بهتری از شما بکند.',
+        whatTypeInfoNeeded: 'اختیاری',
+        exampleFormat: 'Prefer not to say',
+        fieldKey: 'gms1_health'
+      },
+      {
+        id: 'gms1_q6',
+        number: 6,
+        questionCode: 'Section 6 (Part C)',
+        section: 'Patients from abroad',
+        questionEn:
+          'Only for people who do not normally live in the UK, or who live here and receive a pension or benefit from a European country. It asks you to pick a statement about paying for NHS care outside the surgery, and for EHIC or S1 details.',
+        simpleEnglish:
+          'The form itself says anyone can register with a GP and get free care at that surgery. This section is about care elsewhere, such as a hospital.',
+        farsiTranslation:
+          'فقط برای کسانی که ساکن دائم بریتانیا نیستند، یا اینجا زندگی می‌کنند ولی از یک کشور اروپایی مستمری یا کمک‌هزینه می‌گیرند. از شما می‌خواهد یکی از جمله‌های مربوط به پرداخت هزینهٔ درمان بیرون از مطب را انتخاب کنید و مشخصات EHIC یا S1 را بنویسید.',
+        dariTranslation:
+          'فقط برای کسانی که باشندهٔ دایمی بریتانیا نیستند، یا اینجا زندگی می‌کنند ولی از یک کشور اروپایی معاش می‌گیرند.',
+        explanationFa:
+          'خود فرم نوشته هر کسی می‌تواند نزد پزشک عمومی ثبت‌نام کند و مراقبت همان مطب برایش رایگان است. این بخش دربارهٔ درمان بیرون از مطب است، مثل بیمارستان. فرم پناهجویان و پناهندگان را در فهرست کسانی آورده که این مراقبت برایشان هم رایگان است.',
+        whatTypeInfoNeeded: 'فقط در صورتی که ساکن دائم بریتانیا نیستید',
+        exampleFormat: 'N/A',
+        fieldKey: 'gms1_from_abroad'
       }
     ]
   },
