@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { ShieldCheck, Lock, X, Database, UserX, EyeOff } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ShieldCheck, Lock, X, Database, UserX, EyeOff, Cookie } from 'lucide-react';
+import { CookieChoice, analyticsAvailable, readCookieChoice, forgetCookieChoice } from '../utils/analytics';
 
 interface PrivacyBannerProps {
   onOpenPrivacyModal?: () => void;
@@ -7,6 +8,11 @@ interface PrivacyBannerProps {
 
 export const PrivacyBanner: React.FC<PrivacyBannerProps> = ({ onOpenPrivacyModal }) => {
   const [showModal, setShowModal] = useState(false);
+  const [cookieChoice, setCookieChoice] = useState<CookieChoice | null>(null);
+
+  useEffect(() => {
+    if (showModal) setCookieChoice(readCookieChoice());
+  }, [showModal]);
 
   const handleOpen = () => {
     if (onOpenPrivacyModal) {
@@ -112,6 +118,41 @@ export const PrivacyBanner: React.FC<PrivacyBannerProps> = ({ onOpenPrivacyModal
                 </div>
               </div>
             </div>
+
+            {/* Consent is not a one-time thing: a person has to be able to
+                change their mind as easily as they gave it. Clearing the
+                answer brings the notice back and deletes the GA cookies. */}
+            {analyticsAvailable() && (
+              <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                <div className="flex items-start gap-2">
+                  <Cookie className="w-4 h-4 text-teal-600 shrink-0 mt-0.5" />
+                  <div className="min-w-0">
+                    <h4 className="font-bold text-slate-900 text-xs">Counting visits</h4>
+                    <p className="text-slate-600">
+                      {cookieChoice === 'accepted'
+                        ? 'You agreed to let us count visits with Google Analytics.'
+                        : cookieChoice === 'rejected'
+                          ? 'You said no, so nothing is counted and no cookie is set.'
+                          : 'You have not been asked yet.'}
+                    </p>
+                  </div>
+                </div>
+                {cookieChoice && (
+                  <button
+                    onClick={() => {
+                      forgetCookieChoice();
+                      setCookieChoice(null);
+                      setShowModal(false);
+                    }}
+                    className="min-h-[44px] w-full px-3 rounded-xl border border-slate-300 bg-white
+                               hover:bg-slate-50 text-slate-800 text-xs font-bold transition"
+                  >
+                    <span className="font-farsi">تغییر انتخاب</span>
+                    <span className="text-slate-500"> · Change my choice</span>
+                  </button>
+                )}
+              </div>
+            )}
 
             <div className="pt-4 border-t border-slate-100 flex justify-end">
               <button

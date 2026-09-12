@@ -4,6 +4,7 @@ import { Header } from './components/Header';
 import { NavigationTabs } from './components/NavigationTabs';
 import { BackBar } from './components/BackBar';
 import { PrivacyBanner } from './components/PrivacyBanner';
+import { CookieNotice } from './components/CookieNotice';
 import { FormCompanion } from './formCompanion/FormCompanion';
 import { MessageWriterView } from './components/MessageWriterView';
 import { SayItForMeModal } from './components/SayItForMeModal';
@@ -1197,6 +1198,12 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* The cookie notice, on first visit only. It renders nothing at all
+          unless a measurement ID is configured, and nothing once a person has
+          answered. Not while a form is open: the document owns that screen and
+          a bar across the bottom would cover the next-page button. */}
+      {!isFormImmersive && <CookieNotice />}
 
       {/* Modals & Drawers */}
       <SayItForMeModal
