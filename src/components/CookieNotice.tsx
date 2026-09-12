@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Cookie } from 'lucide-react';
+import { ChevronDown, Cookie } from 'lucide-react';
 import {
   CookieChoice,
   acceptCookies,
@@ -30,7 +30,6 @@ import {
  */
 export const CookieNotice: React.FC = () => {
   const [choice, setChoice] = useState<CookieChoice | null | undefined>(undefined);
-  const [showPolicy, setShowPolicy] = useState(false);
 
   useEffect(() => {
     const stored = readCookieChoice();
@@ -68,94 +67,123 @@ export const CookieNotice: React.FC = () => {
           one is deliberately not a modal, and the app stays usable behind it. */}
       <div
         className="pointer-events-auto max-w-3xl mx-auto mb-3 bg-emphasis text-on-emphasis
-                   rounded-3xl shadow-lg p-4 sm:p-5 space-y-3.5"
+                   rounded-3xl shadow-lg p-4 space-y-3"
       >
         {/* The wording is the standard notice Sasan asked for, with one
             phrase removed: "and personalize content". Hamyar personalises
             nothing - no profiling, no recommendations, nothing that differs
             per person - and claiming otherwise in a privacy notice is a false
             statement about the product, made to exactly the people most
-            frightened of being profiled.
-
-            "Visit our Cookie Policy" pointed at nothing, so the policy is
-            written below and opens in place rather than sending a person off
-            to a page that does not exist. */}
+            frightened of being profiled. */}
         <div dir="rtl" className="flex items-start gap-3">
           <Cookie className="w-5 h-5 shrink-0 mt-0.5" aria-hidden="true" />
           <div className="space-y-1 min-w-0">
-            <h2 className="font-farsi font-bold text-lg leading-tight">کوکی‌ها</h2>
-            <p className="font-farsi text-base text-on-emphasis-muted leading-relaxed">
+            <p className="font-farsi text-sm text-on-emphasis-muted leading-relaxed">
               ما از کوکی‌ها و فناوری‌های مشابه استفاده می‌کنیم تا تجربهٔ شما بهتر شود و آمار
               بازدید سایت را بسنجیم. با زدن «قبول»، با استفاده از همهٔ کوکی‌ها موافقت می‌کنید.
               برای اینکه بدانید چطور از آن‌ها استفاده می‌کنیم،{' '}
-              <button
-                onClick={() => setShowPolicy((open) => !open)}
-                className="underline underline-offset-2 font-bold text-on-emphasis"
-              >
-                سیاست کوکی
-              </button>{' '}
-              ما را ببینید.
+              <span className="font-bold text-on-emphasis">سیاست کوکی</span> ما را ببینید.
             </p>
           </div>
         </div>
 
-        <div dir="ltr" className="font-latin space-y-1 border-t border-white/15 pt-2.5">
-          <h3 className="font-bold text-base">Cookies</h3>
+        <div dir="ltr" className="font-latin border-t border-white/15 pt-2.5">
           <p className="text-sm text-on-emphasis-muted leading-relaxed">
             We use cookies and similar technologies to help improve your experience and analyze
             site traffic. By clicking &lsquo;Accept&rsquo;, you consent to the use of all cookies.
-            Visit our{' '}
-            <button
-              id="btn-cookie-policy"
-              onClick={() => setShowPolicy((open) => !open)}
-              className="underline underline-offset-2 font-bold text-on-emphasis"
-            >
-              Cookie Policy
-            </button>{' '}
-            to read more about how we use them.
+            Visit our <span className="font-bold text-on-emphasis">Cookie Policy</span> to read
+            more about how we use them.
           </p>
         </div>
 
-        {/* The policy itself. Short, specific, and checkable: a person can
-            hold every line of it against what the app actually does. */}
-        {showPolicy && (
-          <div className="rounded-2xl bg-white/10 border border-white/20 p-3.5 space-y-3 max-h-[38vh] overflow-y-auto">
-            <div dir="rtl" className="font-farsi space-y-1.5">
-              <h4 className="font-bold text-base">سیاست کوکی</h4>
-              <p className="text-sm text-on-emphasis-muted leading-relaxed">
-                اگر «قبول» را بزنید، Google Analytics یک کوکی به نام <span dir="ltr">_ga</span> روی دستگاه شما
-                می‌گذارد. با آن می‌شمارند چند نفر از برنامه استفاده می‌کنند و هر بار چقدر. این
-                کوکی تا دو سال روی دستگاه می‌ماند، مگر آنکه خودتان پاکش کنید.
-              </p>
-              <p className="text-sm text-on-emphasis-muted leading-relaxed">
-                این آمار را برای گرفتن بودجه و ادامهٔ کار برنامه لازم داریم. حرف‌ها، نامه‌ها،
-                فرم‌ها و مدارک شما هرگز فرستاده نمی‌شود و ما آن‌ها را نمی‌بینیم.
-              </p>
-              <p className="text-sm text-on-emphasis-muted leading-relaxed">
-                اگر «رد» را بزنید هیچ کوکی گذاشته نمی‌شود، هیچ چیزی به Google فرستاده نمی‌شود، و
-                همهٔ بخش‌های برنامه دقیقاً مثل قبل کار می‌کند. هر وقت خواستید می‌توانید نظرتان را
-                در بخش «حریم خصوصی و داده‌ها» عوض کنید.
-              </p>
-            </div>
-            <div dir="ltr" className="font-latin space-y-1.5 border-t border-white/15 pt-2.5">
-              <h4 className="font-bold text-base">Cookie Policy</h4>
-              <p className="text-sm text-on-emphasis-muted leading-relaxed">
-                If you accept, Google Analytics sets one cookie called _ga on your device. It
-                counts how many people use Hamyar and how long each visit lasts. It stays for up
-                to two years unless you delete it.
-              </p>
-              <p className="text-sm text-on-emphasis-muted leading-relaxed">
-                We need those numbers to get funding and keep Hamyar running. Your conversations,
-                letters, forms and documents are never sent, and we cannot see them.
-              </p>
-              <p className="text-sm text-on-emphasis-muted leading-relaxed">
-                If you reject, no cookie is set, nothing is sent to Google, and every part of the
-                app works exactly the same. You can change your mind at any time under
-                &ldquo;Privacy and data&rdquo;.
-              </p>
-            </div>
+        {/* The policy, folded away.
+            It was six paragraphs sitting open under the notice, which on a
+            phone pushed Accept and Reject most of the way off the screen. It
+            is a native details element now: closed by default, keyboard
+            operable without any of our own state, and rewritten as short
+            labelled lines rather than prose, because a person checking what a
+            cookie does wants to find the answer rather than read an essay. */}
+        <details className="group rounded-2xl bg-white/10 border border-white/20">
+          <summary
+            id="btn-cookie-policy"
+            className="min-h-[44px] px-3.5 flex items-center gap-2 list-none [&::-webkit-details-marker]:hidden"
+          >
+            <ChevronDown
+              className="w-4 h-4 shrink-0 transition group-open:rotate-180"
+              aria-hidden="true"
+            />
+            <span className="font-farsi font-bold text-sm">سیاست کوکی</span>
+            <span className="text-sm text-on-emphasis-muted">· Cookie Policy</span>
+          </summary>
+
+          <div className="px-3.5 pb-3.5 pt-1 space-y-3 max-h-[30vh] overflow-y-auto">
+            <dl dir="rtl" className="font-farsi space-y-1.5 text-sm">
+              <div>
+                <dt className="font-bold inline">کدام کوکی؟ </dt>
+                <dd className="inline text-on-emphasis-muted">
+                  یکی، به نام <span dir="ltr">_ga</span>، از Google Analytics. تا دو سال می‌ماند.
+                </dd>
+              </div>
+              <div>
+                <dt className="font-bold inline">برای چه؟ </dt>
+                <dd className="inline text-on-emphasis-muted">
+                  شمردن اینکه چند نفر از برنامه استفاده می‌کنند، برای گرفتن بودجه.
+                </dd>
+              </div>
+              <div>
+                <dt className="font-bold inline">چه چیزی فرستاده نمی‌شود؟ </dt>
+                <dd className="inline text-on-emphasis-muted">
+                  گفتگوها، نامه‌ها، فرم‌ها و مدارک شما. ما آن‌ها را نمی‌بینیم.
+                </dd>
+              </div>
+              <div>
+                <dt className="font-bold inline">اگر «رد» را بزنم؟ </dt>
+                <dd className="inline text-on-emphasis-muted">
+                  هیچ کوکی گذاشته نمی‌شود، چیزی به Google نمی‌رود، و برنامه کامل کار می‌کند.
+                </dd>
+              </div>
+              <div>
+                <dt className="font-bold inline">تغییر نظر؟ </dt>
+                <dd className="inline text-on-emphasis-muted">
+                  هر وقت خواستید، در «حریم خصوصی و داده‌ها».
+                </dd>
+              </div>
+            </dl>
+
+            <dl dir="ltr" className="font-latin space-y-1.5 text-sm border-t border-white/15 pt-2.5">
+              <div>
+                <dt className="font-bold inline">Which cookie? </dt>
+                <dd className="inline text-on-emphasis-muted">
+                  One, called _ga, from Google Analytics. It lasts up to two years.
+                </dd>
+              </div>
+              <div>
+                <dt className="font-bold inline">What for? </dt>
+                <dd className="inline text-on-emphasis-muted">
+                  Counting how many people use Hamyar, so we can get funding.
+                </dd>
+              </div>
+              <div>
+                <dt className="font-bold inline">What is never sent? </dt>
+                <dd className="inline text-on-emphasis-muted">
+                  Your conversations, letters, forms and documents. We cannot see them.
+                </dd>
+              </div>
+              <div>
+                <dt className="font-bold inline">If I reject? </dt>
+                <dd className="inline text-on-emphasis-muted">
+                  No cookie is set, nothing goes to Google, and the whole app still works.
+                </dd>
+              </div>
+              <div>
+                <dt className="font-bold inline">Change my mind? </dt>
+                <dd className="inline text-on-emphasis-muted">
+                  Any time, under &ldquo;Privacy and data&rdquo;.
+                </dd>
+              </div>
+            </dl>
           </div>
-        )}
+        </details>
 
         {/* Equal weight on purpose. Refusing has to be as easy as agreeing. */}
         <div className="flex flex-col sm:flex-row gap-2">
