@@ -38,7 +38,25 @@ const walk = (dir) =>
     return /\.(tsx|ts)$/.test(e.name) ? [full] : [];
   });
 
-const files = walk(src).map((f) => ({ path: path.relative(repo, f), text: fs.readFileSync(f, 'utf8') }));
+/**
+ * Comments are not code.
+ *
+ * A comment saying "this used to be slate-900, which is not in tokens.css" is
+ * how the next person knows why a thing changed, and counting it as debt
+ * punishes exactly the explanation that stops the debt coming back. The first
+ * version of this file counted them, and the answer was to reword the comments
+ * until the number fell, which is the tail wagging the dog.
+ *
+ * Block comments go entirely. Line comments go only when the // starts the
+ * line, so a URL in the middle of a line survives.
+ */
+const withoutComments = (text) =>
+  text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^[ \t]*\/\/.*$/gm, '');
+
+const files = walk(src).map((f) => ({
+  path: path.relative(repo, f),
+  text: withoutComments(fs.readFileSync(f, 'utf8')),
+}));
 
 /** Counted, and allowed to shrink but never grow. */
 const COUNTED = {

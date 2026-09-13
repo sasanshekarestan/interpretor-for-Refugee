@@ -51,7 +51,8 @@ import {
   ArrowLeft,
   CheckSquare,
   BookOpen,
-  FolderLock
+  FolderLock,
+  X
 } from 'lucide-react';
 
 /** A failure the person needs to see, in both languages. */
@@ -534,7 +535,7 @@ export default function App() {
   const userLang = settings.userLanguage || 'farsi';
 
   return (
-    <div className={`min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-teal-600 selection:text-white print:bg-white print:p-0 print:pb-0 print:text-black w-full max-w-full overflow-x-hidden ${isFormImmersive ? '' : 'pb-16'}`}>
+    <div className={`min-h-screen bg-page text-ink flex flex-col selection:bg-primary selection:text-on-primary print:bg-white print:p-0 print:pb-0 print:text-black w-full max-w-full overflow-x-hidden ${isFormImmersive ? '' : 'pb-16'}`}>
       {/* Header */}
       {!isFormImmersive && (
       <Header
@@ -579,31 +580,38 @@ export default function App() {
         {errorMessage && !isFormImmersive && (
           <div
             role="alert"
-            className="bg-rose-50 border border-rose-200 rounded-2xl p-4 flex items-start gap-3"
+            className="bg-fault-bg border-s-4 border-fault rounded-2xl p-4 flex items-start gap-3"
           >
-            <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
-            <div className="flex-1 min-w-0 space-y-1">
-              <p className="font-farsi text-sm font-bold text-rose-900 leading-relaxed" dir="rtl">
+            <AlertTriangle className="w-5 h-5 text-fault shrink-0 mt-0.5" aria-hidden="true" />
+            <div className="flex-1 min-w-0 space-y-1.5">
+              <p className="font-farsi text-base font-bold text-ink leading-relaxed" dir="rtl">
                 {errorMessage.fa}
               </p>
-              <p className="text-xs text-rose-800 leading-relaxed">{errorMessage.en}</p>
+              <p dir="ltr" className="font-latin text-sm text-ink-muted leading-relaxed">
+                {errorMessage.en}
+              </p>
               {/* The cause is for whoever runs the site, not for the person
                   trying to speak to a nurse, so it is folded away rather than
                   printed under their message. */}
               {errorMessage.detail && (
                 <details className="pt-0.5">
-                  <summary className="text-xs text-rose-500 cursor-pointer select-none">
-                    جزئیات فنی · Technical details
+                  <summary className="min-h-[44px] flex items-center text-sm text-ink-muted cursor-pointer select-none">
+                    <span dir="rtl" className="font-farsi">جزئیات فنی</span>
+                    <span dir="ltr" className="font-latin"> · Technical details</span>
                   </summary>
-                  <p className="text-xs text-rose-500 break-words pt-1">{errorMessage.detail}</p>
+                  <p dir="ltr" className="font-latin text-sm text-ink-muted break-words pt-1">
+                    {errorMessage.detail}
+                  </p>
                 </details>
               )}
             </div>
             <button
               onClick={() => setErrorMessage(null)}
-              className="shrink-0 text-xs font-bold text-rose-700 hover:text-rose-900 underline underline-offset-2 cursor-pointer font-farsi"
+              aria-label="بستن / Dismiss"
+              className="shrink-0 w-11 h-11 inline-flex items-center justify-center rounded-xl
+                         text-fault hover:bg-surface transition cursor-pointer"
             >
-              بستن
+              <X className="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
         )}
@@ -614,24 +622,26 @@ export default function App() {
         {speechNotice === 'farsi_voice' && !isFormImmersive && (
           <div
             role="status"
-            className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3"
+            className="bg-attention-bg border-s-4 border-attention rounded-2xl p-4 flex items-start gap-3"
           >
-            <Volume2 className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-            <div className="flex-1 min-w-0 space-y-1">
-              <p className="font-farsi text-sm font-bold text-amber-900 leading-relaxed" dir="rtl">
+            <Volume2 className="w-5 h-5 text-attention shrink-0 mt-0.5" aria-hidden="true" />
+            <div className="flex-1 min-w-0 space-y-1.5">
+              <p className="font-farsi text-base font-bold text-ink leading-relaxed" dir="rtl">
                 ترجمه آماده است، ولی صدای فارسی در این لحظه در دسترس نیست. متن را می‌توانید
                 بخوانید یا به طرف مقابل نشان بدهید.
               </p>
-              <p className="text-xs text-amber-800 leading-relaxed">
+              <p dir="ltr" className="font-latin text-sm text-ink-muted leading-relaxed">
                 The translation is ready, but Farsi audio is not available right now. You can
                 still read it or show it to someone.
               </p>
             </div>
             <button
               onClick={() => setSpeechNotice(null)}
-              className="shrink-0 text-xs font-bold text-amber-700 hover:text-amber-900 underline underline-offset-2 cursor-pointer font-farsi"
+              aria-label="بستن / Dismiss"
+              className="shrink-0 w-11 h-11 inline-flex items-center justify-center rounded-xl
+                         text-attention hover:bg-surface transition cursor-pointer"
             >
-              بستن
+              <X className="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
         )}
@@ -695,49 +705,67 @@ export default function App() {
               {/* Card 1: Talk to someone */}
               <div
                 onClick={() => goToTab('interpreter')}
-                className="group bg-teal-50/60 border-2 border-teal-200 hover:border-primary rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
+                className="group bg-surface border-2 border-edge hover:border-primary rounded-3xl p-5 sm:p-6 shadow-hamyar transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
               >
                 <div className="space-y-4">
                   <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-on-primary group-hover:scale-105 transition">
                     <Mic className="w-6 h-6" />
                   </div>
-                  <div>
-                    <h3 className="text-base font-bold text-slate-900 break-words">Talk to someone</h3>
-                    <p className="text-xs text-slate-500 font-medium break-words">Live audio interpretation</p>
-                    <h4 dir="rtl" className="font-farsi font-bold text-primary text-base mt-2 break-words">با کسی صحبت کنید</h4>
-                    <p dir="rtl" className="font-farsi text-xs text-slate-500 break-words">ترجمه زنده و همزمان</p>
+                  <div className="space-y-1">
+                    {/* Persian first. These cards led with the English
+                        title and put the Persian underneath in smaller,
+                        greyer type, on the home page of an app for people
+                        who read Persian. */}
+                    <h3 dir="rtl" className="font-farsi font-bold text-ink text-lg break-words">با کسی صحبت کنید</h3>
+                    <p dir="rtl" className="font-farsi text-base text-ink-muted break-words">ترجمه زنده و همزمان</p>
+                    <div dir="ltr" className="font-latin pt-1.5 border-t border-edge mt-2">
+                      <h4 className="font-bold text-ink text-base break-words">Talk to someone</h4>
+                      <p className="text-sm text-ink-muted break-words">Live audio interpretation</p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-teal-200 flex items-center justify-between text-xs font-bold text-primary">
+                <div className="pt-3 border-t border-edge flex items-center justify-between gap-2 text-primary">
                   {/* "Start live interpreter" wrapped onto two lines while the
                       other three sat on one, which made this card taller than
                       its neighbours for no reason. */}
-                  <span>Start talking →</span>
-                  <span className="font-farsi">شروع گفتگو</span>
+                  <span className="text-start leading-tight">
+                    <span dir="rtl" className="block font-farsi font-bold text-base">شروع گفتگو</span>
+                    <span dir="ltr" className="block font-latin text-sm">Start talking</span>
+                  </span>
+                  <ArrowLeft className="w-5 h-5 shrink-0 rtl:rotate-180" aria-hidden="true" />
                 </div>
               </div>
 
               {/* Card 2: Understand a letter */}
               <div
                 onClick={() => setIsLetterScannerOpen(true)}
-                className="group bg-teal-50/60 border-2 border-teal-200 hover:border-primary rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
+                className="group bg-surface border-2 border-edge hover:border-primary rounded-3xl p-5 sm:p-6 shadow-hamyar transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
               >
                 <div className="space-y-4">
                   <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-on-primary group-hover:scale-105 transition">
                     <Camera className="w-6 h-6" />
                   </div>
-                  <div>
-                    <h3 className="text-base font-bold text-slate-900 break-words">Understand a letter</h3>
-                    <p className="text-xs text-slate-500 font-medium break-words">Photo analysis & deadlines</p>
-                    <h4 dir="rtl" className="font-farsi font-bold text-primary text-base mt-2 break-words">یک نامه را بفهمید</h4>
-                    <p dir="rtl" className="font-farsi text-xs text-slate-500 break-words">عکس نامه و خلاصه فارسی</p>
+                  <div className="space-y-1">
+                    {/* Persian first. These cards led with the English
+                        title and put the Persian underneath in smaller,
+                        greyer type, on the home page of an app for people
+                        who read Persian. */}
+                    <h3 dir="rtl" className="font-farsi font-bold text-ink text-lg break-words">یک نامه را بفهمید</h3>
+                    <p dir="rtl" className="font-farsi text-base text-ink-muted break-words">عکس نامه و خلاصه فارسی</p>
+                    <div dir="ltr" className="font-latin pt-1.5 border-t border-edge mt-2">
+                      <h4 className="font-bold text-ink text-base break-words">Understand a letter</h4>
+                      <p className="text-sm text-ink-muted break-words">Photo analysis & deadlines</p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-teal-200 flex items-center justify-between text-xs font-bold text-primary">
-                  <span>Scan letter now →</span>
-                  <span className="font-farsi">اسکن نامه</span>
+                <div className="pt-3 border-t border-edge flex items-center justify-between gap-2 text-primary">
+                  <span className="text-start leading-tight">
+                    <span dir="rtl" className="block font-farsi font-bold text-base">اسکن نامه</span>
+                    <span dir="ltr" className="block font-latin text-sm">Scan letter now</span>
+                  </span>
+                  <ArrowLeft className="w-5 h-5 shrink-0 rtl:rotate-180" aria-hidden="true" />
                 </div>
               </div>
 
@@ -748,46 +776,64 @@ export default function App() {
                   setCustomUploadedForm(null);
                   goToTab('form_companion');
                 }}
-                className="group bg-teal-50/60 border-2 border-teal-200 hover:border-primary rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
+                className="group bg-surface border-2 border-edge hover:border-primary rounded-3xl p-5 sm:p-6 shadow-hamyar transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
               >
                 <div className="space-y-4">
                   <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-on-primary group-hover:scale-105 transition">
                     <CheckSquare className="w-6 h-6" />
                   </div>
-                  <div>
-                    <h3 className="text-base font-bold text-slate-900 break-words">Fill in a form</h3>
-                    <p className="text-xs text-slate-500 font-medium break-words">Guided question-by-question</p>
-                    <h4 dir="rtl" className="font-farsi font-bold text-primary text-base mt-2 break-words">یک فرم را تکمیل کنید</h4>
-                    <p dir="rtl" className="font-farsi text-xs text-slate-500 break-words">پاسخ صوتی و بررسی پاسخ‌ها</p>
+                  <div className="space-y-1">
+                    {/* Persian first. These cards led with the English
+                        title and put the Persian underneath in smaller,
+                        greyer type, on the home page of an app for people
+                        who read Persian. */}
+                    <h3 dir="rtl" className="font-farsi font-bold text-ink text-lg break-words">یک فرم را تکمیل کنید</h3>
+                    <p dir="rtl" className="font-farsi text-base text-ink-muted break-words">پاسخ صوتی و بررسی پاسخ‌ها</p>
+                    <div dir="ltr" className="font-latin pt-1.5 border-t border-edge mt-2">
+                      <h4 className="font-bold text-ink text-base break-words">Fill in a form</h4>
+                      <p className="text-sm text-ink-muted break-words">Guided question-by-question</p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-teal-200 flex items-center justify-between text-xs font-bold text-primary">
-                  <span>Start form guide →</span>
-                  <span className="font-farsi">تکمیل فرم</span>
+                <div className="pt-3 border-t border-edge flex items-center justify-between gap-2 text-primary">
+                  <span className="text-start leading-tight">
+                    <span dir="rtl" className="block font-farsi font-bold text-base">تکمیل فرم</span>
+                    <span dir="ltr" className="block font-latin text-sm">Start form guide</span>
+                  </span>
+                  <ArrowLeft className="w-5 h-5 shrink-0 rtl:rotate-180" aria-hidden="true" />
                 </div>
               </div>
 
               {/* Card 4: Write a message */}
               <div
                 onClick={() => goToTab('message_writer')}
-                className="group bg-teal-50/60 border-2 border-teal-200 hover:border-primary rounded-3xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
+                className="group bg-surface border-2 border-edge hover:border-primary rounded-3xl p-5 sm:p-6 shadow-hamyar transition cursor-pointer flex flex-col justify-between space-y-4 sm:space-y-5 w-full min-w-0"
               >
                 <div className="space-y-4">
                   <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-on-primary group-hover:scale-105 transition">
                     <Edit3 className="w-6 h-6" />
                   </div>
-                  <div>
-                    <h3 className="text-base font-bold text-slate-900 break-words">Write a message</h3>
-                    <p className="text-xs text-slate-500 font-medium break-words">Polite UK English messages</p>
-                    <h4 dir="rtl" className="font-farsi font-bold text-primary text-base mt-2 break-words">یک پیام را بنویسید</h4>
-                    <p dir="rtl" className="font-farsi text-xs text-slate-500 break-words">ارسال پیام به مسئول پرونده</p>
+                  <div className="space-y-1">
+                    {/* Persian first. These cards led with the English
+                        title and put the Persian underneath in smaller,
+                        greyer type, on the home page of an app for people
+                        who read Persian. */}
+                    <h3 dir="rtl" className="font-farsi font-bold text-ink text-lg break-words">یک پیام را بنویسید</h3>
+                    <p dir="rtl" className="font-farsi text-base text-ink-muted break-words">ارسال پیام به مسئول پرونده</p>
+                    <div dir="ltr" className="font-latin pt-1.5 border-t border-edge mt-2">
+                      <h4 className="font-bold text-ink text-base break-words">Write a message</h4>
+                      <p className="text-sm text-ink-muted break-words">Polite UK English messages</p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-teal-200 flex items-center justify-between text-xs font-bold text-primary">
-                  <span>Write message →</span>
-                  <span className="font-farsi">نوشتن پیام</span>
+                <div className="pt-3 border-t border-edge flex items-center justify-between gap-2 text-primary">
+                  <span className="text-start leading-tight">
+                    <span dir="rtl" className="block font-farsi font-bold text-base">نوشتن پیام</span>
+                    <span dir="ltr" className="block font-latin text-sm">Write message</span>
+                  </span>
+                  <ArrowLeft className="w-5 h-5 shrink-0 rtl:rotate-180" aria-hidden="true" />
                 </div>
               </div>
             </div>
@@ -855,21 +901,32 @@ export default function App() {
             </div>
 
             {/* QUICK INTERPRETER INLINE PREVIEW */}
-            <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-200 shadow-2xs space-y-4 w-full min-w-0">
-              <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
-                <div className="min-w-0">
-                  <h3 className="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
-                    <Mic className="w-5 h-5 text-teal-600 shrink-0" />
-                    <span>Quick Speech / Text Interpreter</span>
-                  </h3>
-                  <p className="text-xs text-slate-500">Fast translation for immediate conversations</p>
+            <div className="bg-surface rounded-3xl p-4 sm:p-6 border border-edge shadow-hamyar space-y-4 w-full min-w-0">
+              <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-edge">
+                <div className="min-w-0 space-y-0.5">
+                  <div className="flex items-center gap-2">
+                    <Mic className="w-5 h-5 text-primary shrink-0" aria-hidden="true" />
+                    <h3 dir="rtl" className="font-farsi font-bold text-ink text-lg">
+                      ترجمهٔ سریع
+                    </h3>
+                  </div>
+                  <p dir="ltr" className="font-latin text-sm text-ink-muted">
+                    Quick interpreter, by voice or by typing
+                  </p>
                 </div>
+                {/* Was a yellow button, which in this app means "read this
+                    before you continue" and nothing else. */}
                 <button
                   onClick={() => setIsSayItForMeOpen(true)}
-                  className="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs rounded-xl transition shadow-2xs flex items-center gap-1.5 shrink-0 cursor-pointer"
+                  aria-label="برای من بگو / Say it for me"
+                  className="min-h-[44px] px-3.5 bg-primary hover:bg-primary-press text-on-primary
+                             rounded-xl transition shadow-hamyar flex items-center gap-2 shrink-0 cursor-pointer"
                 >
-                  <Volume2 className="w-4 h-4" />
-                  <span>SAY IT FOR ME </span>
+                  <Volume2 className="w-4 h-4 shrink-0" aria-hidden="true" />
+                  <span className="text-start leading-tight">
+                    <span dir="rtl" className="block font-farsi font-bold text-base">برای من بگو</span>
+                    <span dir="ltr" className="block font-latin text-sm opacity-80">Say it for me</span>
+                  </span>
                 </button>
               </div>
 
@@ -903,21 +960,26 @@ export default function App() {
                 "Talk to someone / گفتگو با کسی" on one line, where the two
                 reading directions met in the middle and neither language had a
                 clean place to start. */}
-            <div className="bg-teal-900 text-white p-6 rounded-2xl border border-teal-800">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-800 text-teal-100 text-sm font-semibold mb-3">
-                <Mic className="w-4 h-4" />
-                <span>Live voice interpreter</span>
+            {/* The emphasis surface, like every other block in this app whose
+                job is to explain rather than to act. This was a raw teal-900
+                with a teal-800 pill, neither of which is in tokens.css. */}
+            <div className="bg-emphasis text-on-emphasis p-6 rounded-2xl space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 border border-white/20 text-sm font-bold">
+                <Mic className="w-4 h-4 shrink-0" aria-hidden="true" />
+                <span dir="ltr" className="font-latin">Live voice interpreter</span>
               </div>
-              <h2 className="font-farsi text-2xl font-bold leading-tight" dir="rtl">
-                گفتگو با کسی
-              </h2>
-              <p className="font-farsi text-base text-teal-100 mt-1" dir="rtl">
-                به فارسی یا دری صحبت کنید. حرف شما را بلند به انگلیسی می‌گوییم.
-              </p>
-              <p className="text-base text-teal-100/90 mt-3">
-                <span className="block font-bold text-white">Talk to someone</span>
-                Speak in Farsi or Dari. We translate your words aloud into natural British English.
-              </p>
+              <div dir="rtl" className="space-y-2">
+                <h2 className="font-farsi text-2xl font-bold leading-tight">گفتگو با کسی</h2>
+                <p className="font-farsi text-lg text-on-emphasis-muted leading-relaxed">
+                  به فارسی یا دری صحبت کنید. حرف شما را بلند به انگلیسی می‌گوییم.
+                </p>
+              </div>
+              <div dir="ltr" className="font-latin space-y-0.5 border-t border-white/15 pt-3">
+                <p className="font-bold text-base">Talk to someone</p>
+                <p className="text-sm text-on-emphasis-muted leading-relaxed">
+                  Speak in Farsi or Dari. We translate your words aloud into natural British English.
+                </p>
+              </div>
             </div>
 
             {/* A genuine "read this before you continue", so it wears the
@@ -1096,11 +1158,11 @@ export default function App() {
             {/* The three destinations that came out of the navigation bar when
                 it went from eight to five. They are not buried: this is the
                 first thing on the screen that replaced them. */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200 space-y-3">
-              <h3 className="font-bold text-slate-900 text-lg font-farsi" dir="rtl">
-                بخش‌های دیگر
-              </h3>
-              <p className="text-ink-muted text-sm -mt-1">Other sections</p>
+            <div className="bg-surface rounded-3xl p-6 border border-edge space-y-3">
+              <div dir="rtl" className="space-y-0.5">
+                <h3 className="font-farsi font-bold text-ink text-xl">بخش‌های دیگر</h3>
+                <p dir="ltr" className="font-latin text-ink-muted text-sm">Other sections</p>
+              </div>
               <div className="space-y-2">
                 {[
                   { tab: 'message_writer' as AppTab, fa: 'نوشتن پیام', en: 'Message writer' },
@@ -1110,44 +1172,53 @@ export default function App() {
                   <button
                     key={item.tab}
                     onClick={() => goToTab(item.tab)}
-                    className="w-full min-h-[44px] p-3.5 bg-slate-50 hover:bg-slate-100 rounded-2xl flex items-center justify-between gap-3 cursor-pointer transition"
+                    className="w-full min-h-[56px] p-3.5 bg-page hover:bg-surface border border-edge
+                               rounded-2xl flex items-center justify-between gap-3 cursor-pointer transition"
                   >
-                    <span className="text-left">
-                      <span className="block font-farsi font-bold text-base text-slate-900" dir="rtl">
+                    <span className="text-start">
+                      <span className="block font-farsi font-bold text-base text-ink" dir="rtl">
                         {item.fa}
                       </span>
-                      <span className="block text-sm text-ink-muted">{item.en}</span>
+                      <span dir="ltr" className="block font-latin text-sm text-ink-muted">{item.en}</span>
                     </span>
-                    <ArrowRight className="w-5 h-5 text-ink-muted shrink-0" />
+                    <ArrowRight className="w-5 h-5 text-ink-muted shrink-0 rtl:rotate-180" aria-hidden="true" />
                   </button>
                 ))}
               </div>
             </div>
 
-            <div className="bg-white rounded-3xl p-6 border border-slate-200 space-y-3">
-              <h3 className="font-bold text-slate-900 text-base">More Settings & Resources</h3>
-              <div className="space-y-2 text-xs">
-                <button
-                  onClick={() => setIsSettingsOpen(true)}
-                  className="w-full p-3.5 bg-slate-50 hover:bg-slate-100 rounded-2xl text-left font-bold text-slate-800 flex items-center justify-between"
-                >
-                  <span>App Settings & Voice Preferences</span>
-                  <span>→</span>
-                </button>
-                <button
-                  onClick={() => setIsSavedPhrasesOpen(true)}
-                  className="w-full p-3.5 bg-slate-50 hover:bg-slate-100 rounded-2xl text-left font-bold text-slate-800 flex items-center justify-between"
-                >
-                  <span>Saved Phrases ({savedPhrases.length})</span>
-                  <span>→</span>
-                </button>
-                <button
-                  onClick={() => setIsLexiconOpen(true)}
-                  className="w-full p-3.5 bg-slate-50 hover:bg-slate-100 rounded-2xl text-left font-bold text-slate-800 flex items-center justify-between"
-                >
-                  <span>Refugee Lexicon Modal</span>
-                  <span>→</span>
-                </button>
+            {/* These three were English only, with a typed arrow for an icon,
+                on the screen a person reaches when they are already lost. */}
+            <div className="bg-surface rounded-3xl p-6 border border-edge space-y-3">
+              <div dir="rtl" className="space-y-0.5">
+                <h3 className="font-farsi font-bold text-ink text-xl">تنظیمات و منابع</h3>
+                <p dir="ltr" className="font-latin text-ink-muted text-sm">Settings and resources</p>
+              </div>
+              <div className="space-y-2">
+                {[
+                  { onClick: () => setIsSettingsOpen(true), fa: 'تنظیمات برنامه و صدا', en: 'App settings and voice' },
+                  {
+                    onClick: () => setIsSavedPhrasesOpen(true),
+                    fa: `عبارت‌های ذخیره‌شده (${savedPhrases.length})`,
+                    en: `Saved phrases (${savedPhrases.length})`,
+                  },
+                  { onClick: () => setIsLexiconOpen(true), fa: 'واژه‌نامهٔ پناهندگی', en: 'Words used in the asylum system' },
+                ].map((item) => (
+                  <button
+                    key={item.en}
+                    onClick={item.onClick}
+                    className="w-full min-h-[56px] p-3.5 bg-page hover:bg-surface border border-edge
+                               rounded-2xl flex items-center justify-between gap-3 cursor-pointer transition"
+                  >
+                    <span className="text-start">
+                      <span dir="rtl" className="block font-farsi font-bold text-base text-ink">
+                        {item.fa}
+                      </span>
+                      <span dir="ltr" className="block font-latin text-sm text-ink-muted">{item.en}</span>
+                    </span>
+                    <ArrowRight className="w-5 h-5 text-ink-muted shrink-0 rtl:rotate-180" aria-hidden="true" />
+                  </button>
+                ))}
               </div>
             </div>
           </div>
