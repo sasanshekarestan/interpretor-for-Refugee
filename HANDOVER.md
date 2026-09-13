@@ -2,13 +2,11 @@
 
 Last updated 13 September 2026.
 
-> **Correction, same day.** The first version of this file said the design
-> system had landed. It had not. It landed on the screens that session happened
-> to touch, and the file described the session rather than the app. Anyone
-> reading it cold would have believed the work was finished. The section "The
-> design system is half done" below replaces that claim, and
-> `tests/design-guard.mjs` now measures it on every run so the answer never
-> again depends on somebody's memory.
+> **Corrected twice in one day.** The first version of this file said the design
+> system had landed, when it had reached about half the app. The second version
+> said so honestly and set out the work. That work is now done, and the numbers
+> below come from `tests/design-guard.mjs` rather than from anyone's memory,
+> which is the point of having built it.
 
 This is the file to read when picking the project up cold, in a new chat or a
 new session. It says what exists, what is deliberately absent, what is waiting
@@ -65,56 +63,61 @@ session.
 
 ---
 
-## The design system is half done
+## The design system
 
-This is the single biggest open piece of work and the one most likely to be
-misjudged, because the screens that do follow `design.md` are the ones a person
-sees first.
+Finished on 13 September 2026, in five commits, one screen or one sweep each.
+`tests/design-guard.mjs` measures it on every `npm test`, so the answer never
+again depends on somebody's memory of a session.
 
-**On the system:** home page, form library, My Documents, back bar, cookie
-notice, letter reader hero, live interpreter introduction, and
-`src/formCompanion/tokens.ts`, which used to be a second palette with its own
-hardcoded values and now resolves entirely to `tokens.css`.
+| | Start of the day | Now |
+| --- | --- | --- |
+| Off-system neutrals (`slate-`, `gray-`, `zinc-`…) | 778 | 0 |
+| Off-system Tailwind colours (`teal-`, `rose-`, `amber-`…) | 536 | 0 |
+| Arbitrary type sizes (`text-[13.5px]`) | 47 | 0 |
+| Typed arrow glyphs used as icons | 13 | 0 |
+| Hardcoded hex values | 14 | 1 |
+| Gradients | 7 | 0 |
 
-**Not yet:** the letter reader itself, the form companion internals, the
-interpretation card, the audio input, settings, and most modals.
+The one remaining hex is `context.fillStyle = '#ffffff'` in the letter
+reader, which paints a white page behind a PDF before rendering it. That is
+drawing, not styling, and it should stay.
 
-Measured, not estimated, and re-measured on every `npm test`:
+**Dark mode works now.** Most of the app was hardcoded light, so the dark half
+of `tokens.css` had nothing to act on. Every screen renders correctly in dark
+for the first time. Nobody asked for this; it fell out of the sweep, and it is
+worth knowing before someone reports it as a bug.
 
-| | Count |
-| --- | --- |
-| Off-system neutrals (`slate-`, `gray-`, `zinc-`…) | 756 |
-| Off-system Tailwind colours (`teal-`, `rose-`, `amber-`…) | 523 |
-| Hardcoded hex values in components | 10 |
-| Arbitrary type sizes (`text-[13.5px]`) | 47 |
-| Typed arrow glyphs used as icons | 13 |
+### What the sweep also fixed
 
-The worst single file is `LetterScannerModal.tsx` at 74 off-system neutrals and
-eighteen sizes below the 14px floor, one of them 10.5px. It is also one of the
-two screens people spend the longest in.
+Colour was the smallest part of it.
 
-`design.md` is honest about all of this: its "What we never do" list opens by
-saying each item is currently in the code. The handover was the optimistic
-document, not the design one.
+- **Type below the floor.** 47 sizes under 14px, one at 10.5px, most of them in
+  the letter reader and the form companion. `design.md` sets 16px as the floor
+  for anything a person must read, and Persian one step above Latin throughout.
+- **English leading the screen.** The letter reader's header, the four home
+  cards, the message writer, the terminology library and the settings modal all
+  put English first with Persian underneath in smaller, greyer type.
+- **Two languages on one line.** "Take a photo | عکس گرفتن", "1. Who are you
+  writing to? / گیرنده پیام کیست؟", and every error message in the letter
+  reader, which was one string with a pipe in the middle. `design.md` bans this
+  outright: two reading directions meet in the middle and neither language gets
+  a clean start.
+- **Tap targets.** The interpretation card's controls were 24px tall. 44px is
+  what a cold hand on a bus can hit.
+- **Meaning carried by the wrong colour.** The message writer was amber-branded,
+  so every ordinary control on it wore the attention colour. A screen where
+  everything warns you warns you about nothing.
 
-### How the sweep is meant to go
+### How it was done, if it ever needs doing again
 
-`tests/design-guard.mjs` is a ratchet rather than a pass/fail. The counts above
-are the ceiling; a change that adds one more `slate-700` fails, a change that
-removes fifty passes and lowers the ceiling with `--accept`. That is what makes
-it safe to do this screen by screen over weeks instead of in one enormous
-find-and-replace, which on this project has already gone wrong once.
+`scripts/map-to-tokens.mjs` rewrites colour utility classes and nothing else,
+and never touches a comment, because a comment saying "this used to be
+slate-900" has to stay true. What it cannot decide it leaves and lists:
+gradients, dark grounds, mid teals. Those were done by hand, per file, with a
+screenshot of every screen at 390px and 1280px before anything was committed.
 
-Order, worst and most-used first: letter reader, form companion internals,
-interpretation card, audio input, then the modals. Delete rather than restyle
-where `design.md` says never: the arrow glyphs, the two-languages-on-one-line
-labels in `AudioVoiceInput.tsx` and `ShamsiDateConverterWidget.tsx`, and
-anything below 14px.
-
-One question that keeps being reopened and is already settled: **Persian sits
-one step larger than Latin, with more leading.** `design.md` has the scale
-table and wins. The comment in `tokens.css` saying otherwise is wrong and
-should go when the type sweep reaches it.
+The lesson from the earlier failure on this project still holds: change one
+exact kind of token, leave everything else alone, and check with your eyes.
 
 ---
 
@@ -235,26 +238,27 @@ Fifteen commits, all merged and pushed. In rough order:
 
 ## What changed on 13 September 2026
 
-- School Application fixed, as above. It was live and broken.
-- The PDF viewer's three failure states rewritten. The "missing" state used to
-  print the static file path in a monospace box above the sentence "place the
-  valid PDF file at the path above inside the project public directory", and
-  the error state printed pdf.js's own exception. Both now say, in Persian and
-  then English, that the fault is ours and not the reader's, and that the
-  questions and guidance work either way. The exception text stays in the
-  console where a developer can read it.
-- The NHS's blue removed from the viewer's header tile, and `NHS_BLUE` deleted
-  from `formCompanion/tokens.ts`, which exported it and used it nowhere.
-- `src/formCompanion/tokens.ts` rewritten to resolve to `tokens.css`. It was
-  the second source of truth for the palette.
-- Four surviving `dir-ltr` phantom classes removed, two of them on the date
-  fields in `ShamsiDateConverterWidget.tsx`, where the direction was doing
-  nothing and dates are meant to read left to right.
-- The eleven Playwright suites moved into `tests/`, with a runner
-  (`npm test`), a static server that reproduces Vercel's SPA fallback, and a
-  README.
-- Two new suites: `library-test` opens every card in the form library, and
-  `design-guard` measures the design debt and stops it growing.
+Five commits, all merged.
+
+**School Application was live and broken.** It declared a PDF that had never
+been in the repository, so the SPA fallback served `index.html`, pdf.js called
+it an invalid PDF, and a parent looking for a school place was shown the words
+"Invalid PDF structure" in English. It is a guidance card now (decision log).
+
+**The PDF viewer's three failure states were written for a developer.** The
+missing state printed the static file path above the sentence "place the valid
+PDF file at the path above inside the project public directory". Both now say,
+Persian then English, that the fault is ours and not the reader's, and that the
+questions still work. The exception text stays in the console.
+
+**The test suites moved into `tests/`** with a runner, a static server that
+reproduces Vercel's SPA fallback, and a README. They had lived in a session
+workspace, which meant only whoever was in that session could run them.
+
+**Two new suites.** `library-test` opens every card in the form library.
+`design-guard` measures the design debt and stops it growing.
+
+**The design system, finished.** See the section above.
 
 ---
 

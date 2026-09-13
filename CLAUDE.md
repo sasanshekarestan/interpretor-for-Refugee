@@ -37,8 +37,8 @@ harder to use is a regression.
 3. **Colour means something or it is grey.** The whole palette is in
    `src/tokens.css` as `--hamyar-*` custom properties, with the contrast ratio
    written next to each one. Never introduce a colour that is not there. Never
-   hardcode a hex value in a component. Most of the app does not obey this yet;
-   see "The design system is half done" below before assuming it does.
+   hardcode a hex value in a component. The whole app obeys this now, and
+   `tests/design-guard.mjs` fails if that stops being true.
 4. **Nothing leaves the device that does not have to.** No accounts, no login,
    no server-side storage of anyone's documents or conversations. My Documents
    is IndexedDB on the device and stays that way. This was decided deliberately
@@ -57,29 +57,21 @@ harder to use is a regression.
 
 ---
 
-## The design system is half done
+## The design system
 
-`design.md` describes the interface Hamyar is meant to have. Roughly half the
-app has it. Assume any screen not listed here is still on the old palette, and
-check with `node tests/design-guard.mjs` rather than trusting a summary.
+`design.md` describes the interface Hamyar is meant to have, and as of 13
+September 2026 the app has it. Zero off-system colours, zero type below the
+floor, zero gradients, zero typed arrows. `node tests/design-guard.mjs` proves
+it and fails if any of that comes back. Dark mode works as a result.
 
-**Done:** home page, form library, My Documents, back bar, cookie notice,
-letter reader hero, live interpreter introduction, the form companion's token
-file.
+So when you touch a file, keep it on the system: colours from `tokens.css`,
+sizes from the `design.md` scale, Persian one step larger than Latin, Persian
+block first and English block second, never the two on one line. If you add
+something off-system the guard fails, and the fix is the code, not the ceiling.
 
-**Not done:** the letter reader itself, the form companion internals, the
-interpreter card, the audio input, settings, and most modals. As of the last
-count that is 756 off-system neutrals, 523 off-system Tailwind colours, 10
-hardcoded hex values, 47 arbitrary type sizes and 13 typed arrow glyphs.
-
-Two things follow from that. When you touch a file, bring it onto the system
-rather than matching what is already there; and when you finish a screen, run
-`node tests/design-guard.mjs --accept` so the ceiling records the progress.
-
-One question `design.md` has already answered, because it keeps getting
-reopened: **Persian sits one step larger than Latin, with more leading.** The
-scale table in `design.md` is the authority. A comment in `tokens.css` says
-otherwise and is wrong.
+`scripts/map-to-tokens.mjs` exists if a new file ever arrives off-system. It
+rewrites colour classes only, never touches comments, and lists what it could
+not decide.
 
 ---
 
