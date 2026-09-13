@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { InterpretationResult, EmbedSettings, TranslationDirection } from '../types';
-import { 
-  Volume2, 
-  VolumeX, 
-  Copy, 
-  Check, 
-  Sparkles, 
-  Info, 
-  BookOpen, 
+import {
+  Volume2,
+  VolumeX,
+  Copy,
+  Check,
+  Sparkles,
+  Info,
+  BookOpen,
   Flame,
   AlertTriangle,
   RotateCcw,
@@ -15,9 +15,25 @@ import {
   X,
   Star,
   ThumbsUp,
-  ThumbsDown
+  ThumbsDown,
 } from 'lucide-react';
 import { playSpokenAudio, stopAllSpeech } from '../utils/audioHelper';
+
+/**
+ * One exchange, as both people see it.
+ *
+ * Brought onto the design system in September 2026. Before that this file held
+ * 67 off-system colours, a gradient, a typed arrow standing in for an icon,
+ * and a row of controls at 24px tall that a cold hand on a bus cannot hit.
+ * Almost every label was English only, on the screen where a Persian speaker
+ * is trying to be understood at a desk.
+ *
+ * The two panels are deliberately unalike: what you said sits on the page
+ * ground and reads as a record, what it became sits on a surface with a
+ * primary rule and reads as the thing to show someone. That distinction used
+ * to be carried by a gradient, which design.md bans, and is now carried by
+ * position and a rule.
+ */
 
 interface InterpretationCardProps {
   result: InterpretationResult;
@@ -27,6 +43,16 @@ interface InterpretationCardProps {
   onSavePhrase?: (phrase: { farsiText: string; englishText: string; label: string }) => void;
   onRateResult?: (id: string, rating: 'up' | 'down') => void;
 }
+
+/**
+ * The type scale, as steps, so Persian can sit one above Latin.
+ *
+ * design.md: "Persian sits one step larger with more leading throughout. This
+ * is not generosity, it is legibility: Arabic script hangs its meaning on
+ * marks that disappear first when type gets small or tight." The old helper
+ * gave both scripts the same size and bottomed out at 12px.
+ */
+const STEPS = ['text-sm', 'text-base', 'text-lg', 'text-xl', 'text-2xl', 'text-3xl'] as const;
 
 export const InterpretationCard: React.FC<InterpretationCardProps> = ({
   result,
@@ -47,26 +73,17 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
 
   const isFarsiToEnglish = result.direction === 'farsi_to_english';
 
-  // Determine font size class based on settings.fontSize
-  const getFontSizeClass = (baseSize: 'sm' | 'base' | 'lg' | 'xl') => {
+  /**
+   * `base` is the reading size, `lead` the size of the line being handed over.
+   * Persian takes one step more, and the person's own font-size setting takes
+   * one or two on top of that.
+   */
+  const sizeFor = (role: 'base' | 'lead', persian: boolean) => {
     const scale = settings.fontSize || 'normal';
-    if (scale === 'xlarge') {
-      if (baseSize === 'sm') return 'text-base';
-      if (baseSize === 'base') return 'text-lg';
-      if (baseSize === 'lg') return 'text-xl';
-      return 'text-2xl';
-    }
-    if (scale === 'large') {
-      if (baseSize === 'sm') return 'text-sm';
-      if (baseSize === 'base') return 'text-base';
-      if (baseSize === 'lg') return 'text-lg';
-      return 'text-xl';
-    }
-    // Normal
-    if (baseSize === 'sm') return 'text-xs';
-    if (baseSize === 'base') return 'text-sm';
-    if (baseSize === 'lg') return 'text-base';
-    return 'text-lg';
+    const start = role === 'lead' ? 1 : 0;
+    const bump = scale === 'xlarge' ? 2 : scale === 'large' ? 1 : 0;
+    const index = Math.min(STEPS.length - 1, start + bump + (persian ? 1 : 0));
+    return STEPS[index];
   };
 
   const handleCopy = () => {
@@ -89,8 +106,8 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
     setIsPlaying(true);
     try {
       if (isFarsiToEnglish) {
-        const textToRead = viewMode === 'formal' && result.formalPhrasing 
-          ? result.formalPhrasing 
+        const textToRead = viewMode === 'formal' && result.formalPhrasing
+          ? result.formalPhrasing
           : (result.britishPhrasing || result.translatedText);
 
         await playSpokenAudio(textToRead, 'en-GB', {
@@ -138,214 +155,262 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
 
   const isLowConfidence = result.lowConfidence || (result.dialectConfidence !== undefined && result.dialectConfidence < 0.6);
 
+  /** Icon-only controls, 44px, labelled in both languages. */
+  const iconButton =
+    'w-11 h-11 shrink-0 inline-flex items-center justify-center rounded-xl border transition cursor-pointer';
+
   return (
-    <div className="w-full bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-6 shadow-sm transition-all hover:shadow-md">
-      {/* Low Confidence / Audio Unclear Warning Signal */}
+    <div className="w-full bg-surface border border-edge rounded-2xl p-4 sm:p-6 shadow-hamyar transition">
+      {/* The microphone did not hear it properly. Attention, not fault: nothing
+          has broken, the person just needs to say it again. */}
       {isLowConfidence && (
-        <div className="mb-4 p-3.5 bg-amber-50 border border-amber-300 rounded-xl flex items-start gap-2.5 text-amber-900 animate-fade-in">
-          <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-          <div className="flex-1 text-xs sm:text-sm font-medium">
-            <div className="flex items-center justify-between font-bold">
-              <span className="font-farsi text-amber-950">صدا واضح نبود. لطفاً دوباره آرام‌تر صحبت کنید.</span>
-              <span className="text-amber-900 font-sans">Could not hear clearly. Please speak again slowly.</span>
-            </div>
-            {result.confidenceMessage && (
-              <p className="mt-1 text-xs text-amber-800">{result.confidenceMessage}</p>
-            )}
+        <div className="mb-4 p-3.5 bg-attention-bg border-s-4 border-attention rounded-xl space-y-1.5 animate-fade-in">
+          <div dir="rtl" className="flex items-start gap-2.5">
+            <AlertTriangle className="w-5 h-5 text-attention shrink-0 mt-0.5" aria-hidden="true" />
+            <p className="font-farsi text-base text-ink leading-relaxed flex-1">
+              صدا واضح نبود. لطفاً دوباره آرام‌تر صحبت کنید.
+            </p>
           </div>
+          <p dir="ltr" className="font-latin text-sm text-ink-muted leading-relaxed">
+            Could not hear clearly. Please speak again slowly.
+          </p>
+          {result.confidenceMessage && (
+            <p dir="ltr" className="font-latin text-sm text-ink-muted leading-relaxed">
+              {result.confidenceMessage}
+            </p>
+          )}
         </div>
       )}
 
-      {/* Top Meta Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">
+      {/* Meta and controls */}
+      <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-edge">
         <div className="flex items-center flex-wrap gap-2">
-          {/* Dialect Tag */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-900 text-xs font-bold">
-            <Sparkles className="w-3.5 h-3.5 text-teal-600" />
-            <span>{result.detectedDialect || 'Farsi / Dari'}</span>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary text-on-primary text-sm font-bold">
+            <Sparkles className="w-4 h-4 shrink-0" aria-hidden="true" />
+            <bdi dir="ltr" className="font-latin">{result.detectedDialect || 'Farsi / Dari'}</bdi>
           </div>
 
-          {/* Urgency / Tone */}
           {result.toneOrEmotion && (
-            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-medium">
-              <Flame className="w-3 h-3 text-amber-600" />
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-attention-bg border border-attention text-attention text-sm font-bold">
+              <Flame className="w-4 h-4 shrink-0" aria-hidden="true" />
               <span>{result.toneOrEmotion}</span>
             </div>
           )}
         </div>
 
-        {/* Action Buttons */}
         <div className="flex items-center flex-wrap gap-1.5">
-          {/* Hand-it-over Fullscreen Button */}
+          {/* The one labelled control here, because it is the one that matters
+              at a desk: turning the phone round so the other person can read. */}
           <button
             id={`btn-handover-${result.id}`}
             onClick={() => setShowHandOverModal(true)}
-            title="Hand-it-over Mode (Display large text) / نمایش بزرگ روی صفحه"
-            aria-label="Hand-it-over Mode (Display large text) / نمایش بزرگ روی صفحه"
-            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-teal-50 hover:bg-teal-100 text-teal-900 border border-teal-200 transition"
+            aria-label="نمایش بزرگ متن / Hand it over, large text"
+            className="min-h-[44px] px-3 rounded-xl bg-page border border-edge-control
+                       text-ink hover:bg-surface transition cursor-pointer
+                       inline-flex items-center gap-2"
           >
-            <Maximize2 className="w-3.5 h-3.5 text-teal-700" />
-            <span>Hand-it-Over</span>
-            <span className="font-farsi hidden sm:inline">| نمایش بزرگ</span>
+            <Maximize2 className="w-4 h-4 shrink-0 text-primary" aria-hidden="true" />
+            <span className="text-start leading-tight">
+              <span dir="rtl" className="block font-farsi font-bold text-base">نمایش بزرگ</span>
+              <span dir="ltr" className="block font-latin text-sm text-ink-muted">Hand it over</span>
+            </span>
           </button>
 
-          {/* Save Phrase Button */}
+          {/* Icon-only from here, each labelled in both languages, each 44px.
+              These were 24px tall with English-only labels. */}
           <button
             id={`btn-save-phrase-${result.id}`}
             onClick={handleSave}
-            title={isSaved ? 'Saved / ذخیره شد' : 'Save phrase / ذخیره عبارت'}
-            aria-label={isSaved ? 'Saved / ذخیره شد' : 'Save phrase / ذخیره عبارت'}
-            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium border transition ${
+            aria-label={isSaved ? 'ذخیره شد / Saved' : 'ذخیره عبارت / Save phrase'}
+            aria-pressed={isSaved}
+            className={`${iconButton} ${
               isSaved
-                ? 'bg-amber-100 border-amber-300 text-amber-900 font-bold'
-                : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-700'
+                ? 'bg-primary border-primary text-on-primary'
+                : 'bg-page border-edge-control text-ink-muted hover:bg-surface'
             }`}
           >
-            <Star className={`w-3.5 h-3.5 ${isSaved ? 'fill-amber-500 text-amber-500' : 'text-slate-400'}`} />
-            <span>{isSaved ? 'Saved' : 'Save'}</span>
+            <Star className={`w-5 h-5 ${isSaved ? 'fill-current' : ''}`} aria-hidden="true" />
           </button>
 
-          {/* Copy Button */}
           <button
             id={`btn-copy-result-${result.id}`}
             onClick={handleCopy}
-            title="Copy translation result / کپی متن ترجمه"
-            aria-label="Copy translation result / کپی متن ترجمه"
-            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 transition"
+            aria-label={copied ? 'کپی شد / Copied' : 'کپی متن ترجمه / Copy translation'}
+            className={`${iconButton} ${
+              copied
+                ? 'bg-primary border-primary text-on-primary'
+                : 'bg-page border-edge-control text-ink-muted hover:bg-surface'
+            }`}
           >
-            {copied ? <Check className="w-3.5 h-3.5 text-teal-600" /> : <Copy className="w-3.5 h-3.5" />}
-            <span>{copied ? 'Copied' : 'Copy'}</span>
+            {copied ? <Check className="w-5 h-5" aria-hidden="true" /> : <Copy className="w-5 h-5" aria-hidden="true" />}
           </button>
 
-          {/* Accuracy Rating */}
-          <div className="flex items-center gap-0.5 ml-1 border-l border-slate-200 pl-1.5">
+          <div className="flex items-center gap-1.5 ps-1.5 border-s border-edge">
             <button
               id={`btn-rate-up-${result.id}`}
               onClick={() => handleRate('up')}
-              title="Accurate translation / ترجمه دقیق بود"
-              aria-label="Accurate translation / ترجمه دقیق بود"
-              className={`p-1 rounded hover:bg-slate-100 transition ${userRating === 'up' ? 'text-teal-600 font-bold' : 'text-slate-400'}`}
+              aria-label="ترجمه دقیق بود / Accurate translation"
+              aria-pressed={userRating === 'up'}
+              className={`${iconButton} ${
+                userRating === 'up'
+                  ? 'bg-primary border-primary text-on-primary'
+                  : 'bg-page border-edge-control text-ink-muted hover:bg-surface'
+              }`}
             >
-              <ThumbsUp className="w-3.5 h-3.5" />
+              <ThumbsUp className="w-5 h-5" aria-hidden="true" />
             </button>
             <button
               id={`btn-rate-down-${result.id}`}
               onClick={() => handleRate('down')}
-              title="Inaccurate translation / ترجمه نادرست بود"
-              aria-label="Inaccurate translation / ترجمه نادرست بود"
-              className={`p-1 rounded hover:bg-slate-100 transition ${userRating === 'down' ? 'text-rose-600 font-bold' : 'text-slate-400'}`}
+              aria-label="ترجمه نادرست بود / Inaccurate translation"
+              aria-pressed={userRating === 'down'}
+              className={`${iconButton} ${
+                userRating === 'down'
+                  ? 'bg-fault-bg border-fault text-fault'
+                  : 'bg-page border-edge-control text-ink-muted hover:bg-surface'
+              }`}
             >
-              <ThumbsDown className="w-3.5 h-3.5" />
+              <ThumbsDown className="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
         </div>
       </div>
 
-      {/* Main Dual-Language Display */}
       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-5">
-        {/* Source Text (Spoken Transcript FIRST) */}
-        <div className="flex flex-col justify-between p-4 bg-slate-50 border border-slate-200 rounded-xl">
+        {/* What was said. A record, so it sits on the page ground. */}
+        <div className="flex flex-col justify-between p-4 bg-page border border-edge rounded-xl">
           <div>
-            <div className="flex items-center justify-between text-xs font-bold text-slate-700 mb-2">
-              <span className={isFarsiToEnglish ? 'font-farsi text-sm text-teal-800' : 'font-sans text-xs uppercase tracking-wide text-teal-800'}>
-                {isFarsiToEnglish ? 'شما گفتید (Farsi / Dari Transcript):' : 'You Said (English Transcript):'}
-              </span>
-              <span className="text-xs text-slate-400">Verbatim</span>
+            <div className="mb-2 space-y-0.5">
+              {isFarsiToEnglish ? (
+                <>
+                  <p dir="rtl" className="font-farsi font-bold text-base text-ink">شما گفتید</p>
+                  <p dir="ltr" className="font-latin text-sm text-ink-muted">
+                    What you said, word for word
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p dir="ltr" className="font-latin font-bold text-base text-ink">What you said</p>
+                  <p dir="rtl" className="font-farsi text-sm text-ink-muted">آنچه گفته شد، کلمه به کلمه</p>
+                </>
+              )}
             </div>
             <p
               dir={isFarsiToEnglish ? 'rtl' : 'ltr'}
-              className={`text-slate-900 leading-relaxed ${
-                isFarsiToEnglish ? 'font-farsi font-medium' : 'font-sans font-normal'
-              } ${getFontSizeClass('lg')}`}
+              className={`text-ink leading-[1.8] ${
+                isFarsiToEnglish ? 'font-farsi' : 'font-latin'
+              } ${sizeFor('base', isFarsiToEnglish)}`}
             >
               {result.sourceText}
             </p>
           </div>
 
-          {/* "Not What I Meant" Button */}
-          <div className="mt-4 pt-3 border-t border-slate-200/80 flex items-center justify-between">
+          <div className="mt-4 pt-3 border-t border-edge flex flex-wrap items-center justify-between gap-2">
             {onNotWhatIMeant && (
               <button
                 id={`btn-not-what-i-meant-${result.id}`}
                 onClick={() => onNotWhatIMeant(result.id, result.direction)}
-                title="Discard result and re-record speech / این را نگفتم - ضبط مجدد"
-                aria-label="Discard result and re-record speech / این را نگفتم - ضبط مجدد"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition"
+                aria-label="این را نگفتم، ضبط مجدد / Not what I meant, record again"
+                className="min-h-[44px] px-3 rounded-xl bg-fault-bg border border-fault
+                           text-fault hover:opacity-90 transition cursor-pointer
+                           inline-flex items-center gap-2"
               >
-                <RotateCcw className="w-3.5 h-3.5 text-rose-600" />
-                <span>{isFarsiToEnglish ? 'این را نگفتم (Not what I meant)' : 'Not what I meant'}</span>
+                <RotateCcw className="w-4 h-4 shrink-0" aria-hidden="true" />
+                <span className="text-start leading-tight">
+                  <span dir="rtl" className="block font-farsi font-bold text-base">این را نگفتم</span>
+                  <span dir="ltr" className="block font-latin text-sm">Not what I meant</span>
+                </span>
               </button>
             )}
 
             {result.dialectNotes && (
-              <div className="flex items-center gap-1 text-xs text-slate-500">
-                <Info className="w-3 h-3 text-teal-600" />
+              <div className="flex items-center gap-1.5 text-sm text-ink-muted">
+                <Info className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
                 <span>{result.dialectNotes}</span>
               </div>
             )}
           </div>
         </div>
 
-        {/* Translation Output Card */}
-        <div className="flex flex-col justify-between p-4 bg-gradient-to-br from-teal-50/40 via-white to-teal-50/30 border border-teal-200 rounded-xl shadow-xs">
+        {/* What it became. The thing to show someone, so it gets the rule.
+            This used to be a three-stop gradient, which design.md bans:
+            flat fills only. */}
+        <div className="flex flex-col justify-between p-4 bg-surface border border-edge border-s-4 border-s-primary rounded-xl">
           <div>
-            <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-teal-900 mb-2">
-              <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-teal-600" />
-                <span>{isFarsiToEnglish ? 'British English Translation' : 'ترجمه به فارسی و دری'}</span>
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <div className="space-y-0.5">
+                {isFarsiToEnglish ? (
+                  <>
+                    <p dir="ltr" className="font-latin font-bold text-base text-ink">
+                      British English
+                    </p>
+                    <p dir="rtl" className="font-farsi text-sm text-ink-muted">ترجمه به انگلیسی</p>
+                  </>
+                ) : (
+                  <>
+                    <p dir="rtl" className="font-farsi font-bold text-base text-ink">
+                      ترجمه به فارسی و دری
+                    </p>
+                    <p dir="ltr" className="font-latin text-sm text-ink-muted">Farsi and Dari</p>
+                  </>
+                )}
               </div>
 
-              {/* View style toggle */}
-              {isFarsiToEnglish && (
-                <div className="flex items-center gap-1 text-xs">
+              {isFarsiToEnglish && result.formalPhrasing && (
+                <div role="tablist" className="flex items-center gap-1">
                   <button
                     id="btn-tab-standard"
+                    role="tab"
+                    aria-selected={viewMode === 'standard'}
                     onClick={() => setViewMode('standard')}
-                    className={`px-2 py-0.5 rounded ${
-                      viewMode === 'standard' ? 'bg-teal-700 text-white font-bold' : 'text-slate-500 hover:text-slate-800'
+                    className={`min-h-[44px] px-3 rounded-xl text-sm font-bold transition cursor-pointer ${
+                      viewMode === 'standard'
+                        ? 'bg-primary text-on-primary'
+                        : 'bg-page border border-edge-control text-ink-muted hover:bg-surface'
                     }`}
                   >
                     Natural
                   </button>
-                  {result.formalPhrasing && (
-                    <button
-                      id="btn-tab-formal"
-                      onClick={() => setViewMode('formal')}
-                      className={`px-2 py-0.5 rounded ${
-                        viewMode === 'formal' ? 'bg-teal-700 text-white font-bold' : 'text-slate-500 hover:text-slate-800'
-                      }`}
-                    >
-                      Formal
-                    </button>
-                  )}
+                  <button
+                    id="btn-tab-formal"
+                    role="tab"
+                    aria-selected={viewMode === 'formal'}
+                    onClick={() => setViewMode('formal')}
+                    className={`min-h-[44px] px-3 rounded-xl text-sm font-bold transition cursor-pointer ${
+                      viewMode === 'formal'
+                        ? 'bg-primary text-on-primary'
+                        : 'bg-page border border-edge-control text-ink-muted hover:bg-surface'
+                    }`}
+                  >
+                    Formal
+                  </button>
                 </div>
               )}
             </div>
 
-            {/* Translation Output Text */}
             <div className="my-2">
               {viewMode === 'standard' && (
                 <p
                   dir={isFarsiToEnglish ? 'ltr' : 'rtl'}
-                  className={`text-slate-900 font-semibold leading-relaxed ${
-                    isFarsiToEnglish ? 'font-sans' : 'font-farsi font-medium'
-                  } ${getFontSizeClass('xl')}`}
+                  className={`text-ink font-bold leading-[1.8] ${
+                    isFarsiToEnglish ? 'font-latin' : 'font-farsi'
+                  } ${sizeFor('lead', !isFarsiToEnglish)}`}
                 >
                   {isFarsiToEnglish ? (result.britishPhrasing || result.translatedText) : result.translatedText}
                 </p>
               )}
               {viewMode === 'formal' && (
-                <div>
+                <div className="space-y-1.5">
                   <p
                     dir={isFarsiToEnglish ? 'ltr' : 'rtl'}
-                    className={`text-slate-900 font-semibold leading-relaxed ${
-                      isFarsiToEnglish ? 'font-sans' : 'font-farsi font-medium'
-                    } ${getFontSizeClass('xl')}`}
+                    className={`text-ink font-bold leading-[1.8] ${
+                      isFarsiToEnglish ? 'font-latin' : 'font-farsi'
+                    } ${sizeFor('lead', !isFarsiToEnglish)}`}
                   >
                     {isFarsiToEnglish ? (result.formalPhrasing || result.translatedText) : result.translatedText}
                   </p>
-                  <p className="text-xs text-teal-800 font-medium mt-1">
-                    * Official phrasing for NHS, Home Office, or Legal Solicitors.
+                  <p dir="ltr" className="font-latin text-sm text-ink-muted">
+                    Official phrasing, for the NHS, the Home Office or a solicitor.
                   </p>
                 </div>
               )}
@@ -356,7 +421,8 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
               when the device has no Persian voice the reason is shown here. */}
           {noFarsiVoice && (
             <p
-              className="mt-3 text-xs font-farsi text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 leading-relaxed"
+              className="mt-3 font-farsi text-base text-ink bg-attention-bg border-s-4 border-attention
+                         rounded-xl px-3 py-2.5 leading-relaxed"
               dir="rtl"
               role="status"
             >
@@ -364,29 +430,36 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
             </p>
           )}
 
-          {/* Voice Speak Out Button */}
-          <div className="mt-4 pt-3 border-t border-teal-100 flex items-center justify-between gap-3">
+          <div className="mt-4 pt-3 border-t border-edge">
             <button
               id={`btn-play-british-voice-${result.id}`}
               onClick={handleSpeak}
-              title="Play spoken audio translation / پخش صوتی ترجمه"
-              aria-label="Play spoken audio translation / پخش صوتی ترجمه"
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm ${
-                isPlaying
-                  ? 'bg-rose-600 hover:bg-rose-700 text-white animate-pulse'
-                  : 'bg-teal-700 hover:bg-teal-800 text-white shadow-teal-700/20 active:scale-95'
-              }`}
+              aria-label={isPlaying ? 'توقف پخش / Stop' : 'پخش صوتی ترجمه / Play the translation'}
+              className={`min-h-[48px] px-4 rounded-xl font-bold transition cursor-pointer
+                          inline-flex items-center gap-2 ${
+                            isPlaying
+                              ? 'bg-primary-press text-on-primary'
+                              : 'bg-primary hover:bg-primary-press text-on-primary shadow-hamyar'
+                          }`}
             >
               {isPlaying ? (
                 <>
-                  <VolumeX className="w-4 h-4" />
-                  <span>{isFarsiToEnglish ? 'Stop Voice' : 'توقف پخش صوتی'}</span>
+                  <VolumeX className="w-5 h-5 shrink-0" aria-hidden="true" />
+                  <span className="text-start leading-tight">
+                    <span dir="rtl" className="block font-farsi text-base">توقف پخش</span>
+                    <span dir="ltr" className="block font-latin text-sm opacity-80">Stop</span>
+                  </span>
                 </>
               ) : (
                 <>
-                  <Volume2 className="w-4 h-4" />
-                  <span>
-                    {isFarsiToEnglish ? 'Play English Speech' : 'پخش صوتی فارسی و دری'}
+                  <Volume2 className="w-5 h-5 shrink-0" aria-hidden="true" />
+                  <span className="text-start leading-tight">
+                    <span dir="rtl" className="block font-farsi text-base">
+                      {isFarsiToEnglish ? 'شنیدن به انگلیسی' : 'شنیدن به فارسی'}
+                    </span>
+                    <span dir="ltr" className="block font-latin text-sm opacity-80">
+                      {isFarsiToEnglish ? 'Play in English' : 'Play in Farsi'}
+                    </span>
                   </span>
                 </>
               )}
@@ -395,70 +468,86 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
         </div>
       </div>
 
-      {/* UK Terms Identified Chips */}
+      {/* The English words in this exchange, explained */}
       {result.keyTerms && result.keyTerms.length > 0 && (
-        <div className="mt-4 pt-3 border-t border-slate-100">
-          <div className="flex items-center gap-2 mb-2 text-xs font-bold text-slate-700 uppercase tracking-wide">
-            <BookOpen className="w-3.5 h-3.5 text-teal-700" />
-            <span>UK Terminology Explanations:</span>
+        <div className="mt-4 pt-3 border-t border-edge">
+          <div className="flex items-center gap-2 mb-2">
+            <BookOpen className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
+            <div className="space-y-0.5">
+              <p dir="rtl" className="font-farsi font-bold text-base text-ink">
+                معنی کلمه‌های انگلیسی
+              </p>
+              <p dir="ltr" className="font-latin text-sm text-ink-muted">
+                Words in this exchange, explained
+              </p>
+            </div>
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {result.keyTerms.map((term, idx) => (
-              <div
-                key={idx}
-                className="flex flex-col p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs"
-              >
-                <div className="flex items-center gap-2 font-bold text-teal-900">
-                  <span>{term.english}</span>
-                  <span className="text-slate-400">➔</span>
-                  <span className="font-farsi text-slate-800">{term.farsi}</span>
-                </div>
-                <p className="text-xs text-slate-600 mt-1 leading-snug">
-                  {term.explanation}
+              <div key={idx} className="p-3 bg-page border border-edge rounded-xl space-y-1">
+                {/* Each language on its own line. These used to share one
+                    line with a typed arrow between them, which is not an icon
+                    and put two reading directions either side of it. */}
+                <p dir="ltr" className="font-latin font-bold text-base text-ink">
+                  <bdi>{term.english}</bdi>
                 </p>
+                <p dir="rtl" className="font-farsi text-lg text-ink leading-[1.8]">{term.farsi}</p>
+                {term.explanation && (
+                  <p dir="ltr" className="font-latin text-sm text-ink-muted leading-relaxed">
+                    {term.explanation}
+                  </p>
+                )}
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* HAND-IT-OVER FULLSCREEN OVERLAY */}
+      {/* Turning the phone round. The whole screen becomes one sentence. */}
       {showHandOverModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex flex-col justify-between p-6 sm:p-10 animate-fade-in text-white">
-          {/* Header Bar */}
-          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-            <div className="flex items-center gap-2">
-              <span className="px-3 py-1 bg-teal-600 rounded-full text-xs font-bold uppercase tracking-wider">
-                Hand-it-Over Mode
-              </span>
-              <span className="text-xs text-slate-400 font-farsi">نمایش بزرگ متن جهت ارائه به طرف مقابل</span>
+        <div className="fixed inset-0 z-50 bg-emphasis text-on-emphasis flex flex-col justify-between p-6 sm:p-10 animate-fade-in">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/15 pb-4">
+            <div className="space-y-0.5 min-w-0">
+              <p dir="rtl" className="font-farsi font-bold text-lg">نمایش بزرگ</p>
+              <p dir="ltr" className="font-latin text-sm text-on-emphasis-muted">
+                Hold the phone out so they can read it
+              </p>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={() => setHandOverLang(handOverLang === 'target' ? 'source' : 'target')}
-                className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs font-semibold text-slate-200 transition"
+                aria-label={
+                  handOverLang === 'target'
+                    ? 'نمایش متن اصلی / Show the original'
+                    : 'نمایش ترجمه / Show the translation'
+                }
+                className="min-h-[44px] px-3.5 rounded-xl bg-white/15 border border-white/25
+                           text-on-emphasis hover:bg-white/25 transition cursor-pointer
+                           font-latin text-sm font-bold"
               >
-                {handOverLang === 'target' ? 'Show Source Text' : 'Show Translation'}
+                {handOverLang === 'target' ? 'Show the original' : 'Show the translation'}
               </button>
               <button
                 id="btn-close-handover"
                 onClick={() => setShowHandOverModal(false)}
-                className="p-2 bg-slate-800 hover:bg-slate-700 rounded-full text-slate-300 hover:text-white transition"
+                aria-label="بستن / Close"
+                className="w-11 h-11 shrink-0 inline-flex items-center justify-center rounded-xl
+                           bg-white/15 border border-white/25 text-on-emphasis
+                           hover:bg-white/25 transition cursor-pointer"
               >
-                <X className="w-6 h-6" />
+                <X className="w-6 h-6" aria-hidden="true" />
               </button>
             </div>
           </div>
 
-          {/* GIANT DISPLAY TEXT */}
-          <div className="flex-1 flex flex-col justify-center items-center text-center my-8 px-4">
+          <div className="flex-1 flex flex-col justify-center items-center text-center my-8 px-2">
             {handOverLang === 'target' ? (
               <p
                 dir={isFarsiToEnglish ? 'ltr' : 'rtl'}
-                className={`text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-amber-300 tracking-wide ${
-                  isFarsiToEnglish ? 'font-sans' : 'font-farsi'
+                className={`text-3xl sm:text-5xl md:text-6xl font-bold leading-[1.4] text-on-emphasis ${
+                  isFarsiToEnglish ? 'font-latin' : 'font-farsi'
                 }`}
               >
                 {isFarsiToEnglish ? (result.britishPhrasing || result.translatedText) : result.translatedText}
@@ -466,8 +555,8 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
             ) : (
               <p
                 dir={isFarsiToEnglish ? 'rtl' : 'ltr'}
-                className={`text-3xl sm:text-4xl md:text-5xl font-semibold leading-relaxed text-slate-200 ${
-                  isFarsiToEnglish ? 'font-farsi' : 'font-sans'
+                className={`text-2xl sm:text-4xl md:text-5xl font-bold leading-[1.5] text-on-emphasis-muted ${
+                  isFarsiToEnglish ? 'font-farsi' : 'font-latin'
                 }`}
               >
                 {result.sourceText}
@@ -475,17 +564,21 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
             )}
           </div>
 
-          {/* Footer controls */}
-          <div className="border-t border-slate-800 pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-slate-400">
-              Hold phone out toward caseworker or refugee to read directly.
+          <div className="border-t border-white/15 pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p dir="rtl" className="font-farsi text-base text-on-emphasis-muted text-center sm:text-start">
+              گوشی را به سمت طرف مقابل بگیرید تا خودش بخواند.
             </p>
             <button
               onClick={handleSpeak}
-              className="px-6 py-3 bg-teal-600 hover:bg-teal-500 text-white rounded-xl font-bold text-sm flex items-center gap-2 transition"
+              aria-label="پخش صدا / Read aloud"
+              className="min-h-[48px] px-5 rounded-xl bg-white text-emphasis hover:bg-on-emphasis-muted
+                         font-bold transition cursor-pointer inline-flex items-center gap-2 shrink-0"
             >
-              <Volume2 className="w-5 h-5" />
-              <span>Read Aloud</span>
+              <Volume2 className="w-5 h-5 shrink-0" aria-hidden="true" />
+              <span className="text-start leading-tight">
+                <span dir="rtl" className="block font-farsi text-base">پخش صدا</span>
+                <span dir="ltr" className="block font-latin text-sm opacity-70">Read aloud</span>
+              </span>
             </button>
           </div>
         </div>
