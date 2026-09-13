@@ -6,13 +6,18 @@ import { FormQuestion } from '../types';
 /**
  * How the form is actually completed.
  *
- * 'paper'  — there is a real document to fill in by hand. Form Companion can
- *            show it, so it belongs in the library.
- * 'online' — the application only exists as a web journey. There is nothing
- *            to display beside a guide, so these are kept here for the
- *            browser extension to use and are not listed in the app.
+ * 'paper'   — there is a real document to fill in by hand, and we hold it.
+ *             Form Companion can show it, so it belongs in the library.
+ * 'council' — a real form exists, but every local council issues its own, so
+ *             there is no single document we could show without showing the
+ *             wrong one to almost everybody. These appear in the library as
+ *             guidance: what the council will ask, and where to find their
+ *             form. They never open the document surface.
+ * 'online'  — the application only exists as a web journey. There is nothing
+ *             to display beside a guide, so these are kept here for the
+ *             browser extension to use and are not listed in the app.
  */
-export type FormDelivery = 'paper' | 'online';
+export type FormDelivery = 'paper' | 'online' | 'council';
 
 export interface OfficialForm {
   id: string;
@@ -24,15 +29,26 @@ export interface OfficialForm {
   category: string;
   purposeFa: string;
   purposeEn: string;
-  pdfPath: string;
+  /**
+   * The document in public/forms, when we hold one. Absent for 'council' and
+   * 'online' forms, and absence is the honest state: a path that points at a
+   * file which is not there gets served the SPA's index.html, pdf.js calls it
+   * an invalid PDF, and a person looking for help enrolling their child is
+   * shown a parser error in English.
+   */
+  pdfPath?: string;
   officialSourceUrl: string;
   pageCount: number;
   delivery: FormDelivery;
   questions: FormQuestion[];
 }
 
-/** The forms Form Companion can show: the ones that exist on paper. */
-export const paperForms = (forms: OfficialForm[]) => forms.filter((f) => f.delivery !== 'online');
+/** Everything the library lists: the documents we hold, and the council ones. */
+export const libraryForms = (forms: OfficialForm[]) => forms.filter((f) => f.delivery !== 'online');
+
+/** The forms that open a document surface, because we actually hold the paper. */
+export const documentForms = (forms: OfficialForm[]) =>
+  forms.filter((f) => f.delivery === 'paper' && !!f.pdfPath);
 
 export const OFFICIAL_FORMS: OfficialForm[] = [
   {
@@ -695,7 +711,6 @@ export const OFFICIAL_FORMS: OfficialForm[] = [
     category: 'home_office',
     purposeFa: 'درخواست صدور مجدد کارت هویت پناهندگی (ARC) در صورت مفقودی، سرقت یا آسیب‌دیدگی',
     purposeEn: 'Report lost, stolen, or damaged ARC identity card and request a replacement from Home Office.',
-    pdfPath: 'public/forms/arc-replacement.pdf',
     officialSourceUrl: 'https://www.gov.uk/asylum-reporting-centre',
     pageCount: 2,
     delivery: 'online',
@@ -884,7 +899,6 @@ export const OFFICIAL_FORMS: OfficialForm[] = [
     category: 'benefits',
     purposeFa: 'درخواست حقوق ماهانه معیشت و اجاره‌خانه پس از دریافت قبولی پناهندگی',
     purposeEn: 'Apply for financial monthly living allowance and housing help after refugee status is granted.',
-    pdfPath: 'public/forms/universal-credit.pdf',
     officialSourceUrl: 'https://www.gov.uk/universal-credit',
     pageCount: 6,
     delivery: 'online',
@@ -946,10 +960,9 @@ export const OFFICIAL_FORMS: OfficialForm[] = [
     category: 'education',
     purposeFa: 'ثبت‌نام فرزندان در مدارس دولتی محل سکونت بریتانیا',
     purposeEn: 'Apply for a local state primary or secondary school place for your children.',
-    pdfPath: 'public/forms/school-admission.pdf',
     officialSourceUrl: 'https://www.gov.uk/apply-for-school-place',
     pageCount: 4,
-    delivery: 'paper',
+    delivery: 'council',
     questions: [
       {
         id: 'school_q1',

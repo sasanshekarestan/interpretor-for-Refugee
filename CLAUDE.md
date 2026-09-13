@@ -37,7 +37,8 @@ harder to use is a regression.
 3. **Colour means something or it is grey.** The whole palette is in
    `src/tokens.css` as `--hamyar-*` custom properties, with the contrast ratio
    written next to each one. Never introduce a colour that is not there. Never
-   hardcode a hex value in a component.
+   hardcode a hex value in a component. Most of the app does not obey this yet;
+   see "The design system is half done" below before assuming it does.
 4. **Nothing leaves the device that does not have to.** No accounts, no login,
    no server-side storage of anyone's documents or conversations. My Documents
    is IndexedDB on the device and stays that way. This was decided deliberately
@@ -53,6 +54,32 @@ harder to use is a regression.
 7. **Never claim something the app does not do.** This applies to notices and
    copy as much as to code. The standard cookie wording was shortened because it
    said the app personalises content, and it does not.
+
+---
+
+## The design system is half done
+
+`design.md` describes the interface Hamyar is meant to have. Roughly half the
+app has it. Assume any screen not listed here is still on the old palette, and
+check with `node tests/design-guard.mjs` rather than trusting a summary.
+
+**Done:** home page, form library, My Documents, back bar, cookie notice,
+letter reader hero, live interpreter introduction, the form companion's token
+file.
+
+**Not done:** the letter reader itself, the form companion internals, the
+interpreter card, the audio input, settings, and most modals. As of the last
+count that is 756 off-system neutrals, 523 off-system Tailwind colours, 10
+hardcoded hex values, 47 arbitrary type sizes and 13 typed arrow glyphs.
+
+Two things follow from that. When you touch a file, bring it onto the system
+rather than matching what is already there; and when you finish a screen, run
+`node tests/design-guard.mjs --accept` so the ceiling records the progress.
+
+One question `design.md` has already answered, because it keeps getting
+reopened: **Persian sits one step larger than Latin, with more leading.** The
+scale table in `design.md` is the authority. A comment in `tokens.css` says
+otherwise and is wrong.
 
 ---
 
@@ -135,28 +162,27 @@ fields at all.
 
 ## Testing
 
-Playwright suites live outside the repo, in the session workspace, and are run
-against a local build at 390px (phone) and 1280px (desktop). They stub the API
-with `page.route()` so that anything answered by the model shows up as the
-literal string `FROM_THE_MODEL`.
-
-Eleven suites: `back-test`, `cursor-test`, `docs-test`, `favicon-test`,
-`gp-cache-test`, `hc5-test`, `cookie-test`, `error-test`, `speech-test`,
-`export-test`, `cache-test`.
-
-Every suite except `cookie-test` seeds the cookie choice before the page loads,
-or the notice sits over the bottom of the screen and eats the taps being tested:
-
-```js
-await page.addInitScript(() => {
-  try { localStorage.setItem('hamyar_cookie_choice', 'rejected'); } catch (_) {}
-});
+```
+npm test
 ```
 
-Run all of them before delivering anything. Two real bugs were caught this way
-that no amount of reading would have found: a cookie banner whose invisible
-padding killed the entire mobile navigation, and a guidance cache that silently
-served `index.html` because the build had not been rerun.
+Thirteen suites in `tests/`, Playwright against a real build. `tests/README.md`
+says what each one guards and the two things that will trip you up. Run all of
+them before delivering anything.
+
+Three real bugs have been caught this way that no amount of reading would have
+found: a cookie banner whose invisible padding killed the entire mobile
+navigation, a guidance cache that silently served `index.html` because the
+build had not been rerun, and a form card that had been showing parents the
+words "Invalid PDF structure" for months.
+
+`tests/design-guard.mjs` is the one to understand before touching the
+interface. It is a ratchet: today's counts of off-system colour, hardcoded hex,
+arbitrary type sizes and typed arrow glyphs are the ceiling, and a change that
+raises any of them fails. It does not fail on the debt already there, because
+most of the app does not follow `design.md` yet and a check that fails on every
+run is a check people learn to ignore. After removing some, run
+`node tests/design-guard.mjs --accept` and commit the lowered ceiling.
 
 ---
 

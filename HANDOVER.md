@@ -1,6 +1,14 @@
 # Hamyar: state of play
 
-Last updated 13 September 2026, at commit `36408b3`.
+Last updated 13 September 2026.
+
+> **Correction, same day.** The first version of this file said the design
+> system had landed. It had not. It landed on the screens that session happened
+> to touch, and the file described the session rather than the app. Anyone
+> reading it cold would have believed the work was finished. The section "The
+> design system is half done" below replaces that claim, and
+> `tests/design-guard.mjs` now measures it on every run so the answer never
+> again depends on somebody's memory.
 
 This is the file to read when picking the project up cold, in a new chat or a
 new session. It says what exists, what is deliberately absent, what is waiting
@@ -57,6 +65,59 @@ session.
 
 ---
 
+## The design system is half done
+
+This is the single biggest open piece of work and the one most likely to be
+misjudged, because the screens that do follow `design.md` are the ones a person
+sees first.
+
+**On the system:** home page, form library, My Documents, back bar, cookie
+notice, letter reader hero, live interpreter introduction, and
+`src/formCompanion/tokens.ts`, which used to be a second palette with its own
+hardcoded values and now resolves entirely to `tokens.css`.
+
+**Not yet:** the letter reader itself, the form companion internals, the
+interpretation card, the audio input, settings, and most modals.
+
+Measured, not estimated, and re-measured on every `npm test`:
+
+| | Count |
+| --- | --- |
+| Off-system neutrals (`slate-`, `gray-`, `zinc-`…) | 756 |
+| Off-system Tailwind colours (`teal-`, `rose-`, `amber-`…) | 523 |
+| Hardcoded hex values in components | 10 |
+| Arbitrary type sizes (`text-[13.5px]`) | 47 |
+| Typed arrow glyphs used as icons | 13 |
+
+The worst single file is `LetterScannerModal.tsx` at 74 off-system neutrals and
+eighteen sizes below the 14px floor, one of them 10.5px. It is also one of the
+two screens people spend the longest in.
+
+`design.md` is honest about all of this: its "What we never do" list opens by
+saying each item is currently in the code. The handover was the optimistic
+document, not the design one.
+
+### How the sweep is meant to go
+
+`tests/design-guard.mjs` is a ratchet rather than a pass/fail. The counts above
+are the ceiling; a change that adds one more `slate-700` fails, a change that
+removes fifty passes and lowers the ceiling with `--accept`. That is what makes
+it safe to do this screen by screen over weeks instead of in one enormous
+find-and-replace, which on this project has already gone wrong once.
+
+Order, worst and most-used first: letter reader, form companion internals,
+interpretation card, audio input, then the modals. Delete rather than restyle
+where `design.md` says never: the arrow glyphs, the two-languages-on-one-line
+labels in `AudioVoiceInput.tsx` and `ShamsiDateConverterWidget.tsx`, and
+anything below 14px.
+
+One question that keeps being reopened and is already settled: **Persian sits
+one step larger than Latin, with more leading.** `design.md` has the scale
+table and wins. The comment in `tokens.css` saying otherwise is wrong and
+should go when the type sweep reaches it.
+
+---
+
 ## Known gaps, all deliberate
 
 - **Twenty boxes in HC5(O) are not cached.** In the PDF they are named
@@ -68,7 +129,15 @@ session.
   guidance is cached for all eight pages, so a person is never stuck, but
   tapping an individual box still calls the model because there is no box to
   identify.
+- **Three of the eleven forms have no cached guidance**, because they have no
+  document to walk. `arc_replacement` and `universal_credit` are online-only
+  journeys and are not listed in the app at all. `school_admission` is now a
+  guidance card (see the decision log).
 - **No accounts, anywhere.** See the decision log below.
+- **TypeScript is not in strict mode.** `npm run lint` therefore passes over a
+  whole class of mistake, including the optional `pdfPath` that caused the
+  School Application bug. Turning it on would produce hundreds of errors at
+  once, so it is a job of its own rather than a line in someone else's commit.
 
 ---
 
@@ -101,6 +170,18 @@ no profiling, no recommendations, nothing that differs per person. Claiming
 otherwise in a privacy notice is a false statement about the product, made to
 precisely the people most frightened of being profiled. That phrase is removed
 and `cookie-test.mjs` fails if it ever comes back.
+
+**School admission is a guidance card, not a form.** 13 September 2026. The
+entry declared `public/forms/school-admission.pdf`, which was not in the
+repository. The SPA fallback served `index.html` in its place, pdf.js called it
+an invalid PDF, and a parent looking for a school place was shown the words
+"Invalid PDF structure" in English. There is no national in-year admission
+form to add: admissions run council by council, so any single document would be
+the wrong one for almost everybody. The card now says that plainly, lists what
+the council will ask and what to have ready, and links to the GOV.UK page that
+finds their council. `delivery: 'council'` is the new state for this, and
+`pdfPath` is optional so that "we do not hold this form" can be said in the
+data instead of discovered by a parser.
 
 **The guidance cache exists in the repo, not in a hidden store.** These files are
 the words a frightened person reads. Keeping them visible means they can be read
@@ -149,6 +230,31 @@ Fifteen commits, all merged and pushed. In rough order:
   guidance, sharing hand-written Persian through `hc5-common.*.js`.
 - A cookie notice, Consent Mode v2, a consent gated GA loader, and a cookie
   policy that folds away rather than pushing the buttons off a phone screen.
+
+---
+
+## What changed on 13 September 2026
+
+- School Application fixed, as above. It was live and broken.
+- The PDF viewer's three failure states rewritten. The "missing" state used to
+  print the static file path in a monospace box above the sentence "place the
+  valid PDF file at the path above inside the project public directory", and
+  the error state printed pdf.js's own exception. Both now say, in Persian and
+  then English, that the fault is ours and not the reader's, and that the
+  questions and guidance work either way. The exception text stays in the
+  console where a developer can read it.
+- The NHS's blue removed from the viewer's header tile, and `NHS_BLUE` deleted
+  from `formCompanion/tokens.ts`, which exported it and used it nowhere.
+- `src/formCompanion/tokens.ts` rewritten to resolve to `tokens.css`. It was
+  the second source of truth for the palette.
+- Four surviving `dir-ltr` phantom classes removed, two of them on the date
+  fields in `ShamsiDateConverterWidget.tsx`, where the direction was doing
+  nothing and dates are meant to read left to right.
+- The eleven Playwright suites moved into `tests/`, with a runner
+  (`npm test`), a static server that reproduces Vercel's SPA fallback, and a
+  README.
+- Two new suites: `library-test` opens every card in the form library, and
+  `design-guard` measures the design debt and stops it growing.
 
 ---
 

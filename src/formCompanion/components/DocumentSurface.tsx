@@ -126,7 +126,8 @@ export const DocumentSurface: React.FC<DocumentSurfaceProps> = ({
     }
     body = (
       <div className="flex-1 min-h-0 overflow-auto bg-slate-950 p-3">
-        <div className="bg-white text-slate-900 p-5 rounded-lg shadow-lg max-w-2xl mx-auto text-left dir-ltr">
+        <div className="bg-white text-slate-900 p-5 rounded-lg shadow-lg max-w-2xl mx-auto text-left"
+          dir="ltr">
           <div className="flex items-center gap-2 border-b pb-2 mb-3 text-xs font-mono text-slate-600">
             <FileText className="w-4 h-4" />
             <span>{page?.fileName || 'Document.docx'}</span>

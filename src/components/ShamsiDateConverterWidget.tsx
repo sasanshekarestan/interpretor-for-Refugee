@@ -84,7 +84,8 @@ export const ShamsiDateConverterWidget: React.FC<ShamsiDateConverterWidgetProps>
             value={shamsiDay}
             onChange={(e) => setShamsiDay(e.target.value)}
             placeholder="مثلا ۲۴"
-            className="w-full px-3 py-2 text-center font-bold text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500 dir-ltr"
+            className="w-full px-3 py-2 text-center font-bold text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500"
+            dir="ltr"
           />
         </div>
 
@@ -114,7 +115,8 @@ export const ShamsiDateConverterWidget: React.FC<ShamsiDateConverterWidgetProps>
             value={shamsiYear}
             onChange={(e) => setShamsiYear(e.target.value)}
             placeholder="مثلا ۱۳۷۳"
-            className="w-full px-3 py-2 text-center font-bold text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500 dir-ltr"
+            className="w-full px-3 py-2 text-center font-bold text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500"
+            dir="ltr"
           />
         </div>
       </div>

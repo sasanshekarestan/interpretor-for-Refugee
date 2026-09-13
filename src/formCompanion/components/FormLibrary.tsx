@@ -1,8 +1,108 @@
 import React from 'react';
-import { ArrowLeft, Camera, Check } from 'lucide-react';
-import { OFFICIAL_FORMS, paperForms } from '../../data/officialForms';
+import { ArrowLeft, Camera, Check, ExternalLink, Info } from 'lucide-react';
+import { OFFICIAL_FORMS, OfficialForm, libraryForms } from '../../data/officialForms';
 import { savedAnswerCount } from '../useFormSession';
 import { Button, Pill } from './Primitives';
+
+/**
+ * A form we cannot show, and will not pretend to.
+ *
+ * In-year school admission is run council by council. There is no national
+ * document, so there is nothing we could put on the screen that would not be
+ * the wrong form for almost everyone reading it. Until this card existed the
+ * entry claimed a PDF that was not in the repository, which meant a parent
+ * looking for a school place tapped it and was shown, in English, the words
+ * "Invalid PDF structure".
+ *
+ * What is still ours to give is the part a council form never explains: what
+ * they are going to ask, what to have ready, and what an answer looks like.
+ * That is the card. It does not open the document surface, because there is no
+ * document.
+ */
+const CouncilFormCard: React.FC<{ form: OfficialForm; isDari: boolean }> = ({ form, isDari }) => (
+  <li className="bg-surface border border-edge rounded-2xl p-4 sm:p-5 space-y-3.5">
+    <span
+      dir="ltr"
+      className="font-mono text-sm font-bold bg-primary text-on-primary px-2.5 py-1 rounded-lg inline-block"
+    >
+      {form.code}
+    </span>
+
+    <h2 className="font-farsi font-bold text-ink text-lg sm:text-xl leading-snug">
+      {isDari ? form.titleDari || form.titleFa : form.titleFa}
+    </h2>
+    <p className="font-farsi text-base text-ink-muted leading-relaxed">{form.purposeFa}</p>
+
+    {/* Quiet information, not a fault. Nothing has gone wrong: this is simply
+        how school admission works in England, and saying so plainly is more
+        use than an apology. */}
+    <div className="bg-attention-bg border-s-4 border-attention rounded-xl p-3.5 space-y-2">
+      <div className="flex items-center gap-2">
+        <Info className="w-5 h-5 text-attention shrink-0" aria-hidden="true" />
+        <h3 className="font-farsi font-bold text-attention text-base">
+          این فرم را باید از شورای محلی خودتان بگیرید
+        </h3>
+      </div>
+      <p className="font-farsi text-base text-ink leading-relaxed">
+        ثبت‌نام مدرسه در انگلستان از طریق شورای محل سکونت شما انجام می‌شود و فرم هر شورا فرق
+        می‌کند. برای همین ما نمی‌توانیم یک فرم واحد به شما نشان بدهیم. اما آنچه از شما می‌پرسند
+        تقریباً همه‌جا یکی است، و در پایین آمده است.
+      </p>
+    </div>
+
+    {/* What they will ask. The value this card actually carries. */}
+    <ol className="space-y-3">
+      {form.questions.map((q, i) => (
+        <li key={q.id} className="border border-edge rounded-xl p-3.5 space-y-1.5">
+          <div className="flex items-baseline gap-2">
+            <span className="font-farsi font-bold text-primary text-base tabular-nums shrink-0">
+              {i + 1}.
+            </span>
+            <h4 className="font-farsi font-bold text-ink text-base leading-snug">
+              {isDari ? q.dariTranslation || q.farsiTranslation : q.farsiTranslation}
+            </h4>
+          </div>
+          {q.explanationFa && (
+            <p className="font-farsi text-base text-ink-muted leading-relaxed">{q.explanationFa}</p>
+          )}
+          {q.whatTypeInfoNeeded && (
+            <p className="font-farsi text-sm text-ink-muted leading-relaxed">
+              <span className="font-bold text-ink">چه چیزی لازم است: </span>
+              {q.whatTypeInfoNeeded}
+            </p>
+          )}
+          {q.exampleFormat && (
+            <p dir="ltr" className="font-latin text-sm text-ink-muted leading-relaxed">
+              <bdi>{q.exampleFormat}</bdi>
+            </p>
+          )}
+        </li>
+      ))}
+    </ol>
+
+    {form.officialSourceUrl && (
+      <a
+        href={form.officialSourceUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="min-h-[44px] w-full px-4 rounded-xl bg-primary text-on-primary font-bold
+                   inline-flex items-center justify-center gap-2 text-sm transition
+                   hover:bg-primary-press"
+      >
+        <span className="font-farsi">پیدا کردن شورای محلی خودتان</span>
+        <ExternalLink className="w-4 h-4" aria-hidden="true" />
+      </a>
+    )}
+
+    <div dir="ltr" className="font-latin border-t border-edge pt-3 space-y-0.5">
+      <p className="text-sm text-ink-muted leading-snug">{form.titleEn}</p>
+      <p className="text-xs text-ink-muted">{form.issuer}</p>
+      <p className="text-xs text-ink-muted">
+        Each council issues its own form. This card lists what they will ask.
+      </p>
+    </div>
+  </li>
+);
 
 interface FormLibraryProps {
   isDari: boolean;
@@ -49,10 +149,14 @@ export const FormLibrary: React.FC<FormLibraryProps> = ({ isDari, onSelect, onUp
       </div>
     </div>
 
-    {/* Only forms that exist as a document. An online application has nothing
-        to show beside a guide, so it is not offered here. */}
+    {/* An online-only application has nothing to show beside a guide, so it is
+        not offered here. A council form has no single document, so it is
+        offered as guidance instead of as a form to open. */}
     <ul className="space-y-4">
-      {paperForms(OFFICIAL_FORMS).map((form) => {
+      {libraryForms(OFFICIAL_FORMS).map((form) => {
+        if (form.delivery === 'council') {
+          return <CouncilFormCard key={form.id} form={form} isDari={isDari} />;
+        }
         const answered = savedAnswerCount(form.id);
         const total = form.questions.length;
         const complete = total > 0 && answered >= total;

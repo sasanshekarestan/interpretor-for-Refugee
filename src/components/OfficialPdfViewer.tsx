@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { FileText, Printer, ExternalLink, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, AlertCircle, Download, RefreshCw } from 'lucide-react';
+import { FileText, FileQuestion, Printer, ExternalLink, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, AlertCircle, Download, RefreshCw } from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 
@@ -106,7 +106,8 @@ const linesFromTextContent = (items: any[], viewport: any): RenderedField[] => {
 };
 
 interface OfficialPdfViewerProps {
-  pdfPath: string;
+  /** Undefined when we hold no document. The viewer then says so, in Persian. */
+  pdfPath?: string;
   titleEn: string;
   titleFa?: string;
   officialSourceUrl: string;
@@ -151,7 +152,6 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
     else setInternalZoom(value);
   };
   const [docStatus, setDocStatus] = useState<'loading' | 'loaded' | 'missing' | 'error'>('loading');
-  const [errorMessage, setErrorMessage] = useState<string>('');
   const [pageRendering, setPageRendering] = useState<boolean>(false);
   const [pdfDoc, setPdfDoc] = useState<pdfjsLib.PDFDocumentProxy | null>(null);
   const [totalPdfPages, setTotalPdfPages] = useState<number>(pageCount);
@@ -162,15 +162,24 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
   const renderTaskRef = useRef<any>(null);
 
   // Convert "public/forms/hc1.pdf" to web URL "/forms/hc1.pdf"
-  const webUrl = pdfPath.startsWith('public/') ? pdfPath.replace(/^public/, '') : pdfPath;
-  const displayPath = pdfPath.startsWith('/') ? `public${pdfPath}` : pdfPath.startsWith('public/') ? pdfPath : `public/${pdfPath}`;
+  const webUrl = pdfPath
+    ? pdfPath.startsWith('public/')
+      ? pdfPath.replace(/^public/, '')
+      : pdfPath
+    : '';
 
   // 1. Load the PDF document
   useEffect(() => {
     let isCancelled = false;
-    setDocStatus('loading');
-    setErrorMessage('');
     setPdfDoc(null);
+
+    // No document to load. Not an error, and not something to retry: it means
+    // we do not hold this form's paper.
+    if (!webUrl) {
+      setDocStatus('missing');
+      return;
+    }
+    setDocStatus('loading');
 
     const loadingTask = pdfjsLib.getDocument({
       url: webUrl,
@@ -189,13 +198,20 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
       })
       .catch((err) => {
         if (isCancelled) return;
+        // The exception text stays in the console, where a developer can read
+        // it, and never reaches the screen. "Invalid PDF structure" is not a
+        // sentence anyone in this app can act on, and half of them cannot read
+        // it at all.
         console.warn('PDF.js failed to load document:', err);
-        // Check if 404 or missing file
-        if (err?.name === 'MissingPDFException' || err?.status === 404 || err?.message?.includes('404') || err?.message?.includes('Unexpected server response (404)')) {
+        if (
+          err?.name === 'MissingPDFException' ||
+          err?.status === 404 ||
+          err?.message?.includes('404') ||
+          err?.message?.includes('Unexpected server response (404)')
+        ) {
           setDocStatus('missing');
         } else {
           setDocStatus('error');
-          setErrorMessage(err?.message || 'Failed to parse official PDF file.');
         }
       });
 
@@ -355,7 +371,10 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
       <div className={`${hideToolbar ? 'hidden' : ''} bg-slate-900 text-white p-3 sm:p-4 rounded-2xl border border-slate-800 shadow-lg flex flex-wrap items-center justify-between gap-3 text-xs`}>
         {/* Left: Document Info */}
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-[#005EB8] text-white rounded-xl shadow-xs shrink-0">
+          {/* This tile used to carry the NHS's own blue. That colour belongs
+              to the NHS and appears only inside a rendered document, never on
+              the app's own furniture. */}
+          <div className="p-2 bg-primary text-on-primary rounded-xl shadow-xs shrink-0">
             <FileText className="w-5 h-5" />
           </div>
           <div>
@@ -462,87 +481,98 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
         {/* Document Loading State */}
         {docStatus === 'loading' && (
           <div className="flex-1 w-full min-h-[500px] flex flex-col items-center justify-center p-8 text-slate-400 space-y-3">
-            <RefreshCw className="w-8 h-8 animate-spin text-[#005EB8]" />
-            <p className="text-sm font-medium">Loading official PDF document...</p>
-            <p className="text-xs text-slate-500 font-mono">{webUrl}</p>
+            <RefreshCw className="w-8 h-8 animate-spin text-primary" />
+            <p dir="rtl" className="font-farsi text-base text-white">در حال باز کردن سند رسمی…</p>
+            <p dir="ltr" className="font-latin text-sm text-white/70">Opening the official document</p>
           </div>
         )}
 
-        {/* Missing PDF File Placeholder */}
+        {/*
+          The two states a person sees when the paper is not on screen.
+
+          Both of these used to be written for whoever built the app. The
+          missing state printed the static file path, in a monospace box, above
+          the sentence "place the valid PDF file at the path above inside the
+          project public directory". The error state printed pdf.js's own
+          exception text. A parent looking for a school place met the words
+          "Invalid PDF structure" and nothing else.
+
+          design.md: every failure names itself in both languages and says
+          whose fault it is. Neither of these is the person's fault, and both
+          say so. Neither is a dead end either, because the questions and the
+          Persian guidance work with or without the document.
+        */}
         {docStatus === 'missing' && (
-          <div className="flex-1 flex flex-col items-center justify-center p-6 text-center max-w-xl mx-auto space-y-4 my-auto">
-            <div className="p-4 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-full">
-              <AlertCircle className="w-10 h-10" />
+          <div className="flex-1 flex flex-col items-center justify-center p-6 max-w-xl mx-auto space-y-4 my-auto">
+            <div className="p-4 bg-white/10 text-white border border-white/25 rounded-full">
+              <FileQuestion className="w-10 h-10" aria-hidden="true" />
             </div>
 
-            <div className="space-y-2">
-              <h3 dir="rtl" className="text-lg font-bold text-white font-farsi">
-                سند رسمی PDF هنوز در سرور قرار داده نشده است
+            <div dir="rtl" className="space-y-2 text-center">
+              <h3 className="font-farsi text-lg font-bold text-white leading-snug">
+                این فرم را نداریم که نشانتان بدهیم
               </h3>
-              <p dir="rtl" className="text-xs text-slate-300 leading-relaxed font-farsi">
-                فایل اصلی این فرم هنوز در مسیر فایل‌های استاتیک برنامه موجود نیست.
+              <p className="font-farsi text-base text-white/80 leading-relaxed">
+                اشکال از شما نیست. ما نسخهٔ اصلی این فرم را در برنامه نداریم. می‌توانید آن را از
+                سایت رسمی بگیرید، و در همین صفحه سوال‌ها و راهنمای فارسی کامل در دسترس شماست.
               </p>
             </div>
 
-            {/* Path Information Box */}
-            <div className="w-full bg-slate-900 p-4 rounded-xl border border-slate-800 text-left font-mono text-xs text-slate-300 space-y-2 dir-ltr">
-              <div className="text-slate-400 text-xs uppercase tracking-wider font-sans font-bold">
-                Required Static File Path:
-              </div>
-              <div className="bg-slate-950 p-2.5 rounded border border-slate-700 font-bold text-amber-300 select-all break-all">
-                {displayPath}
-              </div>
-              <p className="text-xs text-slate-400 font-sans leading-normal">
-                To display the official government PDF, place the valid PDF file at the path above inside the project public directory.
+            <div dir="ltr" className="font-latin text-center border-t border-white/15 pt-3 w-full">
+              <p className="text-sm text-white/70 leading-relaxed">
+                We do not hold this form. Nothing is wrong with your phone. The questions and the
+                Persian guidance still work.
               </p>
             </div>
 
-            {/* Source Link & Retry Button */}
-            <div className="w-full pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-              {officialSourceUrl && (
-                <a
-                  href={officialSourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-4 py-2 bg-primary hover:bg-primary-press text-white font-bold rounded-xl text-xs transition flex items-center gap-2 shadow-sm"
-                >
-                  <Download className="w-4 h-4" />
-                  <span>Download PDF from official website</span>
-                </a>
-              )}
-              <button
-                type="button"
-                onClick={handleRetry}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-xl text-xs transition flex items-center gap-2 border border-slate-700 cursor-pointer"
+            {officialSourceUrl && (
+              <a
+                href={officialSourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="min-h-[44px] w-full px-4 rounded-xl bg-white text-emphasis font-bold
+                           inline-flex items-center justify-center gap-2 text-sm transition
+                           hover:bg-on-emphasis-muted"
               >
-                <RefreshCw className="w-4 h-4" />
-                <span>بررسی مجدد فایل (Retry)</span>
-              </button>
-            </div>
-
-            <div dir="rtl" className="p-3 bg-teal-950/40 border border-teal-900/60 rounded-xl text-xs text-teal-300 font-farsi">
-              دستیار هوشمند و راهنمای فارسی سوالات فرم کاملاً فعال و قابل استفاده است.
-            </div>
+                <Download className="w-4 h-4" aria-hidden="true" />
+                <span className="font-farsi">گرفتن فرم از سایت رسمی</span>
+              </a>
+            )}
           </div>
         )}
 
-        {/* Load Error State */}
         {docStatus === 'error' && (
-          <div className="flex-1 flex flex-col items-center justify-center p-6 text-center max-w-xl mx-auto space-y-4 my-auto">
-            <div className="p-4 bg-rose-500/10 text-rose-400 border border-rose-500/30 rounded-full">
-              <AlertCircle className="w-10 h-10" />
+          <div className="flex-1 flex flex-col items-center justify-center p-6 max-w-xl mx-auto space-y-4 my-auto">
+            <div className="p-4 bg-white/10 text-white border border-white/25 rounded-full">
+              <AlertCircle className="w-10 h-10" aria-hidden="true" />
             </div>
-            <div className="space-y-1">
-              <h3 dir="rtl" className="text-base font-bold text-white font-farsi">خطا در بارگذاری سند رسمی PDF</h3>
-              <p className="text-xs text-slate-400 font-mono">{errorMessage || 'Unable to render PDF'}</p>
+
+            <div dir="rtl" className="space-y-2 text-center">
+              <h3 className="font-farsi text-lg font-bold text-white leading-snug">
+                سند باز نشد
+              </h3>
+              <p className="font-farsi text-base text-white/80 leading-relaxed">
+                اشکال از سمت ماست، نه از شما. یک بار دیگر امتحان کنید. اگر باز هم باز نشد،
+                سوال‌ها و راهنمای فارسی بدون سند هم کار می‌کنند.
+              </p>
             </div>
+
+            <div dir="ltr" className="font-latin text-center border-t border-white/15 pt-3 w-full">
+              <p className="text-sm text-white/70 leading-relaxed">
+                The document would not open. This is our fault, not yours. Try again, or carry on
+                with the questions.
+              </p>
+            </div>
+
             <button
               type="button"
               onClick={handleRetry}
-              className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl text-xs transition flex items-center gap-2 shadow-sm cursor-pointer"
+              className="min-h-[44px] w-full px-4 rounded-xl bg-white text-emphasis font-bold
+                         inline-flex items-center justify-center gap-2 text-sm transition
+                         hover:bg-on-emphasis-muted cursor-pointer"
             >
-              <RefreshCw className="w-4 h-4" />
-              <span>تلاش دوباره (Retry Loading)</span>
+              <RefreshCw className="w-4 h-4" aria-hidden="true" />
+              <span className="font-farsi">دوباره امتحان کنید</span>
             </button>
           </div>
         )}
