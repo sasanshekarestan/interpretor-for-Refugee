@@ -523,8 +523,8 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
                     ? 'نمایش متن اصلی / Show the original'
                     : 'نمایش ترجمه / Show the translation'
                 }
-                className="min-h-[44px] px-3.5 rounded-xl bg-white/15 border border-white/25
-                           text-on-emphasis hover:bg-white/25 transition cursor-pointer
+                className="min-h-[44px] px-3.5 rounded-xl bg-surface/15 border border-white/25
+                           text-on-emphasis hover:bg-surface/25 transition cursor-pointer
                            font-latin text-sm font-bold"
               >
                 {handOverLang === 'target' ? 'Show the original' : 'Show the translation'}
@@ -534,8 +534,8 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
                 onClick={() => setShowHandOverModal(false)}
                 aria-label="بستن / Close"
                 className="w-11 h-11 shrink-0 inline-flex items-center justify-center rounded-xl
-                           bg-white/15 border border-white/25 text-on-emphasis
-                           hover:bg-white/25 transition cursor-pointer"
+                           bg-surface/15 border border-white/25 text-on-emphasis
+                           hover:bg-surface/25 transition cursor-pointer"
               >
                 <X className="w-6 h-6" aria-hidden="true" />
               </button>
@@ -571,7 +571,7 @@ export const InterpretationCard: React.FC<InterpretationCardProps> = ({
             <button
               onClick={handleSpeak}
               aria-label="پخش صدا / Read aloud"
-              className="min-h-[48px] px-5 rounded-xl bg-white text-emphasis hover:bg-on-emphasis-muted
+              className="min-h-[48px] px-5 rounded-xl bg-surface text-emphasis hover:bg-on-emphasis-muted
                          font-bold transition cursor-pointer inline-flex items-center gap-2 shrink-0"
             >
               <Volume2 className="w-5 h-5 shrink-0" aria-hidden="true" />

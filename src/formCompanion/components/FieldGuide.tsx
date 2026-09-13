@@ -39,8 +39,8 @@ export const FieldGuide: React.FC<FieldGuideProps> = ({
         dir="rtl"
       >
         <Hand className={`w-6 h-6 mx-auto ${t.faint}`} />
-        <p className="font-bold text-sm text-slate-800">روی هر قسمت از فرم بزنید</p>
-        <p className="text-sm text-slate-600 leading-relaxed">
+        <p className="font-bold text-sm text-ink">روی هر قسمت از فرم بزنید</p>
+        <p className="text-sm text-ink-muted leading-relaxed">
           هر جای فرم را که لمس کنید، توضیح همان قسمت به زبان ساده اینجا نشان داده می‌شود.
         </p>
       </div>
@@ -67,11 +67,11 @@ export const FieldGuide: React.FC<FieldGuideProps> = ({
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2 flex-wrap min-w-0">
           {parsed.reference && (
-            <span className="font-mono text-xs font-bold text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
+            <span className="font-mono text-xs font-bold text-ink-muted bg-page border border-edge px-2 py-0.5 rounded-md">
               {parsed.reference}
             </span>
           )}
-          <span className="font-farsi text-[11.5px] text-slate-500">
+          <span className="font-farsi text-xs text-ink-muted">
             {field.type === 'choice' ? 'خانه تیک زدن' : 'خانه نوشتن'}
             {parsed.choice ? ` · ${parsed.choice}` : ''}
           </span>
@@ -83,7 +83,7 @@ export const FieldGuide: React.FC<FieldGuideProps> = ({
               type="button"
               onClick={() => onPlayAudio(spoken, 'fa')}
               aria-label="شنیدن توضیح"
-              className={`w-9 h-9 inline-flex items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 cursor-pointer ${t.focus}`}
+              className={`w-9 h-9 inline-flex items-center justify-center rounded-lg text-ink-muted hover:bg-page cursor-pointer ${t.focus}`}
             >
               <Volume2 className="w-4.5 h-4.5" />
             </button>
@@ -92,7 +92,7 @@ export const FieldGuide: React.FC<FieldGuideProps> = ({
             type="button"
             onClick={onClear}
             aria-label="بستن توضیح این قسمت"
-            className={`w-9 h-9 inline-flex items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 cursor-pointer ${t.focus}`}
+            className={`w-9 h-9 inline-flex items-center justify-center rounded-lg text-ink-muted hover:bg-page cursor-pointer ${t.focus}`}
           >
             <X className="w-4.5 h-4.5" />
           </button>
@@ -102,11 +102,11 @@ export const FieldGuide: React.FC<FieldGuideProps> = ({
       {/* The form's own words for this part. A canvas has no text to select,
           so the text is reproduced here as real selectable text - and can be
           copied, or sent straight to the assistant, without selecting it. */}
-      <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 space-y-2.5">
-        <p className="font-farsi text-[11.5px] font-bold text-slate-500" dir="rtl">
+      <div className="rounded-xl border border-edge bg-page p-3 space-y-2.5">
+        <p className="font-farsi text-xs font-bold text-ink-muted" dir="rtl">
           متن روی فرم
         </p>
-        <p dir="ltr" className="text-left text-sm text-slate-800 leading-relaxed select-all break-words">
+        <p dir="ltr" className="text-left text-sm text-ink leading-relaxed select-all break-words">
           {formText}
         </p>
         <div className="flex items-center gap-2">
@@ -115,7 +115,7 @@ export const FieldGuide: React.FC<FieldGuideProps> = ({
               type="button"
               onClick={() => onAsk(formText)}
               className={`flex-1 min-h-[40px] inline-flex items-center justify-center gap-2 px-3 rounded-xl
-                ${t.primary} text-[12.5px] font-bold cursor-pointer transition ${t.focus}`}
+                ${t.primary} text-sm font-bold cursor-pointer transition ${t.focus}`}
             >
               <MessageSquarePlus className="w-4 h-4" />
               <span className="font-farsi">درباره این بپرس</span>
@@ -125,8 +125,8 @@ export const FieldGuide: React.FC<FieldGuideProps> = ({
             type="button"
             onClick={copyFormText}
             aria-label="کپی متن"
-            className={`min-h-[40px] px-3 inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-300
-              bg-white text-slate-700 text-xs font-bold cursor-pointer hover:bg-slate-50 transition ${t.focus}`}
+            className={`min-h-[40px] px-3 inline-flex items-center justify-center gap-1.5 rounded-xl border border-edge-control
+              bg-surface text-ink-muted text-xs font-bold cursor-pointer hover:bg-page transition ${t.focus}`}
           >
             {copied ? <Check className={`w-4 h-4 ${t.doneText}`} /> : <Copy className="w-4 h-4" />}
             <span className="font-farsi">{copied ? 'کپی شد' : 'کپی'}</span>
@@ -135,7 +135,7 @@ export const FieldGuide: React.FC<FieldGuideProps> = ({
       </div>
 
       {status === 'loading' && (
-        <div className="flex items-center gap-2.5 py-2 font-farsi text-sm text-slate-500">
+        <div className="flex items-center gap-2.5 py-2 font-farsi text-sm text-ink-muted">
           <Loader2 className="w-4 h-4 animate-spin" />
           در حال آماده کردن توضیح این قسمت…
         </div>
@@ -149,25 +149,25 @@ export const FieldGuide: React.FC<FieldGuideProps> = ({
 
       {explanation && (
         <div className="space-y-3">
-          <h2 className="font-farsi font-bold text-slate-900 text-lg leading-relaxed text-balance">
+          <h2 className="font-farsi font-bold text-ink text-lg leading-relaxed text-balance">
             {explanation.labelFa}
           </h2>
 
-          <p className="font-farsi text-sm text-slate-700 leading-relaxed">{explanation.meaningFa}</p>
+          <p className="font-farsi text-sm text-ink-muted leading-relaxed">{explanation.meaningFa}</p>
 
           {explanation.whatToWriteFa && (
-            <div className="rounded-xl bg-slate-50 border border-slate-200 p-3 space-y-1.5">
-              <p className="font-farsi text-[12.5px] font-bold text-slate-600 flex items-center gap-1.5">
+            <div className="rounded-xl bg-page border border-edge p-3 space-y-1.5">
+              <p className="font-farsi text-sm font-bold text-ink-muted flex items-center gap-1.5">
                 <PenLine className={`w-3.5 h-3.5 ${t.faint}`} />
                 چه چیزی در این خانه می‌نویسید
               </p>
-              <p className="font-farsi text-[13.5px] text-slate-700 leading-relaxed">
+              <p className="font-farsi text-base text-ink-muted leading-relaxed">
                 {explanation.whatToWriteFa}
               </p>
               {explanation.exampleAnswer && (
                 <p
                   dir="ltr"
-                  className="text-left font-mono text-sm text-slate-800 bg-white border border-slate-200 rounded-lg px-3 py-2 mt-1.5"
+                  className="text-left font-mono text-sm text-ink bg-surface border border-edge rounded-lg px-3 py-2 mt-1.5"
                 >
                   {explanation.exampleAnswer}
                 </p>
@@ -185,7 +185,7 @@ export const FieldGuide: React.FC<FieldGuideProps> = ({
           )}
 
           {explanation.source === 'ai' && (
-            <p className="font-farsi text-[11.5px] text-slate-400 leading-relaxed">
+            <p className="font-farsi text-xs text-ink-muted leading-relaxed">
               این توضیح توسط دستیار هوشمند نوشته شده است. متن روی فرم کاغذی همیشه مرجع اصلی است.
             </p>
           )}

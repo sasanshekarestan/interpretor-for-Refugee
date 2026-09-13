@@ -9,9 +9,9 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary: `${t.primary} font-bold shadow-sm`,
-  secondary: 'bg-white text-slate-800 border border-slate-300 font-semibold hover:bg-slate-50',
-  quiet: 'bg-transparent text-slate-600 font-medium hover:bg-slate-100',
+  primary: `${t.primary} font-bold shadow-hamyar`,
+  secondary: 'bg-surface text-ink border border-edge-control font-semibold hover:bg-page',
+  quiet: 'bg-transparent text-ink-muted font-medium hover:bg-page',
 };
 
 /** Three variants. There is no fourth. */
@@ -42,7 +42,7 @@ export const IconButton: React.FC<
     aria-label={label}
     title={label}
     className={`w-11 h-11 shrink-0 inline-flex items-center justify-center rounded-xl
-      text-slate-600 hover:bg-slate-100 transition cursor-pointer ${t.focus} ${className}`}
+      text-ink-muted hover:bg-page transition cursor-pointer ${t.focus} ${className}`}
     {...rest}
   >
     {children}
@@ -52,7 +52,7 @@ export const IconButton: React.FC<
 type NoticeTone = 'info' | 'attention' | 'fault' | 'done';
 
 const TONES: Record<NoticeTone, string> = {
-  info: 'bg-slate-50 text-slate-700 border-slate-200',
+  info: 'bg-page text-ink-muted border-edge',
   attention: t.attention,
   fault: t.faultSoft,
   done: t.doneSoft,
@@ -93,7 +93,7 @@ export const Pill: React.FC<{ tone?: 'done' | 'neutral'; children: React.ReactNo
 }) => (
   <span
     className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${
-      tone === 'done' ? t.doneSoft : 'bg-slate-100 text-slate-700 border-slate-200'
+      tone === 'done' ? t.doneSoft : 'bg-page text-ink-muted border-edge'
     }`}
   >
     {children}

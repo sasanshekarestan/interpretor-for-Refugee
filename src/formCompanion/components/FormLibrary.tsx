@@ -215,7 +215,7 @@ export const FormLibrary: React.FC<FormLibraryProps> = ({ isDari, onSelect, onUp
     {onUpload && (
       <div className="bg-surface border border-edge rounded-2xl p-4 sm:p-5 space-y-3.5">
         <div className="flex items-start gap-3">
-          <span className="w-11 h-11 rounded-xl bg-teal-50 border border-teal-200 text-primary inline-flex items-center justify-center shrink-0">
+          <span className="w-11 h-11 rounded-xl bg-page border border-edge text-primary inline-flex items-center justify-center shrink-0">
             <Camera className="w-5 h-5" />
           </span>
           <div className="min-w-0 space-y-1">

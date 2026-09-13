@@ -55,8 +55,9 @@ await page.waitForTimeout(1000);
 // The direction toggle only appears once typing mode is open.
 await page.getByText('Type Text', { exact: false }).first().click();
 await page.waitForTimeout(800);
-// English -> Farsi is the direction that was silent.
-await page.getByText('English ➔ فارسی', { exact: false }).first().click();
+// English -> Farsi is the direction that was silent. By id, not by label:
+// the label is bilingual and has already been rewritten once.
+await page.click('#btn-dir-en-to-farsi');
 await page.waitForTimeout(400);
 
 const box = page.locator('textarea').first();
@@ -132,7 +133,7 @@ await page2.getByRole('button', { name: /Live interpreter/ }).click();
 await page2.waitForTimeout(1000);
 await page2.getByText('Type Text', { exact: false }).first().click();
 await page2.waitForTimeout(800);
-await page2.getByText('English ➔ فارسی', { exact: false }).first().click();
+await page2.click('#btn-dir-en-to-farsi');
 await page2.waitForTimeout(400);
 await page2.locator('textarea').first().fill('Your appointment has been moved to Tuesday.');
 await page2.locator('button', { hasText: /تفسیر|ترجمه|Interpret/ }).last().click();

@@ -135,32 +135,31 @@ export const UkTerminologyView: React.FC<UkTerminologyViewProps> = ({ userLangua
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-teal-900 via-slate-900 to-teal-950 text-white p-6 rounded-3xl shadow-sm border border-teal-800/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-800/60 text-teal-200 text-xs font-semibold">
-            <BookOpen className="w-3.5 h-3.5" />
-            <span>UK Terminology & Culture Library</span>
-          </div>
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white flex flex-wrap items-center gap-2">
-            <span>What does this mean in the UK?</span>
-            <span className="text-teal-300 font-farsi font-normal">| واژه‌نامه اصطلاحات بریتانیا</span>
-          </h2>
-          <p className="text-xs text-teal-100 max-w-xl">
-            Clear, simple explanations of UK asylum, Home Office, NHS, and housing terms in plain English, Farsi, and Dari.
-          </p>
+      <div className="bg-emphasis text-on-emphasis p-6 rounded-3xl space-y-3">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 border border-white/20 text-sm font-bold">
+          <BookOpen className="w-4 h-4 shrink-0" aria-hidden="true" />
+          <span dir="ltr" className="font-latin">UK terms and phrases</span>
+        </div>
+        <div dir="rtl" className="space-y-2">
+          <h2 className="font-farsi text-2xl font-bold leading-tight">این کلمه یعنی چه؟</h2>
+          <p className="font-farsi text-lg text-on-emphasis-muted leading-relaxed">توضیح ساده اصطلاح‌های پناهندگی، اداره مهاجرت، NHS و مسکن در بریتانیا، به فارسی و دری.</p>
+        </div>
+        <div dir="ltr" className="font-latin space-y-0.5 border-t border-white/15 pt-3">
+          <p className="font-bold text-base">What does this mean in the UK?</p>
+          <p className="text-sm text-on-emphasis-muted leading-relaxed">Plain explanations of the asylum, Home Office, NHS and housing words you will meet, in English, Farsi and Dari.</p>
         </div>
       </div>
 
       {/* Search & Category Filter */}
-      <div className="bg-white rounded-3xl p-4 sm:p-5 border border-slate-200 shadow-2xs space-y-3">
+      <div className="bg-surface rounded-3xl p-4 sm:p-5 border border-edge shadow-hamyar space-y-3">
         <div className="relative">
-          <Search className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-ink-muted absolute left-4 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search UK terms (e.g. Proof of address, ARC card, GP, Legal Aid)..."
-            className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 text-xs sm:text-sm text-slate-900 focus:ring-2 focus:ring-teal-500"
+            className="w-full pl-11 pr-4 py-3 rounded-2xl border border-edge text-xs sm:text-sm text-ink focus:ring-2 focus:ring-primary"
           />
         </div>
 
@@ -171,8 +170,8 @@ export const UkTerminologyView: React.FC<UkTerminologyViewProps> = ({ userLangua
               onClick={() => setSelectedCategory(cat.id)}
               className={`px-3 py-1.5 rounded-full text-xs font-semibold transition shrink-0 ${
                 selectedCategory === cat.id
-                  ? 'bg-teal-700 text-white shadow-2xs'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  ? 'bg-primary text-white shadow-hamyar'
+                  : 'bg-page text-ink-muted hover:bg-page'
               }`}
             >
               {cat.label}
@@ -186,14 +185,14 @@ export const UkTerminologyView: React.FC<UkTerminologyViewProps> = ({ userLangua
         {filteredTerms.map((t, idx) => (
           <div
             key={idx}
-            className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-2xs hover:shadow-xs transition space-y-4"
+            className="bg-surface rounded-3xl p-5 sm:p-6 border border-edge shadow-hamyar hover:shadow-hamyar transition space-y-4"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1">
-                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-800 border border-teal-100">
+                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-page text-primary border border-edge">
                   {t.category?.toUpperCase()}
                 </span>
-                <h3 className="font-bold text-slate-900 text-base sm:text-lg flex items-center gap-2 mt-1">
+                <h3 className="font-bold text-ink text-base sm:text-lg flex items-center gap-2 mt-1">
                   <span>{t.english}</span>
                 </h3>
               </div>
@@ -201,48 +200,48 @@ export const UkTerminologyView: React.FC<UkTerminologyViewProps> = ({ userLangua
               {onPlayAudio && (
                 <button
                   onClick={() => onPlayAudio(t.english, 'en-GB')}
-                  className="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition text-xs font-semibold flex items-center gap-1 shrink-0"
+                  className="p-2.5 bg-page hover:bg-page text-ink-muted rounded-xl transition text-xs font-semibold flex items-center gap-1 shrink-0"
                   title="Listen to pronunciation"
                 >
-                  <Volume2 className="w-4 h-4 text-teal-600" />
+                  <Volume2 className="w-4 h-4 text-primary" />
                   <span className="hidden sm:inline">Pronounce</span>
                 </button>
               )}
             </div>
 
             {/* Simple English Definition */}
-            <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 text-xs text-slate-700">
-              <p className="font-semibold text-slate-900 mb-0.5">Simple English:</p>
+            <div className="p-3 bg-page rounded-2xl border border-edge text-xs text-ink-muted">
+              <p className="font-semibold text-ink mb-0.5">Simple English:</p>
               <p>{t.simpleEnglish}</p>
             </div>
 
             {/* Farsi & Dari Translations */}
-            <div dir="rtl" className="space-y-1.5 pt-1 border-t border-slate-100">
+            <div dir="rtl" className="space-y-1.5 pt-1 border-t border-edge">
               <div className="flex items-center gap-2">
-                <span className="font-farsi font-bold text-teal-800 text-sm">
+                <span className="font-farsi font-bold text-primary text-sm">
                   {t.farsi}
                 </span>
                 {t.dari && (
-                  <span className="font-farsi text-xs text-slate-500 font-normal">
+                  <span className="font-farsi text-xs text-ink-muted font-normal">
                     (دری: {t.dari})
                   </span>
                 )}
               </div>
-              <p className="font-farsi text-xs text-slate-700 leading-relaxed">
+              <p className="font-farsi text-xs text-ink-muted leading-relaxed">
                 {t.explanation}
               </p>
             </div>
 
             {/* Context details: Where heard + example sentence */}
-            <div className="pt-2 flex flex-wrap gap-4 text-xs text-slate-500 border-t border-slate-100">
+            <div className="pt-2 flex flex-wrap gap-4 text-xs text-ink-muted border-t border-edge">
               {t.whereHeard && (
                 <div>
-                  <span className="font-semibold text-slate-700">Where you hear it: </span>
+                  <span className="font-semibold text-ink-muted">Where you hear it: </span>
                   <span>{t.whereHeard}</span>
                 </div>
               )}
               {t.exampleSentence && (
-                <div className="w-full bg-slate-50 p-2.5 rounded-xl border border-slate-200/60 font-mono text-xs text-slate-800">
+                <div className="w-full bg-page p-2.5 rounded-xl border border-edge font-mono text-xs text-ink">
                   "{t.exampleSentence}"
                 </div>
               )}

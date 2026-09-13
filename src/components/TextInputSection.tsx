@@ -104,23 +104,26 @@ export const TextInputSection: React.FC<TextInputSectionProps> = ({
   };
 
   return (
-    <div className="w-full bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-sm">
+    <div className="w-full bg-surface border border-edge rounded-2xl p-4 sm:p-6 shadow-hamyar">
       {/* Direction Selection Tabs */}
-      <div className="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-100">
-        <div className="flex items-center gap-1.5 p-1 bg-slate-100/80 rounded-xl">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-edge">
+        <div className="flex items-center gap-1.5 p-1 bg-page rounded-xl">
           <button
             type="button"
             id="btn-dir-farsi-to-en"
             onClick={() => toggleDirection('farsi_to_english')}
             title="Farsi & Dari to English Translation / ترجمه فارسی و دری به انگلیسی"
             aria-label="Farsi & Dari to English Translation / ترجمه فارسی و دری به انگلیسی"
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+            className={`min-h-[44px] px-3 rounded-lg text-base font-bold transition cursor-pointer ${
               isFarsiToEnglish
-                ? 'bg-teal-700 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-primary text-on-primary shadow-hamyar'
+                : 'text-ink-muted hover:text-ink'
             }`}
           >
-            <span className="font-farsi">فارسی صحبت کنید ➔ English</span>
+            <span className="text-start leading-tight">
+              <span dir="rtl" className="block font-farsi">فارسی به انگلیسی</span>
+              <span dir="ltr" className="block font-latin text-sm opacity-80">Farsi ▸ English</span>
+            </span>
           </button>
 
           <button
@@ -129,13 +132,16 @@ export const TextInputSection: React.FC<TextInputSectionProps> = ({
             onClick={() => toggleDirection('english_to_farsi')}
             title="English to Farsi & Dari Translation / ترجمه انگلیسی به فارسی و دری"
             aria-label="English to Farsi & Dari Translation / ترجمه انگلیسی به فارسی و دری"
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+            className={`min-h-[44px] px-3 rounded-lg text-base font-bold transition cursor-pointer ${
               !isFarsiToEnglish
-                ? 'bg-teal-700 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-primary text-on-primary shadow-hamyar'
+                : 'text-ink-muted hover:text-ink'
             }`}
           >
-            <span>English ➔ فارسی (Farsi & Dari)</span>
+            <span className="text-start leading-tight">
+              <span dir="rtl" className="block font-farsi">انگلیسی به فارسی</span>
+              <span dir="ltr" className="block font-latin text-sm opacity-80">English ▸ فارسی</span>
+            </span>
           </button>
         </div>
 
@@ -145,9 +151,9 @@ export const TextInputSection: React.FC<TextInputSectionProps> = ({
           onClick={onSwitchToVoice}
           title="Switch to Full Audio Voice Recording Mode / تغییر به حالت ضبط صوتی کامل"
           aria-label="Switch to Full Audio Voice Recording Mode / تغییر به حالت ضبط صوتی کامل"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-teal-800 bg-teal-50 hover:bg-teal-100 border border-teal-200/80 px-3 py-1.5 rounded-xl transition font-farsi"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-primary bg-page hover:bg-page border border-edge px-3 py-1.5 rounded-xl transition font-farsi"
         >
-          <Mic className="w-4 h-4 text-teal-700" />
+          <Mic className="w-4 h-4 text-primary" />
           <span>{isFarsiToEnglish ? 'حالت ضبط صوتی (Voice Recording)' : 'Switch to Full Voice Mode'}</span>
         </button>
       </div>
@@ -155,10 +161,10 @@ export const TextInputSection: React.FC<TextInputSectionProps> = ({
       {/* Input Form */}
       <form onSubmit={handleSubmit} className="space-y-3">
         {/* Prominent Voice Mic Bar above/attached to Textarea */}
-        <div className="flex items-center justify-between px-3.5 py-2 bg-slate-100/90 border border-slate-200 border-b-0 rounded-t-2xl">
+        <div className="flex items-center justify-between px-3.5 py-2 bg-page border border-edge border-b-0 rounded-t-2xl">
           <div className="flex items-center gap-2">
-            <Keyboard className="w-4 h-4 text-slate-500" />
-            <span className="text-xs font-bold text-slate-700 font-farsi">
+            <Keyboard className="w-4 h-4 text-ink-muted" />
+            <span className="text-xs font-bold text-ink-muted font-farsi">
               {isFarsiToEnglish ? 'تایپ کنید یا دکمه میکروفون را فشار دهید:' : 'Type or click microphone to speak:'}
             </span>
           </div>
@@ -167,10 +173,10 @@ export const TextInputSection: React.FC<TextInputSectionProps> = ({
             type="button"
             id="btn-dictate-mic-input"
             onClick={startVoiceDictation}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-2xs ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-hamyar ${
               isListening
-                ? 'bg-rose-600 hover:bg-rose-700 text-white animate-pulse'
-                : 'bg-teal-700 hover:bg-teal-800 text-white'
+                ? 'bg-fault hover:bg-fault text-white animate-pulse'
+                : 'bg-primary hover:bg-primary text-white'
             }`}
             title="Click to dictate using your voice / برای صحبت کردن کلیک کنید"
           >
@@ -201,9 +207,9 @@ export const TextInputSection: React.FC<TextInputSectionProps> = ({
                 ? 'متن خود را اینجا تایپ کنید یا دکمه میکروفون بالا را فشار دهید تا صحبت کنید (مثلاً: می‌خوام آدرس هوم آفیس رو بدونم یا کارتم مسدود شده...)'
                 : 'Type here or click the microphone button above to speak in English...'
             }
-            className={`w-full p-4 rounded-b-2xl border border-slate-300 focus:border-teal-600 focus:ring-2 focus:ring-teal-500/20 text-slate-900 placeholder:text-slate-400 text-sm resize-none transition leading-relaxed ${
+            className={`w-full p-4 rounded-b-2xl border border-edge-control focus:border-primary focus:ring-2 focus:ring-primary text-ink placeholder:text-ink-muted text-sm resize-none transition leading-relaxed ${
               isFarsiToEnglish ? 'font-farsi text-base' : 'font-sans'
-            } ${isListening ? 'ring-2 ring-rose-500/40 bg-rose-50/20' : ''}`}
+            } ${isListening ? 'ring-2 ring-fault bg-fault-bg' : ''}`}
           />
 
           {/* Floating audio mic shortcut right inside textarea */}
@@ -212,14 +218,14 @@ export const TextInputSection: React.FC<TextInputSectionProps> = ({
               type="button"
               id="btn-inside-textarea-mic"
               onClick={startVoiceDictation}
-              className={`p-2 rounded-xl text-xs font-bold flex items-center gap-1 transition shadow-xs ${
+              className={`p-2 rounded-xl text-xs font-bold flex items-center gap-1 transition shadow-hamyar ${
                 isListening
-                  ? 'bg-rose-600 text-white animate-bounce'
-                  : 'bg-slate-100 hover:bg-teal-100 text-teal-800 border border-slate-200'
+                  ? 'bg-fault text-white animate-bounce'
+                  : 'bg-page hover:bg-page text-primary border border-edge'
               }`}
               title="Speak voice input / صحبت کردن صوتی"
             >
-              <Mic className="w-4 h-4 text-teal-700" />
+              <Mic className="w-4 h-4 text-primary" />
               <span className="text-xs font-farsi hidden sm:inline">صحبت کنید</span>
             </button>
 
@@ -228,7 +234,7 @@ export const TextInputSection: React.FC<TextInputSectionProps> = ({
                 type="button"
                 id="btn-clear-text"
                 onClick={() => setText('')}
-                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 transition border border-slate-200"
+                className="p-2 rounded-xl bg-page hover:bg-page text-ink-muted transition border border-edge"
                 title="Clear input text / پاک کردن متن"
                 aria-label="Clear input text / پاک کردن متن"
               >
@@ -246,12 +252,12 @@ export const TextInputSection: React.FC<TextInputSectionProps> = ({
             disabled={!text.trim() || isProcessing}
             title="Interpret & Translate / تفسیر و ترجمه"
             aria-label="Interpret & Translate / تفسیر و ترجمه"
-            className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-md ${
+            className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-hamyar ${
               !text.trim() || isProcessing
-                ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                ? 'bg-page text-ink-muted cursor-not-allowed'
                 : isFarsiToEnglish
-                ? 'bg-teal-700 hover:bg-teal-800 text-white shadow-teal-700/20 active:scale-98'
-                : 'bg-teal-700 hover:bg-teal-800 text-white shadow-teal-700/20 active:scale-98'
+                ? 'bg-primary hover:bg-primary text-white shadow-hamyar active:scale-98'
+                : 'bg-primary hover:bg-primary text-white shadow-hamyar active:scale-98'
             }`}
           >
             <span>

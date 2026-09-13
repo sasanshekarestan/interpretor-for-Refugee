@@ -44,12 +44,12 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({
 
   return (
     <section className={`${t.surface} border rounded-2xl overflow-hidden`} dir="rtl">
-      <header className="flex items-center gap-2.5 px-3.5 py-3 border-b border-slate-200">
+      <header className="flex items-center gap-2.5 px-3.5 py-3 border-b border-edge">
         <Sparkles className={`w-4 h-4 ${t.primaryText} shrink-0`} />
         <div className="min-w-0 flex-1">
-          <h2 className="font-farsi font-bold text-[13.5px] text-slate-900">دستیار فرم</h2>
+          <h2 className="font-farsi font-bold text-base text-ink">دستیار فرم</h2>
           {contextFa && (
-            <p className="font-farsi text-[11.5px] text-slate-500 truncate">درباره: {contextFa}</p>
+            <p className="font-farsi text-xs text-ink-muted truncate">درباره: {contextFa}</p>
           )}
         </div>
       </header>
@@ -57,7 +57,7 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({
       <div className="px-3.5 py-3 space-y-3 max-h-[46vh] overflow-y-auto">
         {messages.length === 0 ? (
           <div className="space-y-2">
-            <p className="font-farsi text-[12.5px] text-slate-500">
+            <p className="font-farsi text-sm text-ink-muted">
               هر چیزی درباره این قسمت از فرم بپرسید:
             </p>
             <div className="flex flex-wrap gap-2">
@@ -66,8 +66,8 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({
                   key={s}
                   type="button"
                   onClick={() => onSend(s)}
-                  className={`px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 font-farsi text-[12.5px]
-                    text-slate-700 hover:bg-slate-100 cursor-pointer transition ${t.focus}`}
+                  className={`px-3 py-2 rounded-xl border border-edge bg-page font-farsi text-sm
+                    text-ink-muted hover:bg-page cursor-pointer transition ${t.focus}`}
                 >
                   {s}
                 </button>
@@ -78,8 +78,8 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({
           messages.map((m) => (
             <div key={m.id} className={`flex ${m.sender === 'user' ? 'justify-start' : 'justify-end'}`}>
               <div
-                className={`max-w-[88%] rounded-2xl px-3.5 py-2.5 font-farsi text-[13.5px] leading-relaxed whitespace-pre-wrap
-                  ${m.sender === 'user' ? 'bg-slate-100 text-slate-800' : 'bg-slate-50 border border-slate-200 text-slate-800'}`}
+                className={`max-w-[88%] rounded-2xl px-3.5 py-2.5 font-farsi text-base leading-relaxed whitespace-pre-wrap
+                  ${m.sender === 'user' ? 'bg-page text-ink' : 'bg-page border border-edge text-ink'}`}
               >
                 <span>{m.textFa}</span>
                 {m.suggestedAnswer && onUseSuggestion && (
@@ -87,7 +87,7 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({
                     type="button"
                     onClick={() => onUseSuggestion(m.suggestedAnswer!)}
                     className={`mt-2.5 w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-xl
-                      ${t.primary} text-[12.5px] font-bold cursor-pointer transition ${t.focus}`}
+                      ${t.primary} text-sm font-bold cursor-pointer transition ${t.focus}`}
                   >
                     <CornerDownLeft className="w-3.5 h-3.5" />
                     <span>این را در پاسخ من بگذار</span>
@@ -100,8 +100,8 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({
 
         {isProcessing && (
           <div className="flex justify-end">
-            <div className="rounded-2xl px-3.5 py-2.5 bg-slate-50 border border-slate-200">
-              <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
+            <div className="rounded-2xl px-3.5 py-2.5 bg-page border border-edge">
+              <Loader2 className="w-4 h-4 animate-spin text-ink-muted" />
             </div>
           </div>
         )}
@@ -109,7 +109,7 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({
         <div ref={endRef} />
       </div>
 
-      <div className="border-t border-slate-200 p-2.5 flex items-end gap-2">
+      <div className="border-t border-edge p-2.5 flex items-end gap-2">
         <textarea
           id="assistant-input"
           value={input}
@@ -123,8 +123,8 @@ export const AssistantPanel: React.FC<AssistantPanelProps> = ({
           rows={1}
           aria-label="سوال خود را از دستیار بپرسید"
           placeholder="سوال خود را بنویسید…"
-          className="flex-1 min-h-[44px] max-h-28 resize-none rounded-xl border border-slate-300 px-3.5 py-3
-            font-farsi text-[13.5px] text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0E6E64]/30"
+          className="flex-1 min-h-[44px] max-h-28 resize-none rounded-xl border border-edge-control px-3.5 py-3
+            font-farsi text-base text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
         />
         <button
           type="button"

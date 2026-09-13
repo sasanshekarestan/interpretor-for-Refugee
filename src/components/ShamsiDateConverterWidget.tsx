@@ -52,23 +52,23 @@ export const ShamsiDateConverterWidget: React.FC<ShamsiDateConverterWidgetProps>
   };
 
   return (
-    <div dir="rtl" className="bg-gradient-to-br from-teal-50 via-teal-50 to-teal-50/50 p-4 sm:p-5 rounded-3xl border border-teal-200/80 shadow-xs space-y-3 font-farsi">
+    <div dir="rtl" className="bg-page p-4 sm:p-5 rounded-3xl border border-edge shadow-hamyar space-y-3 font-farsi">
       <div className="flex items-center justify-between text-right">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-teal-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+          <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center shrink-0 shadow-hamyar">
             <Calendar className="w-4 h-4" />
           </div>
           <div>
-            <h4 className="text-sm font-black text-slate-900 leading-tight">
+            <h4 className="text-sm font-black text-ink leading-tight">
               مبدل خودکار تاریخ تولد (شمسی به میلادی)
             </h4>
-            <p className="text-xs text-teal-800">
+            <p className="text-xs text-primary">
               اگر تاریخ تولد خود را به شمسی می‌دانید، اینجا انتخاب کنید تا به تاریخ میلادی بریتانیا تبدیل شود:
             </p>
           </div>
         </div>
-        <span className="text-xs font-bold px-2.5 py-1 bg-teal-100 text-teal-800 rounded-full border border-teal-200 shrink-0">
-          Shamsi ➔ UK Date
+        <span className="text-xs font-bold px-2.5 py-1 bg-page text-primary rounded-full border border-edge shrink-0">
+          Shamsi to UK date
         </span>
       </div>
 
@@ -76,7 +76,7 @@ export const ShamsiDateConverterWidget: React.FC<ShamsiDateConverterWidgetProps>
       <div className="grid grid-cols-3 gap-2 pt-1">
         {/* Day */}
         <div className="space-y-1">
-          <label className="block text-xs font-bold text-slate-700">روز:</label>
+          <label className="block text-xs font-bold text-ink-muted">روز:</label>
           <input
             type="number"
             min={1}
@@ -84,18 +84,18 @@ export const ShamsiDateConverterWidget: React.FC<ShamsiDateConverterWidgetProps>
             value={shamsiDay}
             onChange={(e) => setShamsiDay(e.target.value)}
             placeholder="مثلا ۲۴"
-            className="w-full px-3 py-2 text-center font-bold text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500"
+            className="w-full px-3 py-2 text-center font-bold text-sm bg-surface border border-edge-control rounded-xl focus:ring-2 focus:ring-primary"
             dir="ltr"
           />
         </div>
 
         {/* Month */}
         <div className="space-y-1">
-          <label className="block text-xs font-bold text-slate-700">ماه:</label>
+          <label className="block text-xs font-bold text-ink-muted">ماه:</label>
           <select
             value={shamsiMonth}
             onChange={(e) => setShamsiMonth(parseInt(e.target.value, 10))}
-            className="w-full px-2 py-2 text-xs font-bold bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500 font-farsi text-slate-800"
+            className="w-full px-2 py-2 text-xs font-bold bg-surface border border-edge-control rounded-xl focus:ring-2 focus:ring-primary font-farsi text-ink"
           >
             {SHAMSI_MONTHS_FA.map((m) => (
               <option key={m.id} value={m.id}>
@@ -107,7 +107,7 @@ export const ShamsiDateConverterWidget: React.FC<ShamsiDateConverterWidgetProps>
 
         {/* Year */}
         <div className="space-y-1">
-          <label className="block text-xs font-bold text-slate-700">سال شمسی:</label>
+          <label className="block text-xs font-bold text-ink-muted">سال شمسی:</label>
           <input
             type="number"
             min={1300}
@@ -115,7 +115,7 @@ export const ShamsiDateConverterWidget: React.FC<ShamsiDateConverterWidgetProps>
             value={shamsiYear}
             onChange={(e) => setShamsiYear(e.target.value)}
             placeholder="مثلا ۱۳۷۳"
-            className="w-full px-3 py-2 text-center font-bold text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500"
+            className="w-full px-3 py-2 text-center font-bold text-sm bg-surface border border-edge-control rounded-xl focus:ring-2 focus:ring-primary"
             dir="ltr"
           />
         </div>
@@ -123,17 +123,17 @@ export const ShamsiDateConverterWidget: React.FC<ShamsiDateConverterWidgetProps>
 
       {/* Real-time Output Banner */}
       {convertedResult ? (
-        <div className="p-3 bg-white rounded-2xl border border-teal-300 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs">
+        <div className="p-3 bg-surface rounded-2xl border border-edge flex flex-col sm:flex-row items-center justify-between gap-3 shadow-hamyar">
           <div className="space-y-0.5 text-right w-full sm:w-auto">
-            <span className="text-xs font-bold text-teal-700 flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+            <span className="text-xs font-bold text-primary flex items-center gap-1">
+              <Sparkles className="w-3.5 h-3.5 text-attention" />
               <span>معادل تاریخ میلادی بریتانیا:</span>
             </span>
             <div className="flex items-baseline gap-2">
-              <span className="text-base font-black text-slate-900 font-mono tracking-wider">
+              <span className="text-base font-black text-ink font-mono tracking-wider">
                 {convertedResult.formatted}
               </span>
-              <span className="text-xs text-slate-600 font-medium">
+              <span className="text-xs text-ink-muted font-medium">
                 ({convertedResult.textFa} / {convertedResult.textEn})
               </span>
             </div>
@@ -142,14 +142,14 @@ export const ShamsiDateConverterWidget: React.FC<ShamsiDateConverterWidgetProps>
           <button
             type="button"
             onClick={handleApply}
-            className="w-full sm:w-auto px-4 py-2.5 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shrink-0 shadow-xs"
+            className="w-full sm:w-auto px-4 py-2.5 bg-primary hover:bg-primary text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shrink-0 shadow-hamyar"
           >
             <Check className="w-4 h-4" />
             <span>درج این تاریخ در فرم</span>
           </button>
         </div>
       ) : (
-        <div className="text-center text-xs text-slate-500 py-1">
+        <div className="text-center text-xs text-ink-muted py-1">
           لطفا سال شمسی ۴ رقمی (مانند ۱۳۷۰) و روز را به درستی وارد کنید.
         </div>
       )}

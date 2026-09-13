@@ -31,7 +31,7 @@ export const AnswerSheet: React.FC<AnswerSheetProps> = ({
   onBack,
   onJumpToQuestion,
 }) => (
-  <div className="flex-1 min-h-0 overflow-y-auto bg-slate-50">
+  <div className="flex-1 min-h-0 overflow-y-auto bg-page">
     <div className="max-w-2xl mx-auto px-3.5 py-5 space-y-4 font-farsi" dir="rtl">
       <div className="flex items-center gap-2 print:hidden">
         <Button variant="quiet" onClick={onBack}>
@@ -44,15 +44,15 @@ export const AnswerSheet: React.FC<AnswerSheetProps> = ({
         </Button>
       </div>
 
-      <header className="bg-white border border-slate-200 rounded-2xl p-4 space-y-1">
+      <header className="bg-surface border border-edge rounded-2xl p-4 space-y-1">
         <div className="flex items-center gap-2">
-          <span className="font-mono text-xs font-bold text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
+          <span className="font-mono text-xs font-bold text-ink-muted bg-page border border-edge px-2 py-0.5 rounded-md">
             {code}
           </span>
-          <h1 className="font-bold text-slate-900 text-base leading-snug">{titleFa}</h1>
+          <h1 className="font-bold text-ink text-base leading-snug">{titleFa}</h1>
         </div>
-        <p className="text-xs text-slate-500 text-left" dir="ltr">{titleEn}</p>
-        <p className="text-[12.5px] text-slate-600 pt-1.5 leading-relaxed">
+        <p className="text-xs text-ink-muted text-left" dir="ltr">{titleEn}</p>
+        <p className="text-sm text-ink-muted pt-1.5 leading-relaxed">
           پاسخ‌های زیر را با همین ترتیب روی فرم کاغذی خود بنویسید. این برگه فرم رسمی نیست.
         </p>
       </header>
@@ -68,7 +68,7 @@ export const AnswerSheet: React.FC<AnswerSheetProps> = ({
               {warnings.map((w, i) => (
                 <li key={i}>
                   {w.issueFa}
-                  {w.suggestionFa && <span className="text-amber-800/80"> — {w.suggestionFa}</span>}
+                  {w.suggestionFa && <span className="text-attention"> — {w.suggestionFa}</span>}
                 </li>
               ))}
             </ul>
@@ -81,21 +81,21 @@ export const AnswerSheet: React.FC<AnswerSheetProps> = ({
           const answer = answers[q.fieldKey];
           const answered = !!answer?.extractedAnswer?.trim();
           return (
-            <li key={q.fieldKey} className="bg-white border border-slate-200 rounded-2xl p-3.5 space-y-2">
+            <li key={q.fieldKey} className="bg-surface border border-edge rounded-2xl p-3.5 space-y-2">
               <div className="flex items-start gap-2.5">
-                <span className="font-mono text-xs font-bold text-slate-700 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded shrink-0 tabular-nums">
+                <span className="font-mono text-xs font-bold text-ink-muted bg-page border border-edge px-1.5 py-0.5 rounded shrink-0 tabular-nums">
                   {index + 1}
                 </span>
                 <div className="min-w-0 flex-1 space-y-0.5">
-                  <p className="text-[13.5px] font-bold text-slate-800 leading-snug">{q.farsiTranslation}</p>
-                  <p className="text-[11.5px] text-slate-500 text-left leading-snug" dir="ltr">{q.questionEn}</p>
+                  <p className="text-base font-bold text-ink leading-snug">{q.farsiTranslation}</p>
+                  <p className="text-xs text-ink-muted text-left leading-snug" dir="ltr">{q.questionEn}</p>
                 </div>
               </div>
 
               {answered ? (
                 <p
                   dir="ltr"
-                  className="text-left font-mono text-[13.5px] text-slate-900 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 break-words select-all print:border-slate-400"
+                  className="text-left font-mono text-base text-ink bg-page border border-edge rounded-xl px-3 py-2.5 break-words select-all print:border-edge-control"
                 >
                   {answer.extractedAnswer}
                 </p>
@@ -103,8 +103,8 @@ export const AnswerSheet: React.FC<AnswerSheetProps> = ({
                 <button
                   type="button"
                   onClick={() => onJumpToQuestion(index)}
-                  className={`w-full text-right px-3 py-2.5 rounded-xl border border-dashed border-slate-300 bg-slate-50
-                    text-[12.5px] text-slate-500 hover:bg-slate-100 cursor-pointer transition print:hidden ${t.focus}`}
+                  className={`w-full text-right px-3 py-2.5 rounded-xl border border-dashed border-edge-control bg-page
+                    text-sm text-ink-muted hover:bg-page cursor-pointer transition print:hidden ${t.focus}`}
                 >
                   هنوز پاسخ داده نشده — برای پاسخ دادن بزنید
                 </button>

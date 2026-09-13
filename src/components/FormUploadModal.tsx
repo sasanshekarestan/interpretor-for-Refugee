@@ -305,22 +305,22 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
   const hasBlurryPage = pages.some((p) => p.isBlurryOrDark);
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-fade-in max-h-[90vh]">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-emphasis/70 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-surface rounded-3xl max-w-2xl w-full shadow-hamyar border border-edge overflow-hidden flex flex-col animate-fade-in max-h-[90vh]">
         {/* Modal Header */}
-        <div className="p-5 border-b border-teal-100 bg-gradient-to-r from-teal-900 to-slate-900 text-white flex items-center justify-between">
+        <div className="p-5 border-b border-edge bg-emphasis text-on-emphasis flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-teal-600 flex items-center justify-center text-white shrink-0 shadow-md">
+            <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center text-white shrink-0 shadow-hamyar">
               <Upload className="w-5 h-5" />
             </div>
             <div>
               <h3 className="font-bold text-base sm:text-lg">آپلود یا عکاسی از فرم • Upload Form</h3>
-              <p className="text-xs text-teal-200">عکس یا فایل صفحات فرم کاغذی خود را اضافه کنید</p>
+              <p className="text-sm text-on-emphasis-muted">عکس یا فایل صفحات فرم کاغذی خود را اضافه کنید</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-white/10 text-teal-200 hover:text-white transition"
+            className="p-2 rounded-full hover:bg-white/15 text-on-emphasis-muted hover:text-on-emphasis transition"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
@@ -330,16 +330,16 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
         {/* Modal Body */}
         <div className="p-6 space-y-5 overflow-y-auto flex-1">
           {error && (
-            <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl text-rose-800 text-xs flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+            <div className="p-3.5 bg-fault-bg border border-fault rounded-2xl text-fault text-xs flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-fault shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
           {hasBlurryPage && (
-            <div dir="rtl" className="p-3.5 bg-amber-50 border border-amber-300 rounded-2xl text-amber-950 text-xs space-y-1 font-farsi">
-              <div className="flex items-center gap-2 font-bold text-amber-900">
-                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+            <div dir="rtl" className="p-3.5 bg-attention-bg border border-attention rounded-2xl text-attention text-xs space-y-1 font-farsi">
+              <div className="flex items-center gap-2 font-bold text-attention">
+                <AlertTriangle className="w-4 h-4 text-attention shrink-0" />
                 <span>هشدار کیفیت تصویر / تاریکی عکس</span>
               </div>
               <p>
@@ -349,16 +349,16 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
           )}
 
           {isAnalyzing ? (
-            <div className="py-12 px-6 text-center space-y-4 animate-fade-in bg-teal-50/50 rounded-3xl border border-teal-100">
-              <div className="w-16 h-16 mx-auto rounded-full bg-teal-100 flex items-center justify-center text-teal-600 shadow-md">
+            <div className="py-12 px-6 text-center space-y-4 animate-fade-in bg-page rounded-3xl border border-edge">
+              <div className="w-16 h-16 mx-auto rounded-full bg-page flex items-center justify-center text-primary shadow-hamyar">
                 <RefreshCw className="w-8 h-8 animate-spin" />
               </div>
               <div className="space-y-1">
-                <h4 className="font-bold text-slate-900 text-base">Reading Your Paper Form...</h4>
-                <p dir="rtl" className="font-farsi text-teal-900 font-bold text-sm">
+                <h4 className="font-bold text-ink text-base">Reading Your Paper Form...</h4>
+                <p dir="rtl" className="font-farsi text-primary font-bold text-sm">
                   در حال بررسی و استخراج خانه و فیلدهای برگه فرم کاغذی...
                 </p>
-                <p className="text-xs text-slate-500 pt-1">Preparing Form Companion side-by-side view...</p>
+                <p className="text-xs text-ink-muted pt-1">Preparing Form Companion side-by-side view...</p>
               </div>
             </div>
           ) : !analysisResult ? (
@@ -375,16 +375,16 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
               {/* Upload Dropzone */}
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-teal-300 hover:border-teal-600 bg-teal-50/40 hover:bg-teal-50/80 rounded-3xl p-6 text-center cursor-pointer transition flex flex-col items-center justify-center space-y-2 group"
+                className="border-2 border-dashed border-edge hover:border-primary bg-page hover:bg-page rounded-3xl p-6 text-center cursor-pointer transition flex flex-col items-center justify-center space-y-2 group"
               >
-                <div className="w-14 h-14 rounded-full bg-teal-100 group-hover:bg-teal-200 text-teal-700 flex items-center justify-center transition shadow-xs">
+                <div className="w-14 h-14 rounded-full bg-page group-hover:bg-page text-primary flex items-center justify-center transition shadow-hamyar">
                   <ImagePlus className="w-7 h-7" />
                 </div>
                 <div>
-                  <p className="font-bold text-slate-900 text-sm sm:text-base">
+                  <p className="font-bold text-ink text-sm sm:text-base">
                     Take photo, upload PDF, DOCX or Word document
                   </p>
-                  <p dir="rtl" className="font-farsi font-bold text-teal-900 text-xs mt-0.5">
+                  <p dir="rtl" className="font-farsi font-bold text-primary text-xs mt-0.5">
                     عکس، اسکن، فایل PDF یا اسناد Word (DOCX) را انتخاب کنید (پشتیبانی از چندین فایل)
                   </p>
                 </div>
@@ -394,13 +394,13 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
               {pages.length > 0 && (
                 <div className="space-y-2.5 pt-2">
                   <div dir="rtl" className="flex items-center justify-between font-farsi">
-                    <span className="text-xs font-bold text-slate-800">
+                    <span className="text-xs font-bold text-ink">
                       صفحات آپلود شده ({pages.length} صفحه):
                     </span>
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="text-xs text-teal-700 font-bold hover:underline flex items-center gap-1"
+                      className="text-xs text-primary font-bold hover:underline flex items-center gap-1"
                     >
                       <ImagePlus className="w-3.5 h-3.5" />
                       <span>افزودن صفحه دیگر</span>
@@ -416,16 +416,16 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
                       return (
                         <div
                           key={p.id}
-                          className="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between gap-2"
+                          className="p-3 bg-page rounded-2xl border border-edge flex items-center justify-between gap-2"
                         >
                           <div className="flex items-center gap-2.5 overflow-hidden">
                             {isDocx ? (
-                              <div className="w-12 h-14 bg-teal-100 border border-teal-300 rounded-lg flex flex-col items-center justify-center text-teal-700 shrink-0">
+                              <div className="w-12 h-14 bg-page border border-edge rounded-lg flex flex-col items-center justify-center text-primary shrink-0">
                                 <FileText className="w-6 h-6" />
                                 <span className="text-xs font-black font-mono mt-0.5">DOCX</span>
                               </div>
                             ) : isPdf ? (
-                              <div className="w-12 h-14 bg-rose-100 border border-rose-300 rounded-lg flex flex-col items-center justify-center text-rose-700 shrink-0">
+                              <div className="w-12 h-14 bg-fault-bg border border-fault rounded-lg flex flex-col items-center justify-center text-fault shrink-0">
                                 <FileText className="w-6 h-6" />
                                 <span className="text-xs font-black font-mono mt-0.5">PDF</span>
                               </div>
@@ -433,18 +433,18 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
                               <img
                                 src={p.dataUrl}
                                 alt={`Page ${p.pageNumber}`}
-                                className="w-12 h-14 object-cover rounded-lg border border-slate-300 shrink-0"
+                                className="w-12 h-14 object-cover rounded-lg border border-edge-control shrink-0"
                               />
                             )}
                             <div className="min-w-0">
-                              <span className="text-xs font-bold text-slate-900 block">
+                              <span className="text-xs font-bold text-ink block">
                                 Page {p.pageNumber} {isDocx ? '(Word)' : isPdf ? '(PDF)' : ''}
                               </span>
-                              <span className="text-xs text-slate-500 truncate block">
+                              <span className="text-xs text-ink-muted truncate block">
                                 {p.fileName}
                               </span>
                               {p.isBlurryOrDark && (
-                                <span className="text-xs text-amber-700 font-farsi block font-bold">
+                                <span className="text-xs text-attention font-farsi block font-bold">
                                   کیفیت عکس کم‌نور
                                 </span>
                               )}
@@ -456,7 +456,7 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
                             type="button"
                             onClick={() => handleMovePage(index, 'up')}
                             disabled={index === 0}
-                            className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-600 disabled:opacity-30"
+                            className="p-1.5 rounded-lg hover:bg-page text-ink-muted disabled:opacity-30"
                             title="Move Page Left/Up"
                           >
                             <ArrowUp className="w-3.5 h-3.5" />
@@ -465,7 +465,7 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
                             type="button"
                             onClick={() => handleMovePage(index, 'down')}
                             disabled={index === pages.length - 1}
-                            className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-600 disabled:opacity-30"
+                            className="p-1.5 rounded-lg hover:bg-page text-ink-muted disabled:opacity-30"
                             title="Move Page Right/Down"
                           >
                             <ArrowDown className="w-3.5 h-3.5" />
@@ -473,7 +473,7 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
                           <button
                             type="button"
                             onClick={() => handleRemovePage(p.id)}
-                            className="p-1.5 rounded-lg hover:bg-rose-100 text-rose-600"
+                            className="p-1.5 rounded-lg hover:bg-fault-bg text-fault"
                             title="Remove Page"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -492,22 +492,22 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
                   type="button"
                   onClick={processFormPages}
                   disabled={pages.length === 0 || isAnalyzing}
-                  className={`w-full py-3.5 px-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 transition shadow-sm font-farsi ${
+                  className={`w-full py-3.5 px-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 transition shadow-hamyar font-farsi ${
                     pages.length === 0
-                      ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                      : 'bg-teal-600 hover:bg-teal-700 text-white'
+                      ? 'bg-page text-ink-muted cursor-not-allowed'
+                      : 'bg-primary hover:bg-primary text-white'
                   }`}
                 >
-                  <Sparkles className="w-4 h-4 text-amber-300" />
+                  <Sparkles className="w-4 h-4 text-attention" />
                   <span>تأیید و شروع همراهی فرم (Form Companion) ←</span>
                 </button>
               </div>
 
               <div className="relative my-3 text-center">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-slate-200"></div>
+                  <div className="w-full border-t border-edge"></div>
                 </div>
-                <span className="relative bg-white px-3 text-xs text-slate-400 font-medium">OR / یا</span>
+                <span className="relative bg-surface px-3 text-xs text-ink-muted font-medium">OR / یا</span>
               </div>
 
               {/* Pre-made Templates Button */}
@@ -517,38 +517,38 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
                   onClose();
                   if (onStartPresetForm) onStartPresetForm('arc_replacement');
                 }}
-                className="w-full py-3 px-4 bg-teal-50 hover:bg-teal-100 border border-teal-200 text-teal-900 rounded-2xl font-bold text-xs flex items-center justify-between transition"
+                className="w-full py-3 px-4 bg-page hover:bg-page border border-edge text-primary rounded-2xl font-bold text-xs flex items-center justify-between transition"
               >
                 <div className="flex items-center gap-2.5">
-                  <FileText className="w-4 h-4 text-teal-700" />
+                  <FileText className="w-4 h-4 text-primary" />
                   <div className="text-left">
-                    <p className="font-bold text-slate-900">Try with standard UK form template</p>
-                    <p dir="rtl" className="font-farsi text-teal-800 text-xs">امتحان با نمونه فرم رسمی بریتانیا (ARC, HC1, GP)</p>
+                    <p className="font-bold text-ink">Try with standard UK form template</p>
+                    <p dir="rtl" className="font-farsi text-primary text-xs">امتحان با نمونه فرم رسمی بریتانیا (ARC, HC1, GP)</p>
                   </div>
                 </div>
-                <ArrowRight className="w-4 h-4 text-teal-700" />
+                <ArrowRight className="w-4 h-4 text-primary" />
               </button>
             </div>
           ) : (
             /* Result Confirmation */
             <div className="space-y-4">
-              <div className="p-4 bg-teal-50 border border-teal-200 rounded-2xl flex items-center justify-between">
-                <div className="flex items-center gap-2 text-teal-950 font-bold text-xs sm:text-sm">
-                  <CheckCircle2 className="w-5 h-5 text-teal-600 shrink-0" />
+              <div className="p-4 bg-page border border-edge rounded-2xl flex items-center justify-between">
+                <div className="flex items-center gap-2 text-primary font-bold text-xs sm:text-sm">
+                  <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
                   <span>Form Uploaded & Analyzed</span>
                 </div>
                 <button
                   onClick={handleReset}
-                  className="text-xs text-teal-700 font-bold hover:underline"
+                  className="text-xs text-primary font-bold hover:underline"
                 >
                   Upload Different Pages
                 </button>
               </div>
 
-              <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
-                <h4 className="font-bold text-slate-900 text-xs sm:text-sm">Extracted Document Details:</h4>
-                <p className="text-xs text-slate-700">{analysisResult.englishSummary}</p>
-                <p dir="rtl" className="font-farsi text-xs text-teal-800 pt-1 leading-relaxed">
+              <div className="p-4 bg-page border border-edge rounded-2xl space-y-2">
+                <h4 className="font-bold text-ink text-xs sm:text-sm">Extracted Document Details:</h4>
+                <p className="text-xs text-ink-muted">{analysisResult.englishSummary}</p>
+                <p dir="rtl" className="font-farsi text-xs text-primary pt-1 leading-relaxed">
                   {analysisResult.farsiSummary}
                 </p>
               </div>
@@ -561,7 +561,7 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
                     onStartPresetForm('custom_uploaded', extractedCustomForm);
                   }
                 }}
-                className="w-full py-3.5 px-4 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition font-farsi"
+                className="w-full py-3.5 px-4 bg-primary hover:bg-primary text-white rounded-2xl font-bold text-xs flex items-center justify-center gap-2 shadow-hamyar transition font-farsi"
               >
                 <span>ورود به محیط همزمان فرم و مترجم (Form Companion) ←</span>
               </button>

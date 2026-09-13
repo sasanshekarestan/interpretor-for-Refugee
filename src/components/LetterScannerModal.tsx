@@ -316,7 +316,7 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
             it in smaller type, on a screen built for people who read Persian
             and little English. */}
         <div className="px-4 py-3.5 bg-emphasis text-on-emphasis flex items-center gap-3 shrink-0">
-          <div className="w-11 h-11 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center shrink-0">
+          <div className="w-11 h-11 rounded-xl bg-surface/15 border border-white/20 flex items-center justify-center shrink-0">
             <Camera className="w-5 h-5" aria-hidden="true" />
           </div>
           <div className="flex-1 min-w-0">
@@ -331,7 +331,7 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
             onClick={onClose}
             aria-label="بستن / Close"
             className="w-11 h-11 shrink-0 inline-flex items-center justify-center rounded-xl
-                       text-on-emphasis hover:bg-white/15 transition"
+                       text-on-emphasis hover:bg-surface/15 transition"
           >
             <X className="w-5 h-5" aria-hidden="true" />
           </button>

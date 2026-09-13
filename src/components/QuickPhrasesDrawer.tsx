@@ -62,16 +62,16 @@ export const QuickPhrasesDrawer: React.FC<QuickPhrasesDrawerProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden bg-slate-900/40 backdrop-blur-xs flex justify-end">
-      <div className="w-full max-w-xl bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-200">
+    <div className="fixed inset-0 z-50 overflow-hidden bg-emphasis/70 backdrop-blur-xs flex justify-end">
+      <div className="w-full max-w-xl bg-surface h-full shadow-hamyar flex flex-col animate-in slide-in-from-right duration-200">
         {/* Drawer Header */}
-        <div className="p-4 sm:p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <div className="p-4 sm:p-5 border-b border-edge flex items-center justify-between bg-page">
           <div>
             <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-amber-500" />
-              <h2 className="font-bold text-slate-900 text-base">جملات و عبارات ضروری پناهجویی</h2>
+              <Sparkles className="w-4 h-4 text-attention" />
+              <h2 className="font-bold text-ink text-base">جملات و عبارات ضروری پناهجویی</h2>
             </div>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-ink-muted">
               Essential Refugee Phrases with Spoken British Voice
             </p>
           </div>
@@ -80,16 +80,16 @@ export const QuickPhrasesDrawer: React.FC<QuickPhrasesDrawerProps> = ({
             onClick={onClose}
             title="Close phrases drawer / بستن پنجره جملات"
             aria-label="Close phrases drawer / بستن پنجره جملات"
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition"
+            className="p-2 rounded-xl text-ink-muted hover:text-ink-muted hover:bg-page transition"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Search & Category Filter */}
-        <div className="p-4 border-b border-slate-100 space-y-2 bg-white">
+        <div className="p-4 border-b border-edge space-y-2 bg-surface">
           <div className="relative">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+            <Search className="w-4 h-4 text-ink-muted absolute left-3 top-3" />
             <input
               id="input-search-quick-phrases"
               type="text"
@@ -97,7 +97,7 @@ export const QuickPhrasesDrawer: React.FC<QuickPhrasesDrawerProps> = ({
               onChange={(e) => setSearchQuery(e.target.value)}
               aria-label="Search quick phrases in Farsi, Dari, English / جستجو در جملات کاربردی"
               placeholder="جستجو در جملات (فارسی، دری، English)..."
-              className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:border-teal-600 focus:bg-white transition"
+              className="w-full pl-9 pr-4 py-2 bg-page border border-edge rounded-xl text-xs sm:text-sm focus:outline-none focus:border-primary focus:bg-surface transition"
             />
           </div>
 
@@ -111,8 +111,8 @@ export const QuickPhrasesDrawer: React.FC<QuickPhrasesDrawerProps> = ({
                 aria-label={`Filter by category: ${c.label} / فیلتر بر اساس دسته: ${c.label}`}
                 className={`px-3 py-1 rounded-full whitespace-nowrap font-medium transition ${
                   selectedCategory === c.id
-                    ? 'bg-teal-700 text-white shadow-xs'
-                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                    ? 'bg-primary text-white shadow-hamyar'
+                    : 'bg-page hover:bg-page text-ink-muted'
                 }`}
               >
                 {c.label}
@@ -130,23 +130,23 @@ export const QuickPhrasesDrawer: React.FC<QuickPhrasesDrawerProps> = ({
                 onSelectPhrase(item);
                 onClose();
               }}
-              className="group cursor-pointer p-4 bg-slate-50 hover:bg-teal-50/50 border border-slate-200 hover:border-teal-300 rounded-xl transition shadow-2xs"
+              className="group cursor-pointer p-4 bg-page hover:bg-page border border-edge hover:border-edge rounded-xl transition shadow-hamyar"
             >
               <div className="flex items-start justify-between gap-3">
                 {/* Text Content */}
                 <div className="space-y-1.5 flex-1">
-                  <p dir="rtl" className="font-farsi font-bold text-slate-900 text-sm sm:text-base leading-relaxed">
+                  <p dir="rtl" className="font-farsi font-bold text-ink text-sm sm:text-base leading-relaxed">
                     {item.farsiText}
                   </p>
                   {item.dariNote && (
-                    <p dir="rtl" className="font-farsi text-xs text-teal-800 font-medium bg-teal-100/40 p-1.5 rounded">
+                    <p dir="rtl" className="font-farsi text-xs text-primary font-medium bg-page p-1.5 rounded">
                       {item.dariNote}
                     </p>
                   )}
-                  <p className="font-semibold text-teal-950 text-xs sm:text-sm pt-1">
+                  <p className="font-semibold text-primary text-xs sm:text-sm pt-1">
                     {item.englishText}
                   </p>
-                  <p className="text-xs text-slate-400 font-mono italic">
+                  <p className="text-xs text-ink-muted font-mono italic">
                     {item.phonetic}
                   </p>
                 </div>
@@ -160,8 +160,8 @@ export const QuickPhrasesDrawer: React.FC<QuickPhrasesDrawerProps> = ({
                     aria-label="Speak phrase in British English / پخش صوتی انگلیسی"
                     className={`p-2 rounded-lg transition ${
                       playingId === item.id
-                        ? 'bg-teal-700 text-white animate-pulse'
-                        : 'bg-white group-hover:bg-teal-700 group-hover:text-white text-slate-600 border border-slate-200 group-hover:border-teal-700'
+                        ? 'bg-primary text-white animate-pulse'
+                        : 'bg-surface group-hover:bg-primary group-hover:text-white text-ink-muted border border-edge group-hover:border-primary'
                     }`}
                   >
                     <Volume2 className="w-4 h-4" />
@@ -172,7 +172,7 @@ export const QuickPhrasesDrawer: React.FC<QuickPhrasesDrawerProps> = ({
           ))}
 
           {filtered.length === 0 && (
-            <div className="text-center py-12 text-slate-400 text-xs">
+            <div className="text-center py-12 text-ink-muted text-xs">
               موردی مطابق با جستجوی شما پیدا نشد.
             </div>
           )}

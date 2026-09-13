@@ -368,21 +368,21 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
   return (
     <div className={fill ? 'font-sans h-full flex flex-col' : 'space-y-4 font-sans'}>
       {/* Viewer Toolbar */}
-      <div className={`${hideToolbar ? 'hidden' : ''} bg-slate-900 text-white p-3 sm:p-4 rounded-2xl border border-slate-800 shadow-lg flex flex-wrap items-center justify-between gap-3 text-xs`}>
+      <div className={`${hideToolbar ? 'hidden' : ''} bg-emphasis text-on-emphasis p-3 sm:p-4 rounded-2xl border border-white/15 shadow-hamyar flex flex-wrap items-center justify-between gap-3 text-xs`}>
         {/* Left: Document Info */}
         <div className="flex items-center gap-3">
           {/* This tile used to carry the NHS's own blue. That colour belongs
               to the NHS and appears only inside a rendered document, never on
               the app's own furniture. */}
-          <div className="p-2 bg-primary text-on-primary rounded-xl shadow-xs shrink-0">
+          <div className="p-2 bg-primary text-on-primary rounded-xl shadow-hamyar shrink-0">
             <FileText className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
               <span className="font-bold text-white text-sm line-clamp-1">{titleEn}</span>
-              {titleFa && <span dir="rtl" className="text-xs text-amber-300 font-farsi font-semibold">({titleFa})</span>}
+              {titleFa && <span dir="rtl" className="text-xs text-attention font-farsi font-semibold">({titleFa})</span>}
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-ink-muted">
               Official PDF • {displayTotalPages} {displayTotalPages === 1 ? 'Page' : 'Pages'} total
             </p>
           </div>
@@ -392,24 +392,24 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
         <div className="flex items-center gap-2 flex-wrap">
           {/* Page Navigation */}
           {displayTotalPages > 1 && (
-            <div className="flex items-center gap-1 bg-slate-800 p-1 rounded-xl">
+            <div className="flex items-center gap-1 bg-white/10 p-1 rounded-xl">
               <button
                 type="button"
                 onClick={() => onSelectPage(Math.max(0, currentPageIndex - 1))}
                 disabled={currentPageIndex === 0}
-                className="p-1.5 hover:bg-slate-700 disabled:opacity-40 rounded-lg text-slate-300 transition cursor-pointer disabled:cursor-not-allowed"
+                className="p-1.5 hover:bg-white/20 disabled:opacity-40 rounded-lg text-on-emphasis-muted transition cursor-pointer disabled:cursor-not-allowed"
                 title="Previous page"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <span className="px-2.5 font-mono font-bold text-amber-300 text-xs whitespace-nowrap">
+              <span className="px-2.5 font-mono font-bold text-attention text-xs whitespace-nowrap">
                 Page {currentPageIndex + 1} / {displayTotalPages}
               </span>
               <button
                 type="button"
                 onClick={() => onSelectPage(Math.min(displayTotalPages - 1, currentPageIndex + 1))}
                 disabled={currentPageIndex >= displayTotalPages - 1}
-                className="p-1.5 hover:bg-slate-700 disabled:opacity-40 rounded-lg text-slate-300 transition cursor-pointer disabled:cursor-not-allowed"
+                className="p-1.5 hover:bg-white/20 disabled:opacity-40 rounded-lg text-on-emphasis-muted transition cursor-pointer disabled:cursor-not-allowed"
                 title="Next page"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -418,22 +418,22 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
           )}
 
           {/* Zoom Controls */}
-          <div className="hidden sm:flex items-center gap-1 bg-slate-800 p-1 rounded-xl">
+          <div className="hidden sm:flex items-center gap-1 bg-white/10 p-1 rounded-xl">
             <button
               type="button"
               onClick={handleZoomOut}
               disabled={zoom <= 50}
-              className="p-1.5 hover:bg-slate-700 disabled:opacity-40 rounded-lg text-slate-300 transition cursor-pointer"
+              className="p-1.5 hover:bg-white/20 disabled:opacity-40 rounded-lg text-on-emphasis-muted transition cursor-pointer"
               title="Zoom out"
             >
               <ZoomOut className="w-4 h-4" />
             </button>
-            <span className="px-2 font-mono text-xs text-slate-300 font-semibold">{zoom}%</span>
+            <span className="px-2 font-mono text-sm text-on-emphasis-muted font-bold">{zoom}%</span>
             <button
               type="button"
               onClick={handleZoomIn}
               disabled={zoom >= 200}
-              className="p-1.5 hover:bg-slate-700 disabled:opacity-40 rounded-lg text-slate-300 transition cursor-pointer"
+              className="p-1.5 hover:bg-white/20 disabled:opacity-40 rounded-lg text-on-emphasis-muted transition cursor-pointer"
               title="Zoom in"
             >
               <ZoomIn className="w-4 h-4" />
@@ -446,10 +446,10 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
               href={officialSourceUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium rounded-xl transition flex items-center gap-1.5 text-xs"
+              className="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-on-emphasis font-bold rounded-xl transition flex items-center gap-1.5 text-xs"
               title="Open official GOV.UK / NHS website source"
             >
-              <ExternalLink className="w-3.5 h-3.5 text-teal-400" />
+              <ExternalLink className="w-3.5 h-3.5 text-on-emphasis" />
               <span className="hidden md:inline">GOV / NHS Source</span>
             </a>
           )}
@@ -459,12 +459,12 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
             href={webUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-3.5 py-1.5 bg-primary hover:bg-primary-press text-white font-bold rounded-xl transition flex items-center gap-2 text-xs shadow-xs cursor-pointer"
+            className="px-3.5 py-1.5 bg-primary hover:bg-primary-press text-white font-bold rounded-xl transition flex items-center gap-2 text-xs shadow-hamyar cursor-pointer"
             title="باز کردن فایل PDF در برگه جدید مرورگر برای چاپ و ذخیره (چاپ و ثبت در برگه نو) / Open PDF in new browser tab to print or save"
           >
             <Printer className="w-3.5 h-3.5 shrink-0" />
             <span className="font-farsi font-bold">چاپ و ذخیره PDF</span>
-            <span className="text-xs text-teal-200 hidden sm:inline font-farsi">(برگه جدید / تب نو)</span>
+            <span className="text-sm text-on-emphasis-muted hidden sm:inline font-farsi">(برگه جدید / تب نو)</span>
           </a>
         </div>
       </div>
@@ -472,15 +472,15 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
       {/* Main Document Display Canvas Container */}
       <div
         ref={containerRef}
-        className={`relative w-full bg-slate-950 overflow-auto flex flex-col items-center justify-start ${
+        className={`relative w-full bg-emphasis overflow-auto flex flex-col items-center justify-start ${
           fill
             ? 'flex-1 min-h-0 p-2'
-            : 'min-h-[600px] rounded-2xl border border-slate-800 shadow-inner p-2 sm:p-4'
+            : 'min-h-[600px] rounded-2xl border border-white/15 p-2 sm:p-4'
         }`}
       >
         {/* Document Loading State */}
         {docStatus === 'loading' && (
-          <div className="flex-1 w-full min-h-[500px] flex flex-col items-center justify-center p-8 text-slate-400 space-y-3">
+          <div className="flex-1 w-full min-h-[500px] flex flex-col items-center justify-center p-8 text-ink-muted space-y-3">
             <RefreshCw className="w-8 h-8 animate-spin text-primary" />
             <p dir="rtl" className="font-farsi text-base text-white">در حال باز کردن سند رسمی…</p>
             <p dir="ltr" className="font-latin text-sm text-white/70">Opening the official document</p>
@@ -504,7 +504,7 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
         */}
         {docStatus === 'missing' && (
           <div className="flex-1 flex flex-col items-center justify-center p-6 max-w-xl mx-auto space-y-4 my-auto">
-            <div className="p-4 bg-white/10 text-white border border-white/25 rounded-full">
+            <div className="p-4 bg-surface/10 text-white border border-white/25 rounded-full">
               <FileQuestion className="w-10 h-10" aria-hidden="true" />
             </div>
 
@@ -530,7 +530,7 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
                 href={officialSourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="min-h-[44px] w-full px-4 rounded-xl bg-white text-emphasis font-bold
+                className="min-h-[44px] w-full px-4 rounded-xl bg-surface text-emphasis font-bold
                            inline-flex items-center justify-center gap-2 text-sm transition
                            hover:bg-on-emphasis-muted"
               >
@@ -543,7 +543,7 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
 
         {docStatus === 'error' && (
           <div className="flex-1 flex flex-col items-center justify-center p-6 max-w-xl mx-auto space-y-4 my-auto">
-            <div className="p-4 bg-white/10 text-white border border-white/25 rounded-full">
+            <div className="p-4 bg-surface/10 text-white border border-white/25 rounded-full">
               <AlertCircle className="w-10 h-10" aria-hidden="true" />
             </div>
 
@@ -567,7 +567,7 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
             <button
               type="button"
               onClick={handleRetry}
-              className="min-h-[44px] w-full px-4 rounded-xl bg-white text-emphasis font-bold
+              className="min-h-[44px] w-full px-4 rounded-xl bg-surface text-emphasis font-bold
                          inline-flex items-center justify-center gap-2 text-sm transition
                          hover:bg-on-emphasis-muted cursor-pointer"
             >
@@ -581,14 +581,14 @@ export const OfficialPdfViewer: React.FC<OfficialPdfViewerProps> = ({
         <div className={`relative flex flex-col items-center max-w-full ${docStatus === 'loaded' ? 'block' : 'hidden'}`}>
           {/* Subtle Page Rendering Indicator */}
           {pageRendering && (
-            <div className="absolute top-4 right-4 z-20 px-3 py-1.5 bg-slate-900/90 border border-slate-700 rounded-full shadow-lg flex items-center gap-2 text-xs text-amber-300 backdrop-blur-xs">
+            <div className="absolute top-4 right-4 z-20 px-3 py-1.5 bg-emphasis/90 border border-white/20 rounded-full shadow-hamyar flex items-center gap-2 text-xs text-attention backdrop-blur-xs">
               <RefreshCw className="w-3.5 h-3.5 animate-spin" />
               <span>Rendering page {currentPageIndex + 1}...</span>
             </div>
           )}
 
           {/* Actual Canvas, with any field overlay pinned to the same box */}
-          <div className="relative shadow-2xl rounded-lg overflow-hidden bg-white border border-slate-700">
+          <div className="relative shadow-hamyar rounded-lg overflow-hidden bg-surface border border-white/20">
             <canvas ref={canvasRef} className="block mx-auto max-w-full h-auto" />
             {overlay}
           </div>

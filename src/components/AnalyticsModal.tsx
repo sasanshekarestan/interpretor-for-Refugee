@@ -60,28 +60,28 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ isOpen, onClose 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-emphasis/70 backdrop-blur-sm animate-fade-in">
       <div 
-        className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]"
+        className="bg-surface rounded-2xl shadow-hamyar border border-edge w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]"
         role="dialog"
         aria-modal="true"
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
+        <div className="px-6 py-4 border-b border-edge flex items-center justify-between bg-page">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-teal-100 flex items-center justify-center text-teal-800">
+            <div className="w-8 h-8 rounded-lg bg-page flex items-center justify-center text-primary">
               <BarChart3 className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="font-bold text-slate-900 text-base">Website Visitor & Usage Evaluation</h2>
-              <p className="text-xs text-slate-500">Real-time metrics for academic and pilot study evaluation</p>
+              <h2 className="font-bold text-ink text-base">Website Visitor & Usage Evaluation</h2>
+              <p className="text-xs text-ink-muted">Real-time metrics for academic and pilot study evaluation</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={fetchStats}
               disabled={isLoading}
-              className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-200/60 rounded-lg transition"
+              className="p-1.5 text-ink-muted hover:text-ink hover:bg-page rounded-lg transition"
               title="Refresh Stats / به روزرسانی آمار"
               aria-label="Refresh Stats / به روزرسانی آمار"
             >
@@ -89,7 +89,7 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ isOpen, onClose 
             </button>
             <button
               onClick={onClose}
-              className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 rounded-lg transition"
+              className="p-1.5 text-ink-muted hover:text-ink-muted hover:bg-page rounded-lg transition"
               title="Close Analytics Modal / بستن پنجره آمار"
               aria-label="Close Analytics Modal / بستن پنجره آمار"
             >
@@ -103,76 +103,76 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ isOpen, onClose 
           {/* Top Key Metrics Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {/* Total Visits */}
-            <div className="bg-gradient-to-br from-teal-50 to-teal-50/40 p-4 rounded-xl border border-teal-100/80">
-              <div className="flex items-center justify-between text-teal-700 mb-1">
+            <div className="bg-page p-4 rounded-xl border border-edge">
+              <div className="flex items-center justify-between text-primary mb-1">
                 <span className="text-xs font-semibold uppercase tracking-wider">Total Pageviews</span>
                 <Globe2 className="w-4 h-4" />
               </div>
-              <div className="text-2xl font-black text-slate-900">
+              <div className="text-2xl font-black text-ink">
                 {isLoading ? '...' : (stats?.totalVisits || 0)}
               </div>
-              <span className="text-xs text-teal-800/80 font-medium">All visits recorded</span>
+              <span className="text-xs text-primary font-medium">All visits recorded</span>
             </div>
 
             {/* Unique Visitors */}
-            <div className="bg-gradient-to-br from-teal-50 to-teal-50/40 p-4 rounded-xl border border-teal-100/80">
-              <div className="flex items-center justify-between text-teal-700 mb-1">
+            <div className="bg-page p-4 rounded-xl border border-edge">
+              <div className="flex items-center justify-between text-primary mb-1">
                 <span className="text-xs font-semibold uppercase tracking-wider">Unique Visitors</span>
                 <Users className="w-4 h-4" />
               </div>
-              <div className="text-2xl font-black text-slate-900">
+              <div className="text-2xl font-black text-ink">
                 {isLoading ? '...' : (stats?.uniqueVisitors || 0)}
               </div>
-              <span className="text-xs text-teal-800/80 font-medium">Individual devices</span>
+              <span className="text-xs text-primary font-medium">Individual devices</span>
             </div>
 
             {/* Total Translations */}
-            <div className="bg-gradient-to-br from-teal-50 to-teal-50/40 p-4 rounded-xl border border-teal-100/80">
-              <div className="flex items-center justify-between text-teal-700 mb-1">
+            <div className="bg-page p-4 rounded-xl border border-edge">
+              <div className="flex items-center justify-between text-primary mb-1">
                 <span className="text-xs font-semibold uppercase tracking-wider">Interpreted</span>
                 <TrendingUp className="w-4 h-4" />
               </div>
-              <div className="text-2xl font-black text-slate-900">
+              <div className="text-2xl font-black text-ink">
                 {isLoading ? '...' : (stats?.totalTranslations || 0)}
               </div>
-              <span className="text-xs text-teal-800/80 font-medium">Translations done</span>
+              <span className="text-xs text-primary font-medium">Translations done</span>
             </div>
 
             {/* Voice vs Text */}
-            <div className="bg-gradient-to-br from-amber-50 to-teal-50/40 p-4 rounded-xl border border-amber-100/80">
-              <div className="flex items-center justify-between text-amber-700 mb-1">
+            <div className="bg-attention-bg p-4 rounded-xl border border-attention">
+              <div className="flex items-center justify-between text-attention mb-1">
                 <span className="text-xs font-semibold uppercase tracking-wider">Voice Sessions</span>
                 <Mic className="w-4 h-4" />
               </div>
-              <div className="text-2xl font-black text-slate-900">
+              <div className="text-2xl font-black text-ink">
                 {isLoading ? '...' : (stats?.voiceTranslations || 0)}
               </div>
-              <span className="text-xs text-amber-800/80 font-medium">{stats?.textTranslations || 0} via text typing</span>
+              <span className="text-xs text-attention font-medium">{stats?.textTranslations || 0} via text typing</span>
             </div>
           </div>
 
           {/* Traffic Breakdown */}
-          <div className="border border-slate-200 rounded-xl p-4 bg-white">
-            <h3 className="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-teal-600" />
+          <div className="border border-edge rounded-xl p-4 bg-surface">
+            <h3 className="text-sm font-bold text-ink mb-3 flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-primary" />
               Traffic Sources & Platform Split
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="p-3 bg-slate-50 rounded-lg border border-slate-100 flex items-center justify-between">
+              <div className="p-3 bg-page rounded-lg border border-edge flex items-center justify-between">
                 <div>
-                  <div className="text-xs text-slate-500 font-medium">Wix Embedded Site Views</div>
-                  <div className="text-lg font-bold text-slate-800">{stats?.wixEmbedViews || 0}</div>
+                  <div className="text-xs text-ink-muted font-medium">Wix Embedded Site Views</div>
+                  <div className="text-lg font-bold text-ink">{stats?.wixEmbedViews || 0}</div>
                 </div>
-                <span className="text-xs font-semibold bg-teal-100 text-teal-800 px-2 py-1 rounded">
+                <span className="text-xs font-semibold bg-page text-primary px-2 py-1 rounded">
                   Embedded
                 </span>
               </div>
-              <div className="p-3 bg-slate-50 rounded-lg border border-slate-100 flex items-center justify-between">
+              <div className="p-3 bg-page rounded-lg border border-edge flex items-center justify-between">
                 <div>
-                  <div className="text-xs text-slate-500 font-medium">Direct Standalone Visits</div>
-                  <div className="text-lg font-bold text-slate-800">{stats?.directVisits || 0}</div>
+                  <div className="text-xs text-ink-muted font-medium">Direct Standalone Visits</div>
+                  <div className="text-lg font-bold text-ink">{stats?.directVisits || 0}</div>
                 </div>
-                <span className="text-xs font-semibold bg-teal-100 text-teal-800 px-2 py-1 rounded">
+                <span className="text-xs font-semibold bg-page text-primary px-2 py-1 rounded">
                   Direct Link
                 </span>
               </div>
@@ -180,9 +180,9 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ isOpen, onClose 
           </div>
 
           {/* Evaluation Information note */}
-          <div className="bg-teal-50/70 border border-teal-200/80 rounded-xl p-4 text-xs text-teal-900 space-y-2">
-            <div className="font-semibold flex items-center gap-1.5 text-teal-950">
-              <ShieldCheck className="w-4 h-4 text-teal-700" />
+          <div className="bg-page border border-edge rounded-xl p-4 text-xs text-primary space-y-2">
+            <div className="font-semibold flex items-center gap-1.5 text-primary">
+              <ShieldCheck className="w-4 h-4 text-primary" />
               Evaluation & Ethics Note
             </div>
             <p className="leading-relaxed">
@@ -192,14 +192,14 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ isOpen, onClose 
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-between text-xs text-slate-500">
+        <div className="px-6 py-3 border-t border-edge bg-page flex items-center justify-between text-xs text-ink-muted">
           <div className="flex items-center gap-1">
             <Clock className="w-3.5 h-3.5" />
             <span>Updated live on every user interaction</span>
           </div>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 bg-slate-800 hover:bg-slate-900 text-white font-medium rounded-lg transition"
+            className="px-4 py-1.5 bg-primary hover:bg-primary-press text-on-primary font-medium rounded-lg transition"
           >
             Done
           </button>

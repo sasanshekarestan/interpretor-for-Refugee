@@ -40,17 +40,17 @@ export const RefugeeLexiconModal: React.FC<RefugeeLexiconModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl max-w-3xl w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[85vh]">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-emphasis/70 backdrop-blur-xs flex items-center justify-center p-4">
+      <div className="bg-surface rounded-2xl max-w-3xl w-full shadow-hamyar border border-edge overflow-hidden flex flex-col max-h-[85vh]">
         {/* Modal Header */}
-        <div className="p-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+        <div className="p-5 border-b border-edge bg-page flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-teal-100 flex items-center justify-center text-teal-800">
+            <div className="w-8 h-8 rounded-lg bg-page flex items-center justify-center text-primary">
               <BookOpen className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="font-bold text-slate-900 text-base">راهنمای واژگان پناهندگی در بریتانیا</h2>
-              <p className="text-xs text-slate-500">UK Asylum & NHS Terminology Glossary</p>
+              <h2 className="font-bold text-ink text-base">راهنمای واژگان پناهندگی در بریتانیا</h2>
+              <p className="text-xs text-ink-muted">UK Asylum & NHS Terminology Glossary</p>
             </div>
           </div>
 
@@ -59,16 +59,16 @@ export const RefugeeLexiconModal: React.FC<RefugeeLexiconModalProps> = ({
             onClick={onClose}
             title="Close UK Terminology Guide / بستن راهنمای اصطلاحات"
             aria-label="Close UK Terminology Guide / بستن راهنمای اصطلاحات"
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/50 transition"
+            className="p-1.5 rounded-lg text-ink-muted hover:text-ink-muted hover:bg-page transition"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Search & Filter */}
-        <div className="p-4 border-b border-slate-100 bg-white space-y-2">
+        <div className="p-4 border-b border-edge bg-surface space-y-2">
           <div className="relative">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+            <Search className="w-4 h-4 text-ink-muted absolute left-3 top-3" />
             <input
               id="input-search-lexicon"
               type="text"
@@ -76,7 +76,7 @@ export const RefugeeLexiconModal: React.FC<RefugeeLexiconModalProps> = ({
               onChange={(e) => setSearch(e.target.value)}
               aria-label="Search UK Asylum & NHS terminology / جستجو در اصطلاحات پناهندگی و پزشکی"
               placeholder="Search UK terminology (ARC, ASPEN, GP, Section 95, هوم آفیس)..."
-              className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:border-teal-600 focus:bg-white"
+              className="w-full pl-9 pr-4 py-2 bg-page border border-edge rounded-xl text-xs sm:text-sm focus:outline-none focus:border-primary focus:bg-surface"
             />
           </div>
 
@@ -90,8 +90,8 @@ export const RefugeeLexiconModal: React.FC<RefugeeLexiconModalProps> = ({
                 aria-label={`Filter by category: ${c} / دسته‌بندی ${c}`}
                 className={`px-3 py-1 rounded-full whitespace-nowrap font-medium transition ${
                   category === c
-                    ? 'bg-teal-700 text-white'
-                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                    ? 'bg-primary text-white'
+                    : 'bg-page hover:bg-page text-ink-muted'
                 }`}
               >
                 {c === 'all' ? 'All Categories' : c}
@@ -105,24 +105,24 @@ export const RefugeeLexiconModal: React.FC<RefugeeLexiconModalProps> = ({
           {filtered.map((item, idx) => (
             <div
               key={idx}
-              className="p-4 bg-slate-50 border border-slate-200/80 rounded-xl space-y-2 hover:border-teal-300 transition"
+              className="p-4 bg-page border border-edge rounded-xl space-y-2 hover:border-edge transition"
             >
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="font-bold text-teal-950 text-sm sm:text-base">
+                    <h3 className="font-bold text-primary text-sm sm:text-base">
                       {item.english}
                     </h3>
-                    <span className="text-xs font-semibold bg-slate-200/80 text-slate-700 px-2 py-0.5 rounded">
+                    <span className="text-xs font-semibold bg-page text-ink-muted px-2 py-0.5 rounded">
                       {item.category}
                     </span>
                   </div>
                   <div className="flex flex-wrap items-center gap-3 mt-1 text-xs">
-                    <span className="font-farsi font-semibold text-slate-900">
+                    <span className="font-farsi font-semibold text-ink">
                       فارسی: {item.farsi}
                     </span>
-                    <span className="text-slate-300">|</span>
-                    <span className="font-farsi font-semibold text-teal-800">
+                    <span className="text-ink-muted" aria-hidden="true">·</span>
+                    <span className="font-farsi font-semibold text-primary">
                       دری: {item.dari}
                     </span>
                   </div>
@@ -135,15 +135,15 @@ export const RefugeeLexiconModal: React.FC<RefugeeLexiconModalProps> = ({
                   aria-label="Pronounce term in British English / تلفظ صوتی اصطلاح به انگلیسی"
                   className={`p-2 rounded-lg transition ${
                     playingTerm === item.english
-                      ? 'bg-teal-700 text-white animate-pulse'
-                      : 'bg-white hover:bg-teal-50 text-slate-600 border border-slate-200'
+                      ? 'bg-primary text-white animate-pulse'
+                      : 'bg-surface hover:bg-page text-ink-muted border border-edge'
                   }`}
                 >
                   <Volume2 className="w-4 h-4" />
                 </button>
               </div>
 
-              <p className="text-xs text-slate-600 leading-relaxed pt-1 border-t border-slate-200/50">
+              <p className="text-xs text-ink-muted leading-relaxed pt-1 border-t border-edge">
                 {item.explanation}
               </p>
             </div>

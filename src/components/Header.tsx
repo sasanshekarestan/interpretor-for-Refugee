@@ -31,7 +31,7 @@ export const Header: React.FC<HeaderProps> = ({
   const currentLang = settings.userLanguage || 'farsi';
 
   return (
-    <header className="border-b border-slate-200/80 bg-white/95 backdrop-blur sticky top-0 z-30 transition-all shadow-2xs print:hidden w-full max-w-full overflow-hidden">
+    <header className="border-b border-edge bg-surface/95 backdrop-blur sticky top-0 z-30 transition-all shadow-hamyar print:hidden w-full max-w-full overflow-hidden">
       <div className="max-w-6xl mx-auto px-3 py-2.5 sm:px-6 sm:py-3 w-full">
         <div className="flex items-center justify-between gap-2 sm:gap-3">
           {/* The wordmark carries the name, so there is no round badge and no
@@ -76,7 +76,7 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={onOpenSettings}
               title="Settings / تنظیمات"
               aria-label="Settings / تنظیمات"
-              className="min-h-[44px] min-w-[44px] p-2 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition shrink-0 cursor-pointer flex items-center justify-center"
+              className="min-h-[44px] min-w-[44px] p-2 rounded-full text-ink-muted hover:text-ink hover:bg-page border border-edge transition shrink-0 cursor-pointer flex items-center justify-center"
             >
               <SlidersHorizontal className="w-4 h-4" />
             </button>

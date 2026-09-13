@@ -61,19 +61,19 @@ export const SavedPhrasesModal: React.FC<SavedPhrasesModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-fade-in max-h-[90vh]">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-emphasis/70 backdrop-blur-xs flex items-center justify-center p-4">
+      <div className="bg-surface rounded-2xl max-w-lg w-full shadow-hamyar border border-edge overflow-hidden flex flex-col animate-fade-in max-h-[90vh]">
         {/* Header */}
-        <div className="p-4 sm:p-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+        <div className="p-4 sm:p-5 border-b border-edge bg-page flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
-            <h2 className="font-bold text-slate-900 text-base">
-              Saved Phrases <span className="font-farsi font-normal text-slate-500">| عبارات ذخیره‌شده</span>
+            <Star className="w-5 h-5 text-attention fill-attention" />
+            <h2 className="font-bold text-ink text-base">
+              Saved Phrases <span className="font-farsi font-normal text-ink-muted">| عبارات ذخیره‌شده</span>
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/50 transition"
+            className="p-1.5 rounded-lg text-ink-muted hover:text-ink-muted hover:bg-page transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -82,12 +82,12 @@ export const SavedPhrasesModal: React.FC<SavedPhrasesModalProps> = ({
         {/* Content */}
         <div className="p-4 sm:p-5 overflow-y-auto flex-1 space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-slate-500">
+            <span className="text-xs text-ink-muted">
               Personal reference details, ARC number, address & saved sentences.
             </span>
             <button
               onClick={() => setShowAddForm(!showAddForm)}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold transition shadow-xs"
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-primary hover:bg-primary text-white text-xs font-bold transition shadow-hamyar"
             >
               <Plus className="w-4 h-4" />
               <span>Add Custom Phrase</span>
@@ -96,40 +96,40 @@ export const SavedPhrasesModal: React.FC<SavedPhrasesModalProps> = ({
 
           {/* Form to Add New Phrase */}
           {showAddForm && (
-            <form onSubmit={handleCreate} className="p-4 bg-slate-50 border border-teal-200 rounded-xl space-y-3">
-              <h3 className="font-bold text-xs text-teal-900 uppercase tracking-wide">Add New Saved Details / عبارت جدید</h3>
+            <form onSubmit={handleCreate} className="p-4 bg-page border border-edge rounded-xl space-y-3">
+              <h3 className="font-bold text-xs text-primary uppercase tracking-wide">Add New Saved Details / عبارت جدید</h3>
               
               <div>
-                <label className="text-xs font-semibold text-slate-700">Label (Title):</label>
+                <label className="text-xs font-semibold text-ink-muted">Label (Title):</label>
                 <input
                   type="text"
                   value={newLabel}
                   onChange={(e) => setNewLabel(e.target.value)}
                   placeholder="e.g. My ARC Card Number or Home Address"
-                  className="w-full mt-1 p-2 bg-white border border-slate-300 rounded-lg text-xs"
+                  className="w-full mt-1 p-2 bg-surface border border-edge-control rounded-lg text-xs"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-700 font-farsi">متن فارسی یا دری (Farsi/Dari Text):</label>
+                <label className="text-xs font-semibold text-ink-muted font-farsi">متن فارسی یا دری (Farsi/Dari Text):</label>
                 <input
                   type="text"
                   dir="rtl"
                   value={newFarsi}
                   onChange={(e) => setNewFarsi(e.target.value)}
                   placeholder="مثلاً: شماره کارت ای‌آرسی من ۱۲۳۴۵ است"
-                  className="w-full mt-1 p-2 bg-white border border-slate-300 rounded-lg text-xs font-farsi"
+                  className="w-full mt-1 p-2 bg-surface border border-edge-control rounded-lg text-xs font-farsi"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-700">English Text:</label>
+                <label className="text-xs font-semibold text-ink-muted">English Text:</label>
                 <input
                   type="text"
                   value={newEnglish}
                   onChange={(e) => setNewEnglish(e.target.value)}
                   placeholder="e.g. My ARC card reference is 12345"
-                  className="w-full mt-1 p-2 bg-white border border-slate-300 rounded-lg text-xs"
+                  className="w-full mt-1 p-2 bg-surface border border-edge-control rounded-lg text-xs"
                 />
               </div>
 
@@ -137,13 +137,13 @@ export const SavedPhrasesModal: React.FC<SavedPhrasesModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowAddForm(false)}
-                  className="px-3 py-1.5 rounded-lg border border-slate-300 text-xs text-slate-600 hover:bg-slate-100"
+                  className="px-3 py-1.5 rounded-lg border border-edge-control text-xs text-ink-muted hover:bg-page"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 rounded-lg bg-teal-700 text-white font-bold text-xs hover:bg-teal-800"
+                  className="px-4 py-1.5 rounded-lg bg-primary text-white font-bold text-xs hover:bg-primary"
                 >
                   Save Phrase
                 </button>
@@ -156,22 +156,22 @@ export const SavedPhrasesModal: React.FC<SavedPhrasesModalProps> = ({
             {savedPhrases.map((phrase) => (
               <div
                 key={phrase.id}
-                className="p-4 bg-slate-50 hover:bg-teal-50/30 border border-slate-200 hover:border-teal-300 rounded-xl transition space-y-2"
+                className="p-4 bg-page hover:bg-page border border-edge hover:border-edge rounded-xl transition space-y-2"
               >
-                <div className="flex items-center justify-between border-b border-slate-200/60 pb-2">
-                  <span className="font-bold text-slate-900 text-xs sm:text-sm">{phrase.label}</span>
+                <div className="flex items-center justify-between border-b border-edge pb-2">
+                  <span className="font-bold text-ink text-xs sm:text-sm">{phrase.label}</span>
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => handleCopy(phrase)}
                       title="Copy phrase"
-                      className="p-1 rounded text-slate-400 hover:text-slate-700 hover:bg-slate-200/50"
+                      className="p-1 rounded text-ink-muted hover:text-ink-muted hover:bg-page"
                     >
-                      {copiedId === phrase.id ? <Check className="w-3.5 h-3.5 text-teal-600" /> : <Copy className="w-3.5 h-3.5" />}
+                      {copiedId === phrase.id ? <Check className="w-3.5 h-3.5 text-primary" /> : <Copy className="w-3.5 h-3.5" />}
                     </button>
                     <button
                       onClick={() => onDeletePhrase(phrase.id)}
                       title="Delete saved phrase"
-                      className="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50"
+                      className="p-1 rounded text-ink-muted hover:text-fault hover:bg-fault-bg"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -179,12 +179,12 @@ export const SavedPhrasesModal: React.FC<SavedPhrasesModalProps> = ({
                 </div>
 
                 {phrase.farsiText && (
-                  <p dir="rtl" className="font-farsi font-medium text-slate-800 text-sm">
+                  <p dir="rtl" className="font-farsi font-medium text-ink text-sm">
                     {phrase.farsiText}
                   </p>
                 )}
                 {phrase.englishText && (
-                  <p className="font-medium text-teal-950 text-xs sm:text-sm">
+                  <p className="font-medium text-primary text-xs sm:text-sm">
                     {phrase.englishText}
                   </p>
                 )}
@@ -195,8 +195,8 @@ export const SavedPhrasesModal: React.FC<SavedPhrasesModalProps> = ({
                       onClick={() => handleSpeak(phrase, 'en-GB')}
                       className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition ${
                         playingId === phrase.id + '_en-GB'
-                          ? 'bg-teal-700 text-white animate-pulse'
-                          : 'bg-white border border-slate-200 text-teal-800 hover:bg-teal-50'
+                          ? 'bg-primary text-white animate-pulse'
+                          : 'bg-surface border border-edge text-primary hover:bg-page'
                       }`}
                     >
                       <Volume2 className="w-3.5 h-3.5" />
@@ -209,8 +209,8 @@ export const SavedPhrasesModal: React.FC<SavedPhrasesModalProps> = ({
                       onClick={() => handleSpeak(phrase, 'fa-IR')}
                       className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition ${
                         playingId === phrase.id + '_fa-IR'
-                          ? 'bg-teal-700 text-white animate-pulse'
-                          : 'bg-white border border-slate-200 text-teal-800 hover:bg-teal-50 font-farsi'
+                          ? 'bg-primary text-white animate-pulse'
+                          : 'bg-surface border border-edge text-primary hover:bg-page font-farsi'
                       }`}
                     >
                       <Volume2 className="w-3.5 h-3.5" />
@@ -222,7 +222,7 @@ export const SavedPhrasesModal: React.FC<SavedPhrasesModalProps> = ({
             ))}
 
             {savedPhrases.length === 0 && (
-              <div className="text-center py-10 text-slate-400 text-xs">
+              <div className="text-center py-10 text-ink-muted text-xs">
                 No saved phrases yet. Click "Save" on any translation card or add custom phrases above.
               </div>
             )}

@@ -146,7 +146,7 @@ export const DocumentOrganiserView: React.FC<DocumentOrganiserViewProps> = () =>
         className="bg-emphasis text-on-emphasis rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
         <div className="flex items-start gap-3 min-w-0 flex-1">
-          <div className="p-2 rounded-lg bg-white/10 border border-white/20 shrink-0 mt-0.5">
+          <div className="p-2 rounded-lg bg-surface/10 border border-white/20 shrink-0 mt-0.5">
             <FolderLock className="w-5 h-5" />
           </div>
           <div className="space-y-1 min-w-0">
@@ -277,7 +277,7 @@ export const DocumentOrganiserView: React.FC<DocumentOrganiserViewProps> = () =>
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="space-y-1.5 min-w-0 flex-1">
-                    <span className="inline-block text-xs font-bold px-2.5 py-1 rounded-full bg-teal-50 text-primary border border-teal-200">
+                    <span className="inline-block text-xs font-bold px-2.5 py-1 rounded-full bg-page text-primary border border-edge">
                       <span className="font-farsi">{cat.fa}</span>
                       <span className="text-ink-muted"> · {cat.en}</span>
                     </span>
@@ -376,7 +376,7 @@ export const DocumentOrganiserView: React.FC<DocumentOrganiserViewProps> = () =>
 
       {/* Save sheet, once a file has been chosen */}
       {pendingFile && (
-        <div className="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-emphasis/70 z-50 flex items-center justify-center p-4">
           <div className="bg-surface rounded-3xl max-w-md w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div dir="rtl" className="space-y-1">
               <h3 className="font-farsi font-bold text-ink text-lg">ذخیرهٔ مدرک</h3>

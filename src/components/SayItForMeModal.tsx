@@ -103,27 +103,27 @@ export const SayItForMeModal: React.FC<SayItForMeModalProps> = ({ isOpen, onClos
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+    <div className="fixed inset-0 bg-emphasis/70 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+      <div className="bg-surface rounded-3xl max-w-lg w-full p-6 shadow-hamyar border border-edge space-y-4">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div className="flex items-center justify-between pb-3 border-b border-edge">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-teal-100 text-teal-800">
+            <div className="p-2 rounded-xl bg-page text-primary">
               <Volume2 className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-bold text-slate-900 text-base">Say It For Me / از زبان من بگو</h3>
-              <p className="text-xs text-slate-500">Speak or type in Farsi/Dari — we speak natural UK English out loud.</p>
+              <h3 className="font-bold text-ink text-base">Say It For Me / از زبان من بگو</h3>
+              <p className="text-xs text-ink-muted">Speak or type in Farsi/Dari — we speak natural UK English out loud.</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1 text-slate-400 hover:text-slate-600 rounded-full">
+          <button onClick={onClose} className="p-1 text-ink-muted hover:text-ink-muted rounded-full">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tone Selection */}
         <div className="space-y-1">
-          <label className="text-xs font-bold text-slate-700">Select Tone / لحن:</label>
+          <label className="text-xs font-bold text-ink-muted">Select Tone / لحن:</label>
           <div className="flex flex-wrap gap-1.5">
             {[
               { id: 'natural', label: 'Natural (طبیعی)' },
@@ -135,7 +135,7 @@ export const SayItForMeModal: React.FC<SayItForMeModalProps> = ({ isOpen, onClos
                 key={t.id}
                 onClick={() => setTone(t.id as any)}
                 className={`px-3 py-1 rounded-full text-xs font-semibold transition ${
-                  tone === t.id ? 'bg-teal-700 text-white shadow-2xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  tone === t.id ? 'bg-primary text-white shadow-hamyar' : 'bg-page text-ink-muted hover:bg-page'
                 }`}
               >
                 {t.label}
@@ -147,12 +147,12 @@ export const SayItForMeModal: React.FC<SayItForMeModalProps> = ({ isOpen, onClos
         {/* Text Area with Mic Input */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-bold text-slate-700">Type or Speak your message:</label>
+            <label className="text-xs font-bold text-ink-muted">Type or Speak your message:</label>
             <button
               type="button"
               onClick={toggleVoiceDictation}
               className={`px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1 transition ${
-                isListening ? 'bg-rose-600 text-white animate-pulse' : 'bg-teal-50 text-teal-800 hover:bg-teal-100 border border-teal-200'
+                isListening ? 'bg-fault text-white animate-pulse' : 'bg-page text-primary hover:bg-page border border-edge'
               }`}
             >
               {isListening ? <MicOff className="w-3.5 h-3.5 animate-bounce" /> : <Mic className="w-3.5 h-3.5" />}
@@ -165,8 +165,8 @@ export const SayItForMeModal: React.FC<SayItForMeModalProps> = ({ isOpen, onClos
               onChange={(e) => setInputText(e.target.value)}
               rows={3}
               placeholder="عبارت خود را به فارسی بگوئید یا تایپ کنید..."
-              className={`w-full p-3.5 rounded-2xl border border-slate-300 text-xs font-farsi focus:ring-2 focus:ring-teal-500 ${
-                isListening ? 'ring-2 ring-rose-500/40 bg-rose-50/20' : ''
+              className={`w-full p-3.5 rounded-2xl border border-edge-control text-xs font-farsi focus:ring-2 focus:ring-primary ${
+                isListening ? 'ring-2 ring-fault bg-fault-bg' : ''
               }`}
             />
           </div>
@@ -175,7 +175,7 @@ export const SayItForMeModal: React.FC<SayItForMeModalProps> = ({ isOpen, onClos
         <button
           onClick={handleConvert}
           disabled={!inputText.trim() || isProcessing}
-          className="w-full py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl text-xs font-bold transition flex items-center justify-center gap-2"
+          className="w-full py-3 bg-primary hover:bg-primary text-white rounded-2xl text-xs font-bold transition flex items-center justify-center gap-2"
         >
           <Sparkles className="w-4 h-4" />
           <span>{isProcessing ? 'Generating Speech...' : 'Say This Out Loud '}</span>
@@ -183,27 +183,27 @@ export const SayItForMeModal: React.FC<SayItForMeModalProps> = ({ isOpen, onClos
 
         {/* Output Card */}
         {result && (
-          <div className="p-4 bg-slate-900 text-white rounded-2xl space-y-3 animate-fadeIn">
+          <div className="p-4 bg-emphasis text-on-emphasis rounded-2xl space-y-3 animate-fadeIn">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-teal-400">Say this out loud:</span>
+              <span className="text-sm font-bold text-on-emphasis-muted">Say this out loud:</span>
               <div className="flex items-center gap-2">
                 {onPlayAudio && (
                   <button
                     onClick={() => onPlayAudio(result.englishText, 'en-GB')}
-                    className="px-2.5 py-1 bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold rounded-lg text-xs flex items-center gap-1"
+                    className="px-2.5 py-1 bg-white hover:bg-on-emphasis-muted text-emphasis font-bold rounded-lg text-xs flex items-center gap-1"
                   >
                     <Volume2 className="w-3.5 h-3.5" />
                     <span>Play Audio</span>
                   </button>
                 )}
-                <button onClick={handleCopy} className="p-1 text-slate-400 hover:text-white">
-                  {copied ? <Check className="w-4 h-4 text-teal-400" /> : <Copy className="w-4 h-4" />}
+                <button onClick={handleCopy} className="p-1 text-ink-muted hover:text-white">
+                  {copied ? <Check className="w-4 h-4 text-on-emphasis" /> : <Copy className="w-4 h-4" />}
                 </button>
               </div>
             </div>
 
             <p className="text-base font-bold text-white leading-relaxed">{result.englishText}</p>
-            <p dir="rtl" className="text-xs font-farsi text-slate-300 pt-1 border-t border-slate-800">
+            <p dir="rtl" className="text-base font-farsi text-on-emphasis-muted pt-1 border-t border-white/15">
               {result.farsiTranslation}
             </p>
           </div>

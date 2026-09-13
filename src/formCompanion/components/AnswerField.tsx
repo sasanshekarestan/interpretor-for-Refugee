@@ -51,13 +51,13 @@ export const AnswerField: React.FC<AnswerFieldProps> = ({
 
   return (
     <div className="space-y-3" dir="rtl">
-      <label htmlFor="answer-field" className="block font-farsi text-sm font-bold text-slate-700">
+      <label htmlFor="answer-field" className="block font-farsi text-sm font-bold text-ink-muted">
         پاسخ خود را بنویسید یا بگویید
       </label>
 
       <div
-        className={`relative rounded-2xl border bg-white transition
-          ${isRecording ? 'border-[#0E6E64] ring-2 ring-[#0E6E64]/25' : 'border-slate-300'}`}
+        className={`relative rounded-2xl border bg-surface transition
+          ${isRecording ? 'border-primary ring-2 ring-primary/25' : 'border-edge-control'}`}
       >
         <textarea
           id="answer-field"
@@ -68,7 +68,7 @@ export const AnswerField: React.FC<AnswerFieldProps> = ({
           dir="auto"
           placeholder={placeholderFa}
           className="w-full bg-transparent resize-none px-3.5 py-3 pl-14 font-farsi text-base leading-relaxed
-            text-slate-900 placeholder:text-slate-400 focus:outline-none rounded-2xl"
+            text-ink placeholder:text-ink-muted focus:outline-none rounded-2xl"
         />
 
         <button
@@ -78,14 +78,14 @@ export const AnswerField: React.FC<AnswerFieldProps> = ({
           aria-pressed={isRecording}
           className={`absolute left-2.5 bottom-2.5 w-10 h-10 inline-flex items-center justify-center rounded-xl
             cursor-pointer transition ${t.focus}
-            ${isRecording ? 'bg-[#0E6E64] text-white' : 'text-slate-500 hover:bg-slate-100'}`}
+            ${isRecording ? 'bg-primary text-on-primary' : 'text-ink-muted hover:bg-page'}`}
         >
           {isRecording ? <Square className="w-4 h-4" fill="currentColor" /> : <Mic className="w-5 h-5" />}
         </button>
       </div>
 
       {isProcessing && (
-        <p className="flex items-center gap-2 font-farsi text-[12.5px] text-slate-500">
+        <p className="flex items-center gap-2 font-farsi text-sm text-ink-muted">
           <Loader2 className="w-4 h-4 animate-spin" />
           در حال آماده‌سازی پاسخ انگلیسی…
         </p>
@@ -117,15 +117,15 @@ export const AnswerField: React.FC<AnswerFieldProps> = ({
       )}
 
       {englishAnswer && (
-        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3 space-y-2">
+        <div className="rounded-2xl border border-edge bg-page p-3 space-y-2">
           <div className="flex items-center justify-between gap-2">
-            <p className="font-farsi text-[12.5px] font-bold text-slate-600">
+            <p className="font-farsi text-sm font-bold text-ink-muted">
               این را روی فرم کاغذی بنویسید:
             </p>
             <button
               type="button"
               onClick={copy}
-              className={`inline-flex items-center gap-1.5 text-[11.5px] font-bold text-slate-600 hover:text-slate-900 cursor-pointer ${t.focus} rounded px-1`}
+              className={`inline-flex items-center gap-1.5 text-xs font-bold text-ink-muted hover:text-ink cursor-pointer ${t.focus} rounded px-1`}
             >
               {copied ? <Check className={`w-3.5 h-3.5 ${t.doneText}`} /> : <Copy className="w-3.5 h-3.5" />}
               <span className="font-farsi">{copied ? 'کپی شد' : 'کپی'}</span>
@@ -133,7 +133,7 @@ export const AnswerField: React.FC<AnswerFieldProps> = ({
           </div>
           <p
             dir="ltr"
-            className="text-left font-mono text-sm text-slate-900 bg-white border border-slate-200 rounded-xl px-3 py-2.5 break-words select-all"
+            className="text-left font-mono text-sm text-ink bg-surface border border-edge rounded-xl px-3 py-2.5 break-words select-all"
           >
             {englishAnswer}
           </p>

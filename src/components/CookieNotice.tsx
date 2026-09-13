@@ -67,7 +67,7 @@ export const CookieNotice: React.FC = () => {
           one is deliberately not a modal, and the app stays usable behind it. */}
       <div
         className="pointer-events-auto max-w-3xl mx-auto mb-3 bg-emphasis text-on-emphasis
-                   rounded-3xl shadow-lg p-4 space-y-3"
+                   rounded-3xl shadow-hamyar p-4 space-y-3"
       >
         {/* The wording is the standard notice Sasan asked for, with one
             phrase removed: "and personalize content". Hamyar personalises
@@ -103,7 +103,7 @@ export const CookieNotice: React.FC = () => {
             operable without any of our own state, and rewritten as short
             labelled lines rather than prose, because a person checking what a
             cookie does wants to find the answer rather than read an essay. */}
-        <details className="group rounded-2xl bg-white/10 border border-white/20">
+        <details className="group rounded-2xl bg-surface/10 border border-white/20">
           <summary
             id="btn-cookie-policy"
             className="min-h-[44px] px-3.5 flex items-center gap-2 list-none [&::-webkit-details-marker]:hidden"
@@ -200,7 +200,7 @@ export const CookieNotice: React.FC = () => {
             id="btn-cookies-reject"
             onClick={() => decide(false)}
             className="min-h-[48px] flex-1 px-5 rounded-2xl border-2 border-white/40
-                       text-on-emphasis hover:bg-white/10 font-bold transition"
+                       text-on-emphasis hover:bg-surface/10 font-bold transition"
           >
             <span className="font-farsi">رد کردن</span>
             <span className="text-xs opacity-70"> · Reject</span>

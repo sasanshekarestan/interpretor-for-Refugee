@@ -80,12 +80,12 @@ export const DocumentSurface: React.FC<DocumentSurfaceProps> = ({
                 className={`absolute rounded-[3px] transition cursor-pointer
                   ${
                     isActive
-                      ? 'bg-[#0E6E64]/25 ring-2 ring-[#0E6E64]'
+                      ? 'bg-primary/25 ring-2 ring-primary'
                       : isAnswered
-                      ? 'bg-teal-500/20 hover:bg-teal-500/30'
+                      ? 'bg-primary/25 hover:bg-primary/40'
                       : f.source === 'widget'
-                      ? 'bg-[#0E6E64]/8 hover:bg-[#0E6E64]/20'
-                      : 'bg-transparent hover:bg-[#0E6E64]/15'
+                      ? 'bg-primary/10 hover:bg-primary/20'
+                      : 'bg-transparent hover:bg-primary/15'
                   }`}
                 style={{
                   left: f.left,
@@ -125,10 +125,10 @@ export const DocumentSurface: React.FC<DocumentSurfaceProps> = ({
       } catch (_) {}
     }
     body = (
-      <div className="flex-1 min-h-0 overflow-auto bg-slate-950 p-3">
-        <div className="bg-white text-slate-900 p-5 rounded-lg shadow-lg max-w-2xl mx-auto text-left"
+      <div className="flex-1 min-h-0 overflow-auto bg-emphasis p-3">
+        <div className="bg-surface text-ink p-5 rounded-lg shadow-hamyar max-w-2xl mx-auto text-left"
           dir="ltr">
-          <div className="flex items-center gap-2 border-b pb-2 mb-3 text-xs font-mono text-slate-600">
+          <div className="flex items-center gap-2 border-b pb-2 mb-3 text-xs font-mono text-ink-muted">
             <FileText className="w-4 h-4" />
             <span>{page?.fileName || 'Document.docx'}</span>
           </div>
@@ -138,7 +138,7 @@ export const DocumentSurface: React.FC<DocumentSurfaceProps> = ({
               dangerouslySetInnerHTML={{ __html: html }}
             />
           ) : (
-            <p className="font-farsi text-sm text-slate-600" dir="rtl">
+            <p className="font-farsi text-sm text-ink-muted" dir="rtl">
               محتوای سند بارگذاری شد.
             </p>
           )}
@@ -149,17 +149,17 @@ export const DocumentSurface: React.FC<DocumentSurfaceProps> = ({
     body = (
       <iframe
         src={dataUrl}
-        className="flex-1 min-h-0 w-full bg-white"
+        className="flex-1 min-h-0 w-full bg-surface"
         title={`صفحه ${pageIndex + 1} از فرم بارگذاری‌شده`}
       />
     );
   } else {
     body = (
-      <div className="flex-1 min-h-0 overflow-auto bg-slate-950 p-3 flex items-start justify-center">
+      <div className="flex-1 min-h-0 overflow-auto bg-emphasis p-3 flex items-start justify-center">
         <img
           src={dataUrl}
           alt="فرم کاغذی بارگذاری‌شده شما"
-          className="max-w-full rounded-lg shadow-lg"
+          className="max-w-full rounded-lg shadow-hamyar"
           style={{ width: `${zoom}%` }}
         />
       </div>
@@ -167,7 +167,7 @@ export const DocumentSurface: React.FC<DocumentSurfaceProps> = ({
   }
 
   const control =
-    'w-9 h-9 inline-flex items-center justify-center rounded-lg text-white/90 hover:bg-white/15 disabled:opacity-30 disabled:pointer-events-none cursor-pointer transition';
+    'w-9 h-9 inline-flex items-center justify-center rounded-lg text-white/90 hover:bg-surface/15 disabled:opacity-30 disabled:pointer-events-none cursor-pointer transition';
 
   return (
     <div className={`relative flex-1 min-h-0 flex flex-col ${t.mat}`}>
@@ -176,7 +176,7 @@ export const DocumentSurface: React.FC<DocumentSurfaceProps> = ({
       {/* Page and zoom float over the document rather than stacking above it. */}
       <div
         className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 px-1.5 py-1
-          bg-slate-900/90 backdrop-blur-sm border border-white/15 rounded-full shadow-lg"
+          bg-emphasis/90 backdrop-blur-sm border border-white/15 rounded-full shadow-hamyar"
         dir="ltr"
       >
         <button
@@ -203,7 +203,7 @@ export const DocumentSurface: React.FC<DocumentSurfaceProps> = ({
           <ChevronRight className="w-4 h-4" />
         </button>
 
-        <span className="w-px h-5 bg-white/20 mx-0.5" />
+        <span className="w-px h-5 bg-surface/20 mx-0.5" />
 
         <button
           type="button"

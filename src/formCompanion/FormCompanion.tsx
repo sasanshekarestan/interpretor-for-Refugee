@@ -233,7 +233,7 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
    * No second list of questions to keep in step with the document.
    */
   const guidePane = (
-    <div className="flex-1 min-h-0 overflow-y-auto bg-slate-50">
+    <div className="flex-1 min-h-0 overflow-y-auto bg-page">
       <div className="max-w-xl mx-auto px-3.5 py-4 space-y-3.5">
         {/* The whole page, not one box. Tapping a line answers about that
             line, which is the wrong answer to "what is this page and what
@@ -244,15 +244,15 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
           disabled={s.isChatProcessing || isExplainingPage || !pageText}
           className={`w-full flex items-center gap-2.5 px-4 py-3.5 rounded-2xl text-right transition
             disabled:opacity-50 disabled:pointer-events-none cursor-pointer ${t.focus}
-            ${activeField ? 'bg-white border border-slate-200 hover:bg-slate-50' : `${t.primary} shadow-sm`}`}
+            ${activeField ? 'bg-surface border border-edge hover:bg-page' : `${t.primary} shadow-hamyar`}`}
           dir="rtl"
         >
           <FileQuestion className={`w-5 h-5 shrink-0 ${activeField ? t.faint : 'text-white/90'}`} />
           <span className="flex-1 min-w-0">
-            <span className={`block font-farsi font-bold text-sm ${activeField ? 'text-slate-800' : 'text-white'}`}>
+            <span className={`block font-farsi font-bold text-sm ${activeField ? 'text-ink' : 'text-white'}`}>
               این صفحه چه می‌گوید و باید چکار کنم؟
             </span>
-            <span className={`block text-xs ${activeField ? 'text-slate-500' : 'text-white/80'}`}>
+            <span className={`block text-xs ${activeField ? 'text-ink-muted' : 'text-white/80'}`}>
               Explain this whole page · صفحه {s.documentPageIndex + 1}
             </span>
           </span>
@@ -276,12 +276,12 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
               setGuideMode(false);
               clearActiveField();
             }}
-            className={`w-full flex items-center gap-2.5 px-3.5 py-3 rounded-2xl border border-slate-200 bg-white
-              text-right cursor-pointer hover:bg-slate-50 transition ${t.focus}`}
+            className={`w-full flex items-center gap-2.5 px-3.5 py-3 rounded-2xl border border-edge bg-surface
+              text-right cursor-pointer hover:bg-page transition ${t.focus}`}
             dir="rtl"
           >
             <ListChecks className={`w-4 h-4 ${t.faint} shrink-0`} />
-            <span className="font-farsi text-sm font-bold text-slate-700 flex-1">
+            <span className="font-farsi text-sm font-bold text-ink-muted flex-1">
               ترجیح می‌دهید قدم‌به‌قدم راهنمایی شوید؟
             </span>
           </button>
@@ -291,7 +291,7 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
   );
 
   const wizardPane = question ? (
-    <div className="flex-1 min-h-0 overflow-y-auto bg-slate-50">
+    <div className="flex-1 min-h-0 overflow-y-auto bg-page">
       <div className="max-w-xl mx-auto px-3.5 py-4 space-y-3.5">
         {/* At most one banner, and it can always be dismissed. */}
         {s.showRestoredBanner && (
@@ -334,12 +334,12 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
         <button
           type="button"
           onClick={() => setGuideMode(true)}
-          className={`w-full flex items-center gap-2.5 px-3.5 py-3 rounded-2xl border border-slate-200 bg-white
-            text-right cursor-pointer hover:bg-slate-50 transition ${t.focus}`}
+          className={`w-full flex items-center gap-2.5 px-3.5 py-3 rounded-2xl border border-edge bg-surface
+            text-right cursor-pointer hover:bg-page transition ${t.focus}`}
           dir="rtl"
         >
           <Hand className={`w-4 h-4 ${t.faint} shrink-0`} />
-          <span className="font-farsi text-sm font-bold text-slate-700 flex-1">
+          <span className="font-farsi text-sm font-bold text-ink-muted flex-1">
             به جای این، روی خود فرم بزنید و توضیح بگیرید
           </span>
         </button>
@@ -384,7 +384,7 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
   const questionPane = guideMode || !wizardPane ? guidePane : wizardPane;
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-slate-50 print:static print:h-auto">
+    <div className="fixed inset-0 flex flex-col bg-page print:static print:h-auto">
       <AppBar
         code={form.code}
         titleFa={s.displayTitle || form.titleEn}
@@ -424,7 +424,7 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
           <div className="flex-1 min-h-0 flex">
             <div
               className={`${s.phoneView === 'document' ? 'flex' : 'hidden'} md:flex
-                flex-1 min-w-0 flex-col md:border-l md:border-slate-200`}
+                flex-1 min-w-0 flex-col md:border-l md:border-edge`}
             >
               {documentPane}
             </div>
@@ -453,12 +453,12 @@ export const FormCompanion: React.FC<FormCompanionProps> = ({
             type="button"
             aria-label="لغو"
             onClick={() => setConfirmReset(false)}
-            className="absolute inset-0 bg-slate-900/40 cursor-pointer"
+            className="absolute inset-0 bg-emphasis/70 cursor-pointer"
           />
-          <div className="relative bg-white rounded-2xl shadow-2xl p-5 max-w-sm w-full space-y-4 font-farsi" dir="rtl">
+          <div className="relative bg-surface rounded-2xl shadow-hamyar p-5 max-w-sm w-full space-y-4 font-farsi" dir="rtl">
             <div className="space-y-1.5">
-              <h2 className="font-bold text-base text-slate-900">همه پاسخ‌ها پاک شود؟</h2>
-              <p className="text-[13.5px] text-slate-600 leading-relaxed">
+              <h2 className="font-bold text-base text-ink">همه پاسخ‌ها پاک شود؟</h2>
+              <p className="text-base text-ink-muted leading-relaxed">
                 پاسخ‌هایی که تا الان داده‌اید حذف می‌شود و از سوال اول شروع می‌کنید. این کار برگشت‌پذیر نیست.
               </p>
             </div>

@@ -535,7 +535,7 @@ export default function App() {
   const userLang = settings.userLanguage || 'farsi';
 
   return (
-    <div className={`min-h-screen bg-page text-ink flex flex-col selection:bg-primary selection:text-on-primary print:bg-white print:p-0 print:pb-0 print:text-black w-full max-w-full overflow-x-hidden ${isFormImmersive ? '' : 'pb-16'}`}>
+    <div className={`min-h-screen bg-page text-ink flex flex-col selection:bg-primary selection:text-on-primary print:bg-surface print:p-0 print:pb-0 print:text-black w-full max-w-full overflow-x-hidden ${isFormImmersive ? '' : 'pb-16'}`}>
       {/* Header */}
       {!isFormImmersive && (
       <Header
@@ -860,10 +860,10 @@ export default function App() {
                 setCustomUploadedForm(null);
                 goToTab('form_companion');
               }}
-              className="bg-emphasis text-on-emphasis rounded-3xl p-4 sm:p-6 shadow-sm transition cursor-pointer flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-farsi group w-full min-w-0"
+              className="bg-emphasis text-on-emphasis rounded-3xl p-4 sm:p-6 shadow-hamyar transition cursor-pointer flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-farsi group w-full min-w-0"
             >
               <div className="flex items-start gap-3 sm:gap-3.5 min-w-0 flex-1">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-on-emphasis shrink-0 mt-0.5">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-surface/10 border border-white/20 flex items-center justify-center text-on-emphasis shrink-0 mt-0.5">
                   <FileText className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div className="space-y-1 min-w-0 flex-1">
@@ -871,7 +871,7 @@ export default function App() {
                     <h3 className="font-bold text-base md:text-lg text-on-emphasis break-words">
                       همراه تکمیل فرم‌های رسمی (NHS, Home Office, Council)
                     </h3>
-                    <span className="text-xs font-bold text-on-emphasis-muted bg-white/10 px-2 py-0.5 rounded-md border border-white/20 shrink-0">
+                    <span className="text-xs font-bold text-on-emphasis-muted bg-surface/10 px-2 py-0.5 rounded-md border border-white/20 shrink-0">
                       آرشیو رسمی و آپلود
                     </span>
                   </div>
@@ -892,7 +892,7 @@ export default function App() {
                     setCustomUploadedForm(null);
                     goToTab('form_companion');
                   }}
-                  className="min-h-[48px] w-full sm:w-auto px-4 sm:px-5 py-2.5 bg-on-emphasis text-emphasis hover:bg-on-emphasis-muted rounded-2xl text-sm font-bold transition shadow-xs flex items-center justify-center gap-2"
+                  className="min-h-[48px] w-full sm:w-auto px-4 sm:px-5 py-2.5 bg-on-emphasis text-emphasis hover:bg-on-emphasis-muted rounded-2xl text-sm font-bold transition shadow-hamyar flex items-center justify-center gap-2"
                 >
                   <span>مشاهده آرشیو فرم‌ها</span>
                   <ArrowLeft className="w-4 h-4" />
@@ -964,7 +964,7 @@ export default function App() {
                 job is to explain rather than to act. This was a raw teal-900
                 with a teal-800 pill, neither of which is in tokens.css. */}
             <div className="bg-emphasis text-on-emphasis p-6 rounded-2xl space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 border border-white/20 text-sm font-bold">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface/15 border border-white/20 text-sm font-bold">
                 <Mic className="w-4 h-4 shrink-0" aria-hidden="true" />
                 <span dir="ltr" className="font-latin">Live voice interpreter</span>
               </div>

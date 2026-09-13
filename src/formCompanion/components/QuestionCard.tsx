@@ -38,10 +38,10 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
     <section className={`${t.surface} border rounded-2xl p-4 space-y-3.5`} dir="rtl">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 min-w-0">
-          <span className="font-mono text-xs font-bold text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md shrink-0 tabular-nums">
+          <span className="font-mono text-xs font-bold text-ink-muted bg-page border border-edge px-2 py-0.5 rounded-md shrink-0 tabular-nums">
             {index + 1}/{total}
           </span>
-          <span className="font-farsi text-xs text-slate-500 truncate">{question.section}</span>
+          <span className="font-farsi text-xs text-ink-muted truncate">{question.section}</span>
           {isAnswered && (
             <span className={`inline-flex items-center gap-1 text-xs font-bold ${t.doneText} shrink-0`}>
               <Check className="w-3.5 h-3.5" />
@@ -54,7 +54,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
           <button
             type="button"
             onClick={() => onPlayAudio(guidance.audioText, isDari ? 'fa' : 'fa')}
-            className={`shrink-0 w-10 h-10 inline-flex items-center justify-center rounded-xl text-slate-600 hover:bg-slate-100 cursor-pointer transition ${t.focus}`}
+            className={`shrink-0 w-10 h-10 inline-flex items-center justify-center rounded-xl text-ink-muted hover:bg-page cursor-pointer transition ${t.focus}`}
             aria-label="شنیدن توضیح این سوال"
           >
             <Volume2 className="w-5 h-5" />
@@ -63,16 +63,16 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
       </div>
 
       <div className="space-y-1.5">
-        <h2 className="font-farsi font-bold text-slate-900 text-lg leading-relaxed text-balance">
+        <h2 className="font-farsi font-bold text-ink text-lg leading-relaxed text-balance">
           {questionFa}
         </h2>
-        <p className="text-sm text-slate-500 leading-snug text-left" dir="ltr">
+        <p className="text-sm text-ink-muted leading-snug text-left" dir="ltr">
           {question.questionEn}
         </p>
       </div>
 
       {question.isLegallySensitive && question.legalAidNotice && (
-        <div className={`${t.attention} border rounded-xl p-3 flex gap-2.5 text-[12.5px] font-farsi leading-relaxed`}>
+        <div className={`${t.attention} border rounded-xl p-3 flex gap-2.5 text-sm font-farsi leading-relaxed`}>
           <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5" />
           <span>{question.legalAidNotice}</span>
         </div>
@@ -82,19 +82,19 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         type="button"
         onClick={() => setShowHelp((s) => !s)}
         aria-expanded={showHelp}
-        className={`w-full flex items-center gap-2 text-right px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200
-          text-sm font-farsi font-bold text-slate-700 hover:bg-slate-100 cursor-pointer transition ${t.focus}`}
+        className={`w-full flex items-center gap-2 text-right px-3 py-2.5 rounded-xl bg-page border border-edge
+          text-sm font-farsi font-bold text-ink-muted hover:bg-page cursor-pointer transition ${t.focus}`}
       >
         <HelpCircle className={`w-4 h-4 ${t.faint}`} />
         <span className="flex-1">{showHelp ? 'بستن توضیح' : 'نمی‌فهمم — ساده توضیح بده'}</span>
       </button>
 
       {showHelp && (
-        <div className="space-y-2.5 px-3 py-3 rounded-xl bg-slate-50 border border-slate-200 font-farsi text-[13.5px] leading-relaxed text-slate-700">
+        <div className="space-y-2.5 px-3 py-3 rounded-xl bg-page border border-edge font-farsi text-base leading-relaxed text-ink-muted">
           <p>{guidance.meaningSimple}</p>
-          {guidance.whyTheyAsk && <p className="text-slate-500 text-[12.5px]">{guidance.whyTheyAsk}</p>}
+          {guidance.whyTheyAsk && <p className="text-ink-muted text-sm">{guidance.whyTheyAsk}</p>}
           {guidance.concreteExample && (
-            <p className="text-slate-600">
+            <p className="text-ink-muted">
               <span className="font-bold">مثال: </span>
               <span dir="auto">{guidance.concreteExample}</span>
             </p>
@@ -104,7 +104,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
 
       {question.isCheckbox && question.options && question.options.length > 0 && (
         <div className="space-y-2">
-          <p className="font-farsi text-[12.5px] text-slate-500">
+          <p className="font-farsi text-sm text-ink-muted">
             هر کدام که درست است را انتخاب کنید:
           </p>
           {question.options.map((option) => {
@@ -116,17 +116,17 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                 onClick={() => onToggleOption(question.fieldKey, option.value)}
                 aria-pressed={checked}
                 className={`w-full text-right px-3 py-3 rounded-xl border flex items-center gap-3 cursor-pointer transition ${t.focus}
-                  ${checked ? t.doneSoft : 'bg-white border-slate-200 hover:bg-slate-50'}`}
+                  ${checked ? t.doneSoft : 'bg-surface border-edge hover:bg-page'}`}
               >
                 <span
                   className={`w-5 h-5 shrink-0 rounded-md border-2 inline-flex items-center justify-center
-                    ${checked ? 'bg-teal-600 border-teal-600 text-white' : 'border-slate-300'}`}
+                    ${checked ? 'bg-primary border-primary text-white' : 'border-edge-control'}`}
                 >
                   {checked && <Check className="w-3.5 h-3.5" strokeWidth={3} />}
                 </span>
                 <span className="flex-1 min-w-0">
-                  <span className="block font-farsi text-[13.5px] font-bold leading-snug">{option.labelFa}</span>
-                  <span className="block text-xs text-slate-500 text-left" dir="ltr">{option.labelEn}</span>
+                  <span className="block font-farsi text-base font-bold leading-snug">{option.labelFa}</span>
+                  <span className="block text-xs text-ink-muted text-left" dir="ltr">{option.labelEn}</span>
                 </span>
               </button>
             );
