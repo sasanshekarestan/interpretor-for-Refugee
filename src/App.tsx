@@ -52,6 +52,7 @@ import {
   CheckSquare,
   BookOpen,
   FolderLock,
+  ExternalLink,
   X
 } from 'lucide-react';
 
@@ -1187,6 +1188,36 @@ export default function App() {
               </div>
             </div>
 
+            {/* The rest of Hamyar. This is the screen someone opens when they
+                are looking for something they have not found, which makes it
+                the one place in the app where "there is more over there" is
+                useful rather than a distraction. */}
+            <a
+              id="card-hamyar-site"
+              href="https://hamyar.co.uk"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block bg-emphasis text-on-emphasis rounded-3xl p-6 space-y-3
+                         hover:opacity-95 transition"
+            >
+              <div dir="rtl" className="space-y-1.5">
+                <h3 className="font-farsi font-bold text-xl leading-snug">
+                  ویدیوها و راهنماهای همیار
+                </h3>
+                <p className="font-farsi text-base text-on-emphasis-muted leading-relaxed">
+                  فیلم‌ها و راهنماهای ساده دربارهٔ زندگی در بریتانیا: پزشک، مسکن، مدرسه و کارهای
+                  اداری. به فارسی و دری.
+                </p>
+              </div>
+              <div dir="ltr" className="font-latin border-t border-white/15 pt-3 flex items-center justify-between gap-3">
+                <span className="leading-tight">
+                  <span className="block font-bold text-base">Hamyar videos and guides</span>
+                  <span className="block text-sm text-on-emphasis-muted">hamyar.co.uk</span>
+                </span>
+                <ExternalLink className="w-5 h-5 shrink-0" aria-hidden="true" />
+              </div>
+            </a>
+
             {/* These three were English only, with a typed arrow for an icon,
                 on the screen a person reaches when they are already lost. */}
             <div className="bg-surface rounded-3xl p-6 border border-edge space-y-3">
@@ -1252,6 +1283,36 @@ export default function App() {
               This app provides translation and general information only. It is not a solicitor and
               does not replace legal advice.
             </p>
+          </div>
+
+          {/* The video library and the rest of Hamyar.
+              Deliberately a labelled link rather than the wordmark at the top.
+              The bottom bar already has a Home tab, so a logo that leaves the
+              app would be a second control that looks like "home" and does the
+              opposite, and a logo people are meant to tap is a convention
+              learned from using a lot of websites, which is not a safe thing to
+              assume here. It opens in a new tab so that nobody halfway through
+              a form loses their answers by tapping it. */}
+          <div className="border-t border-edge pt-4">
+            <a
+              id="link-hamyar-site"
+              href="https://hamyar.co.uk"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="min-h-[56px] w-full sm:max-w-md sm:mx-auto px-4 rounded-2xl
+                         bg-page border border-edge hover:bg-surface transition
+                         flex items-center justify-between gap-3"
+            >
+              <span className="text-start leading-tight">
+                <span dir="rtl" className="block font-farsi font-bold text-base text-ink">
+                  ویدیوها و راهنماهای بیشتر همیار
+                </span>
+                <span dir="ltr" className="block font-latin text-sm text-ink-muted">
+                  More Hamyar videos and guides
+                </span>
+              </span>
+              <ExternalLink className="w-5 h-5 text-primary shrink-0" aria-hidden="true" />
+            </a>
           </div>
 
           <div className="border-t border-edge pt-4 text-center">
