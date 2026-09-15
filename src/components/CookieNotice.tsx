@@ -119,15 +119,17 @@ export const CookieNotice: React.FC = () => {
           <div className="px-3.5 pb-3.5 pt-1 space-y-3 max-h-[30vh] overflow-y-auto">
             <dl dir="rtl" className="font-farsi space-y-1.5 text-sm">
               <div>
-                <dt className="font-bold inline">کدام کوکی؟ </dt>
+                <dt className="font-bold inline">برای چه؟ </dt>
                 <dd className="inline text-on-emphasis-muted">
-                  یکی، به نام <span dir="ltr">_ga</span>، از Google Analytics. تا دو سال می‌ماند.
+                  فقط برای اینکه بدانیم چند نفر از برنامه استفاده می‌کنند و کدام بخش‌ها را، تا برای
+                  گرفتن بودجه مدرک داشته باشیم.
                 </dd>
               </div>
               <div>
-                <dt className="font-bold inline">برای چه؟ </dt>
+                <dt className="font-bold inline">با چه ابزاری؟ </dt>
                 <dd className="inline text-on-emphasis-muted">
-                  شمردن اینکه چند نفر از برنامه استفاده می‌کنند، برای گرفتن بودجه.
+                  <span dir="ltr">Google Analytics</span> و <span dir="ltr">Microsoft Clarity</span>.
+                  همهٔ متن‌ها پنهان می‌شود، پس نوشته‌های شما دیده نمی‌شود، فقط جای دست زدن‌ها.
                 </dd>
               </div>
               <div>
@@ -139,7 +141,7 @@ export const CookieNotice: React.FC = () => {
               <div>
                 <dt className="font-bold inline">اگر «رد» را بزنم؟ </dt>
                 <dd className="inline text-on-emphasis-muted">
-                  هیچ کوکی گذاشته نمی‌شود، چیزی به Google نمی‌رود، و برنامه کامل کار می‌کند.
+                  هیچ کوکی گذاشته نمی‌شود، هیچ‌چیز فرستاده نمی‌شود، و برنامه کامل کار می‌کند.
                 </dd>
               </div>
               <div>
@@ -152,15 +154,17 @@ export const CookieNotice: React.FC = () => {
 
             <dl dir="ltr" className="font-latin space-y-1.5 text-sm border-t border-white/15 pt-2.5">
               <div>
-                <dt className="font-bold inline">Which cookie? </dt>
+                <dt className="font-bold inline">What for? </dt>
                 <dd className="inline text-on-emphasis-muted">
-                  One, called _ga, from Google Analytics. It lasts up to two years.
+                  Only to see how many people use Hamyar and which parts, so we have evidence for
+                  funding.
                 </dd>
               </div>
               <div>
-                <dt className="font-bold inline">What for? </dt>
+                <dt className="font-bold inline">Using what? </dt>
                 <dd className="inline text-on-emphasis-muted">
-                  Counting how many people use Hamyar, so we can get funding.
+                  Google Analytics and Microsoft Clarity. All text is hidden, so your writing is
+                  never recorded, only where people tap.
                 </dd>
               </div>
               <div>
@@ -172,7 +176,7 @@ export const CookieNotice: React.FC = () => {
               <div>
                 <dt className="font-bold inline">If I reject? </dt>
                 <dd className="inline text-on-emphasis-muted">
-                  No cookie is set, nothing goes to Google, and the whole app still works.
+                  Nothing is set, nothing is sent, and the whole app still works.
                 </dd>
               </div>
               <div>

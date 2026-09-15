@@ -20,10 +20,13 @@ const fail = (why) => {
 };
 const pass = (what) => console.log(`ok   ${what}`);
 
+// Anything that phones an analytics vendor, Google or Microsoft. Clarity
+// records the screen, so it matters even more than GA that nothing reaches it
+// before a person says yes.
 const googleHits = (page, sink) => {
   page.on('request', (r) => {
     const url = r.url();
-    if (/googletagmanager|google-analytics|analytics\.google/.test(url)) sink.push(url);
+    if (/googletagmanager|google-analytics|analytics\.google|clarity\.ms/.test(url)) sink.push(url);
   });
 };
 
@@ -140,7 +143,15 @@ const gaCookies = async (context) =>
   if (!hits.length) {
     fail('accepting loaded no analytics at all, so the measurement would never work');
   } else {
-    pass(`accepting loads analytics (${hits.length} request(s) to Google)`);
+    pass(`accepting loads analytics (${hits.length} request(s))`);
+  }
+  // Clarity records the screen, so it is the one whose gate matters most.
+  // Confirm it actually loads on Accept, or the masking and the recording
+  // never happen and this whole feature is off.
+  if (!hits.some((u) => u.includes('clarity.ms'))) {
+    fail('accepting did not load Clarity');
+  } else {
+    pass('accepting loads Clarity, masked');
   }
   await page.reload({ waitUntil: 'networkidle' });
   await page.waitForTimeout(1000);
@@ -193,9 +204,10 @@ const gaCookies = async (context) =>
   await page.waitForTimeout(400);
   const policy = await page.locator('[role="dialog"]').first().innerText();
   for (const [what, needle] of [
-    ['names the cookie', '_ga'],
-    ['says how long it lasts', 'two years'],
-    ['says what refusing does', 'No cookie is set'],
+    ['names both vendors', 'Microsoft Clarity'],
+    ['names Google too', 'Google Analytics'],
+    ['says text is hidden', 'All text is hidden'],
+    ['says what refusing does', 'Nothing is set'],
     ['says how to change your mind', 'Change my mind'],
   ]) {
     if (!policy.includes(needle)) fail(`the cookie policy never ${what}`);

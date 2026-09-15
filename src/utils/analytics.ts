@@ -26,7 +26,21 @@ const STORAGE_KEY = 'hamyar_cookie_choice';
 export const MEASUREMENT_ID: string =
   (import.meta.env.VITE_GA_MEASUREMENT_ID as string | undefined) || '';
 
-export const analyticsAvailable = (): boolean => Boolean(MEASUREMENT_ID);
+/**
+ * Microsoft Clarity project id, set in Vercel. Looks like a short string of
+ * letters and numbers. Optional and independent of GA: either, both or neither
+ * can be configured, and each obeys the same rule below.
+ *
+ * Clarity records the screen, and on this app the screen shows Home Office
+ * letters, medical translations and form answers. So it is loaded with strict
+ * masking on (nothing but layout and where people tap is recorded) and only
+ * after someone has pressed Accept, exactly like GA. Refuse, and it never runs.
+ */
+export const CLARITY_ID: string =
+  (import.meta.env.VITE_CLARITY_ID as string | undefined) || '';
+
+/** True if there is anything to ask consent for. Governs whether the notice shows. */
+export const analyticsAvailable = (): boolean => Boolean(MEASUREMENT_ID || CLARITY_ID);
 
 /**
  * What the person chose, or null if they have not been asked yet.
@@ -97,9 +111,45 @@ const loadGoogleAnalytics = () => {
   });
 };
 
+let clarityLoaded = false;
+
+/**
+ * Puts Microsoft Clarity on the page. Only ever called after an explicit
+ * Accept, and it turns masking on before it starts recording, so no letter
+ * text, form answer or translation is ever captured, only the shape of the
+ * page and where people tap.
+ */
+const loadClarity = () => {
+  if (clarityLoaded || !CLARITY_ID || typeof document === 'undefined') return;
+  clarityLoaded = true;
+
+  // The queue shim Clarity's own snippet installs, so calls made before the
+  // script arrives are replayed once it does.
+  (function (c: any, l: Document, a: string, i: string) {
+    c[a] =
+      c[a] ||
+      function () {
+        (c[a].q = c[a].q || []).push(arguments);
+      };
+    // Mask everything, decided before the recorder is even on the page. This
+    // is the line that keeps someone's asylum paperwork off Microsoft's
+    // servers, so it runs first.
+    c[a]('set', 'maskTextInputs', true);
+    c[a]('set', 'maskAllText', true);
+    const t = l.createElement('script');
+    t.async = true;
+    t.src = 'https://www.clarity.ms/tag/' + i;
+    const y = l.getElementsByTagName('script')[0];
+    y.parentNode!.insertBefore(t, y);
+  })(window, document, 'clarity', CLARITY_ID);
+};
+
 /** Called on load, and after a choice. Does nothing unless the answer was yes. */
 export const applyCookieChoice = (choice: CookieChoice | null) => {
-  if (choice === 'accepted') loadGoogleAnalytics();
+  if (choice === 'accepted') {
+    loadGoogleAnalytics();
+    loadClarity();
+  }
   if (choice === 'rejected' && window.gtag) {
     window.gtag('consent', 'update', { analytics_storage: 'denied' });
   }
@@ -120,13 +170,20 @@ export const rejectCookies = () => {
   clearAnalyticsCookies();
 };
 
-/** GA4 writes _ga and _ga_<container>. Both go. */
+/** GA4 writes _ga and _ga_<container>; Clarity writes _clck and _clsk. All go. */
 export const clearAnalyticsCookies = () => {
   if (typeof document === 'undefined') return;
   const names = document.cookie
     .split(';')
     .map((c) => c.split('=')[0].trim())
-    .filter((name) => name === '_ga' || name.startsWith('_ga_') || name === '_gid');
+    .filter(
+      (name) =>
+        name === '_ga' ||
+        name.startsWith('_ga_') ||
+        name === '_gid' ||
+        name === '_clck' ||
+        name === '_clsk'
+    );
 
   const host = window.location.hostname;
   // A cookie has to be deleted with the same domain and path it was set with,

@@ -80,6 +80,10 @@ if (!noBuild) {
   // asserting that a request was attempted, not that Google answered.
   const code = await run('npx', ['vite', 'build', '--logLevel', 'warn'], {
     VITE_GA_MEASUREMENT_ID: process.env.VITE_GA_MEASUREMENT_ID || 'G-TESTONLY00',
+    // A fake Clarity id too, so cookie-test exercises the real gate: it checks
+    // that nothing reaches clarity.ms before a choice, and Clarity has to be
+    // configured for there to be anything to hold back.
+    VITE_CLARITY_ID: process.env.VITE_CLARITY_ID || 'testonly00',
   });
   if (code !== 0) {
     console.error('\nThe build failed, so there is nothing honest to test.');
