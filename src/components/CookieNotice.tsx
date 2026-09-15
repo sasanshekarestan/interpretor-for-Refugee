@@ -129,7 +129,7 @@ export const CookieNotice: React.FC = () => {
                 <dt className="font-bold inline">با چه ابزاری؟ </dt>
                 <dd className="inline text-on-emphasis-muted">
                   <span dir="ltr">Google Analytics</span> و <span dir="ltr">Microsoft Clarity</span>.
-                  همهٔ متن‌ها پنهان می‌شود، پس نوشته‌های شما دیده نمی‌شود، فقط جای دست زدن‌ها.
+                  چیزی که شما در فرم‌ها می‌نویسید پنهان می‌ماند و دیده نمی‌شود.
                 </dd>
               </div>
               <div>
@@ -163,8 +163,8 @@ export const CookieNotice: React.FC = () => {
               <div>
                 <dt className="font-bold inline">Using what? </dt>
                 <dd className="inline text-on-emphasis-muted">
-                  Google Analytics and Microsoft Clarity. All text is hidden, so your writing is
-                  never recorded, only where people tap.
+                  Google Analytics and Microsoft Clarity. What you type into forms is hidden, so
+                  your own answers are never recorded.
                 </dd>
               </div>
               <div>

@@ -206,7 +206,7 @@ const gaCookies = async (context) =>
   for (const [what, needle] of [
     ['names both vendors', 'Microsoft Clarity'],
     ['names Google too', 'Google Analytics'],
-    ['says text is hidden', 'All text is hidden'],
+    ['says what you type is hidden', 'What you type into forms is hidden'],
     ['says what refusing does', 'Nothing is set'],
     ['says how to change your mind', 'Change my mind'],
   ]) {

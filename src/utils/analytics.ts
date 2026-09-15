@@ -32,9 +32,10 @@ export const MEASUREMENT_ID: string =
  * can be configured, and each obeys the same rule below.
  *
  * Clarity records the screen, and on this app the screen shows Home Office
- * letters, medical translations and form answers. So it is loaded with strict
- * masking on (nothing but layout and where people tap is recorded) and only
- * after someone has pressed Accept, exactly like GA. Refuse, and it never runs.
+ * letters, medical translations and form answers. So it is loaded with the
+ * text people TYPE masked (Clarity also masks sensitive fields by default) and
+ * only after someone has pressed Accept, exactly like GA. Refuse, and it never
+ * runs.
  */
 export const CLARITY_ID: string =
   (import.meta.env.VITE_CLARITY_ID as string | undefined) || '';
@@ -131,11 +132,17 @@ const loadClarity = () => {
       function () {
         (c[a].q = c[a].q || []).push(arguments);
       };
-    // Mask everything, decided before the recorder is even on the page. This
-    // is the line that keeps someone's asylum paperwork off Microsoft's
-    // servers, so it runs first.
+    // Mask what people TYPE, not everything on the page. maskTextInputs keeps
+    // the asylum and medical answers a person enters out of the recording,
+    // which is the content that actually matters here. It runs before the
+    // recorder loads, so nothing sensitive is ever captured even briefly.
+    //
+    // The earlier version also set maskAllText, Clarity's strictest mode,
+    // which greyed out every word on the screen and made the recordings
+    // useless for seeing how the app is actually used. Clarity already masks
+    // sensitive fields by default; masking literally all text was heavier than
+    // this app needs. Removed.
     c[a]('set', 'maskTextInputs', true);
-    c[a]('set', 'maskAllText', true);
     const t = l.createElement('script');
     t.async = true;
     t.src = 'https://www.clarity.ms/tag/' + i;
