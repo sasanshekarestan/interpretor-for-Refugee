@@ -3,10 +3,15 @@ import { ShieldCheck, Lock, X, Database, UserX, EyeOff, Cookie } from 'lucide-re
 import { CookieChoice, analyticsAvailable, readCookieChoice, forgetCookieChoice } from '../utils/analytics';
 
 interface PrivacyBannerProps {
-  onOpenPrivacyModal?: () => void;
+  /**
+   * Opens the full Privacy Policy. The banner's own short panel keeps the
+   * cookie "Change my choice" control, and links out to this for the detail,
+   * so both stay reachable rather than one shadowing the other.
+   */
+  onOpenPrivacyPolicy?: () => void;
 }
 
-export const PrivacyBanner: React.FC<PrivacyBannerProps> = ({ onOpenPrivacyModal }) => {
+export const PrivacyBanner: React.FC<PrivacyBannerProps> = ({ onOpenPrivacyPolicy }) => {
   const [showModal, setShowModal] = useState(false);
   const [cookieChoice, setCookieChoice] = useState<CookieChoice | null>(null);
 
@@ -14,13 +19,7 @@ export const PrivacyBanner: React.FC<PrivacyBannerProps> = ({ onOpenPrivacyModal
     if (showModal) setCookieChoice(readCookieChoice());
   }, [showModal]);
 
-  const handleOpen = () => {
-    if (onOpenPrivacyModal) {
-      onOpenPrivacyModal();
-    } else {
-      setShowModal(true);
-    }
-  };
+  const handleOpen = () => setShowModal(true);
 
   return (
     <>
@@ -96,27 +95,47 @@ export const PrivacyBanner: React.FC<PrivacyBannerProps> = ({ onOpenPrivacyModal
                 <div className="flex items-start gap-3">
                   <UserX className="w-4 h-4 text-primary shrink-0 mt-1" />
                   <div>
-                    <h4 className="font-bold text-ink text-xs">Zero External Reporting</h4>
-                    <p className="text-ink-muted">Your audio, transcribed text, and form entries are strictly confined to your session. We do not transmit reports to the UK Home Office, NASS, solicitors, or landlords.</p>
+                    <h4 className="font-bold text-ink text-xs">Never sent to the authorities</h4>
+                    <p className="text-ink-muted">Nothing you do here is reported to the Home Office, NASS, a caseworker, a solicitor or a landlord. We hold no accounts and no server-side record of your documents or conversations.</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
                   <EyeOff className="w-4 h-4 text-primary shrink-0 mt-1" />
                   <div>
-                    <h4 className="font-bold text-ink text-xs">No Advertisers or Profiling</h4>
-                    <p className="text-ink-muted">We do not sell data or track users for advertising. All translation processing is stateless.</p>
+                    <h4 className="font-bold text-ink text-xs">How translation works</h4>
+                    {/* This used to say translation was "stateless" and that
+                        everything stayed on the device. That is not true: a
+                        scanned photo or a recording is sent to Google to be
+                        read. Saying otherwise to people frightened of being
+                        tracked is exactly the wrong thing to do, so it says the
+                        real thing now and points to the full policy. */}
+                    <p className="text-ink-muted">To translate a photo or a recording, it is sent to Google's AI service, read, and discarded. On our paid tier Google does not use it to train its models. We do not sell data or track you for advertising.</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
                   <Database className="w-4 h-4 text-primary shrink-0 mt-1" />
                   <div>
-                    <h4 className="font-bold text-ink text-xs">Local Control & Deletion</h4>
-                    <p className="text-ink-muted">You can clear your conversation history and cached saved documents at any time from the settings menu with a single click.</p>
+                    <h4 className="font-bold text-ink text-xs">Kept only on your device</h4>
+                    <p className="text-ink-muted">Anything you save stays in your own device's browser. You can clear your history and saved documents at any time with a single tap.</p>
                   </div>
                 </div>
               </div>
+
+              {onOpenPrivacyPolicy && (
+                <button
+                  onClick={() => {
+                    setShowModal(false);
+                    onOpenPrivacyPolicy();
+                  }}
+                  className="inline-flex items-center min-h-[44px] text-primary underline underline-offset-2
+                             hover:no-underline text-xs font-semibold"
+                >
+                  <span className="font-farsi">سیاست کامل حریم خصوصی</span>
+                  <span> · Read the full Privacy Policy</span>
+                </button>
+              )}
             </div>
 
             {/* Consent is not a one-time thing: a person has to be able to

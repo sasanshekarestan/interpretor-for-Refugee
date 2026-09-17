@@ -16,6 +16,7 @@ import { InterpretationCard } from './components/InterpretationCard';
 import { ConversationHistory } from './components/ConversationHistory';
 import { QuickPhrasesDrawer } from './components/QuickPhrasesDrawer';
 import { RefugeeLexiconModal } from './components/RefugeeLexiconModal';
+import { PrivacyPolicyModal } from './components/PrivacyPolicyModal';
 import { SettingsModal } from './components/SettingsModal';
 import { AnalyticsModal } from './components/AnalyticsModal';
 import { SavedPhrasesModal } from './components/SavedPhrasesModal';
@@ -92,6 +93,7 @@ export default function App() {
   // Modals state
   const [isQuickPhrasesOpen, setIsQuickPhrasesOpen] = useState<boolean>(false);
   const [isLexiconOpen, setIsLexiconOpen] = useState<boolean>(false);
+  const [isPrivacyPolicyOpen, setIsPrivacyPolicyOpen] = useState<boolean>(false);
   const [isAnalyticsOpen, setIsAnalyticsOpen] = useState<boolean>(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const [isSavedPhrasesOpen, setIsSavedPhrasesOpen] = useState<boolean>(false);
@@ -689,7 +691,7 @@ export default function App() {
             </section>
 
             {/* Privacy & Trust Banner */}
-            <PrivacyBanner />
+            <PrivacyBanner onOpenPrivacyPolicy={() => setIsPrivacyPolicyOpen(true)} />
 
             {/* HEADING SECTION */}
             <div className="text-center space-y-1.5 pt-1 w-full min-w-0 px-2">
@@ -1234,6 +1236,7 @@ export default function App() {
                     en: `Saved phrases (${savedPhrases.length})`,
                   },
                   { onClick: () => setIsLexiconOpen(true), fa: 'واژه‌نامهٔ پناهندگی', en: 'Words used in the asylum system' },
+                  { onClick: () => setIsPrivacyPolicyOpen(true), fa: 'حریم خصوصی', en: 'Privacy policy' },
                 ].map((item) => (
                   <button
                     key={item.en}
@@ -1315,7 +1318,22 @@ export default function App() {
             </a>
           </div>
 
-          <div className="border-t border-edge pt-4 text-center">
+          {/* The privacy policy, reachable from the footer.
+              A person deciding whether Hamyar is safe to use, or safe to
+              recommend, looks in the footer for this before they look anywhere
+              else, so it lives here and not only three taps deep under More. It
+              opens the same policy that More does, in the app rather than a
+              separate page, so it works offline and needs no second URL. */}
+          <div className="border-t border-edge pt-4 text-center space-y-2">
+            <button
+              id="link-privacy-policy"
+              onClick={() => setIsPrivacyPolicyOpen(true)}
+              className="inline-flex items-center justify-center min-h-[44px] px-4 text-sm text-primary
+                         underline underline-offset-2 hover:no-underline cursor-pointer"
+            >
+              <span className="font-farsi">حریم خصوصی</span>
+              <span className="font-latin"> · Privacy Policy</span>
+            </button>
             <p className="text-sm text-ink-muted">
               Powered by{' '}
               <a
@@ -1354,6 +1372,11 @@ export default function App() {
       <RefugeeLexiconModal
         isOpen={isLexiconOpen}
         onClose={() => setIsLexiconOpen(false)}
+      />
+
+      <PrivacyPolicyModal
+        isOpen={isPrivacyPolicyOpen}
+        onClose={() => setIsPrivacyPolicyOpen(false)}
       />
 
       <AnalyticsModal
