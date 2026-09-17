@@ -105,7 +105,7 @@ export const PrivacyPolicyModal: React.FC<PrivacyPolicyModalProps> = ({ isOpen, 
             fa="شمارش بازدید"
             en="Counting visits"
             faBody="برای اینکه بدانیم چند نفر از همیار استفاده می‌کنند و بتوانیم برای گرفتن بودجه مدرک داشته باشیم، از Google Analytics و Microsoft Clarity استفاده می‌کنیم. هیچ‌کدام تا وقتی خودتان «قبول» را نزنید بارگذاری نمی‌شوند. اگر «رد» را بزنید، هیچ‌چیز شمارش نمی‌شود. چیزی که در فرم‌ها می‌نویسید در این ابزارها پنهان می‌ماند."
-            enBody="To see how many people use Hamyar, so we have evidence for funding, we use Google Analytics and Microsoft Clarity. Neither loads unless you press Accept on the cookie notice. If you press Reject, nothing is counted and no cookie is set. What you type into forms is masked from these tools. You can change your choice at any time under Privacy and data."
+            enBody="To understand how many people use Hamyar and gather evidence of its usage, we use Google Analytics and Microsoft Clarity to collect and analyse user engagement data. Neither loads unless you press Accept on the cookie notice. If you press Reject, nothing is counted and no cookie is set. What you type into forms is masked from these tools. You can change your choice at any time under Privacy and data."
           />
 
           {/* 6b. The cookieless count */}
