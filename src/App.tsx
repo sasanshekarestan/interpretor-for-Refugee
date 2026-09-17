@@ -220,6 +220,13 @@ export default function App() {
     ensureVoicesLoaded().catch((e) => console.warn('Voice pre-load note:', e));
     preCacheCommonPhrases(QUICK_PHRASES);
 
+    // Count this visit. Cookieless and non-identifying: the server adds one to
+    // a single number and stores nothing about the person, so this needs no
+    // consent and runs for everyone, including the many who decline analytics
+    // cookies. Fire and forget, and it must never affect the page, so any
+    // failure is swallowed.
+    fetch('/api/analytics/track', { method: 'POST' }).catch(() => {});
+
     try {
       const params = new URLSearchParams(window.location.search);
       const isEmbed = params.get('embed') === 'true' || window.self !== window.top;

@@ -108,6 +108,14 @@ export const PrivacyPolicyModal: React.FC<PrivacyPolicyModalProps> = ({ isOpen, 
             enBody="To see how many people use Hamyar, so we have evidence for funding, we use Google Analytics and Microsoft Clarity. Neither loads unless you press Accept on the cookie notice. If you press Reject, nothing is counted and no cookie is set. What you type into forms is masked from these tools. You can change your choice at any time under Privacy and data."
           />
 
+          {/* 6b. The cookieless count */}
+          <Section
+            fa="یک شمارش ساده و بی‌کوکی"
+            en="A simple, cookieless count"
+            faBody="یک شمارندهٔ ساده هم داریم که هر بار همیار باز می‌شود، فقط یک عدد را یکی زیاد می‌کند. این شمارنده کوکی نمی‌گذارد، شناسه‌ای برای شما نمی‌سازد، و هیچ‌چیز دربارهٔ شما ذخیره نمی‌کند، نه آدرس اینترنتی و نه چیز دیگر. تعداد استفاده‌ها را می‌شمارد، نه افراد را. چون چیزی از شما نگه نمی‌دارد، به اجازه نیاز ندارد و همیشه کار می‌کند، حتی اگر «رد» را زده باشید."
+            enBody="We also keep a simple counter that adds one to a single number each time Hamyar is opened. It sets no cookie, creates no identifier for you, and stores nothing about you, no IP address and nothing else. It counts uses, not people. Because it keeps nothing about you, it needs no consent and always runs, even if you pressed Reject. We use it only to show funders how much Hamyar is used."
+          />
+
           {/* 7. Not legal advice, not the government */}
           <Section
             fa="چه چیزی نیست"

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  BarChart3, 
-  Users, 
-  Mic, 
+  BarChart3,
+  Mic,
   Type as TypeIcon, 
   Globe2, 
   TrendingUp, 
@@ -16,15 +15,15 @@ import {
 
 interface AnalyticsData {
   totalVisits: number;
-  uniqueVisitors: number;
+  // True when the count is coming from the durable Upstash store rather than
+  // the in-process fallback. Lets this view say whether the number is a record
+  // or an indicative figure since the last restart.
+  durable?: boolean;
   totalTranslations: number;
   voiceTranslations: number;
   textTranslations: number;
-  wixEmbedViews: number;
-  directVisits: number;
   firstSeenTimestamp: number;
   lastVisitTimestamp: number;
-  dailyVisits: Record<string, number>;
 }
 
 interface AnalyticsModalProps {
@@ -114,18 +113,6 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ isOpen, onClose 
               <span className="text-xs text-primary font-medium">All visits recorded</span>
             </div>
 
-            {/* Unique Visitors */}
-            <div className="bg-page p-4 rounded-xl border border-edge">
-              <div className="flex items-center justify-between text-primary mb-1">
-                <span className="text-xs font-semibold uppercase tracking-wider">Unique Visitors</span>
-                <Users className="w-4 h-4" />
-              </div>
-              <div className="text-2xl font-black text-ink">
-                {isLoading ? '...' : (stats?.uniqueVisitors || 0)}
-              </div>
-              <span className="text-xs text-primary font-medium">Individual devices</span>
-            </div>
-
             {/* Total Translations */}
             <div className="bg-page p-4 rounded-xl border border-edge">
               <div className="flex items-center justify-between text-primary mb-1">
@@ -151,34 +138,6 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ isOpen, onClose 
             </div>
           </div>
 
-          {/* Traffic Breakdown */}
-          <div className="border border-edge rounded-xl p-4 bg-surface">
-            <h3 className="text-sm font-bold text-ink mb-3 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-primary" />
-              Traffic Sources & Platform Split
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="p-3 bg-page rounded-lg border border-edge flex items-center justify-between">
-                <div>
-                  <div className="text-xs text-ink-muted font-medium">Wix Embedded Site Views</div>
-                  <div className="text-lg font-bold text-ink">{stats?.wixEmbedViews || 0}</div>
-                </div>
-                <span className="text-xs font-semibold bg-page text-primary px-2 py-1 rounded">
-                  Embedded
-                </span>
-              </div>
-              <div className="p-3 bg-page rounded-lg border border-edge flex items-center justify-between">
-                <div>
-                  <div className="text-xs text-ink-muted font-medium">Direct Standalone Visits</div>
-                  <div className="text-lg font-bold text-ink">{stats?.directVisits || 0}</div>
-                </div>
-                <span className="text-xs font-semibold bg-page text-primary px-2 py-1 rounded">
-                  Direct Link
-                </span>
-              </div>
-            </div>
-          </div>
-
           {/* Evaluation Information note */}
           <div className="bg-page border border-edge rounded-xl p-4 text-xs text-primary space-y-2">
             <div className="font-semibold flex items-center gap-1.5 text-primary">
@@ -186,7 +145,16 @@ export const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ isOpen, onClose 
               Evaluation & Ethics Note
             </div>
             <p className="leading-relaxed">
-              Every visitor loading the widget (whether through the Wix site or direct launch) increments the visitor count and unique device token anonymously. No audio files or personal biometric data are stored, ensuring full compliance with GDPR and ethical research guidelines.
+              The visit count is cookieless: each time Hamyar is opened it adds one to a single
+              number, with no visitor identifier, no session and nothing stored about anyone. It
+              counts uses, not people, which is why it needs no consent. It runs whether or not a
+              person accepts analytics cookies, so it captures the many who decline.
+              {stats?.durable === false && (
+                <span className="block mt-1 text-attention">
+                  The durable store is not configured on this deployment, so this figure is
+                  indicative since the last restart rather than a full record.
+                </span>
+              )}
             </p>
           </div>
         </div>

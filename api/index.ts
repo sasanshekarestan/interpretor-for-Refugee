@@ -33,67 +33,97 @@ app.use((req, res, next) => {
   next();
 });
 
-// Simple in-memory analytics counter for website evaluation tracking.
-// NOTE: this lives in the process, so on a serverless host (Vercel) it resets
-// whenever a new instance starts and is not shared between instances. The
-// numbers are indicative there, not a record. Real usage evidence - the kind a
-// funding bid would rest on - needs a store behind it.
-let analyticsData = {
+/**
+ * A cookieless visit counter.
+ *
+ * The point of this is a number Mehr Health can put in a funding bid: how many
+ * times Hamyar has been opened. Google Analytics and Clarity only ever count
+ * the people who press Accept on the cookie notice, so they undercount, and the
+ * people most likely to refuse are exactly the ones this app is for. This
+ * counts every visit, and it needs no consent because it stores nothing about
+ * anyone.
+ *
+ * What it records is one integer that goes up by one on each visit. There is no
+ * visitor id, no session, no set of "unique visitors", no IP, no anything that
+ * could be traced back to a person. It counts uses, not people, on purpose:
+ * that is the whole reason it does not need a cookie and the reason it is
+ * honest to describe as private. An earlier version took a visitor id from the
+ * browser and kept a set of them; that was both fragile on a serverless host
+ * and the kind of thing a careful reader could fairly call tracking, so it is
+ * gone.
+ *
+ * The integer lives in Upstash Redis (what Vercel's KV integration provisions),
+ * reached over its REST API with the two environment variables below. No npm
+ * package, no connection to keep open. If those variables are not set - a local
+ * build, or before the integration is added in Vercel - the counter falls back
+ * to an in-process number so nothing breaks; that fallback resets when the
+ * instance restarts and is not the durable record, which is why the durable
+ * store is what a bid should quote.
+ */
+
+const KV_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || '';
+const KV_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || '';
+const VISITS_KEY = 'hamyar:visits';
+const kvConfigured = Boolean(KV_URL && KV_TOKEN);
+
+// In-process fallback, and a home for the indicative extras (translation
+// counts) that are not personal and not the headline funding number.
+let memory = {
   totalVisits: 0,
-  uniqueVisitors: new Set<string>(),
   totalTranslations: 0,
   voiceTranslations: 0,
   textTranslations: 0,
-  wixEmbedViews: 0,
-  directVisits: 0,
   firstSeenTimestamp: Date.now(),
   lastVisitTimestamp: Date.now(),
-  dailyVisits: {} as Record<string, number>,
 };
 
-// Track a visitor event
-app.post('/api/analytics/track', (req, res) => {
+// One Upstash REST call. Returns the command result, or null on any failure -
+// the counter must never take a page down, so every path here is best-effort.
+const kvCommand = async (command: (string | number)[]): Promise<any> => {
+  if (!kvConfigured) return null;
   try {
-    const { visitorId, source = 'direct', isEmbed = false } = req.body;
-    analyticsData.totalVisits += 1;
-    analyticsData.lastVisitTimestamp = Date.now();
-
-    if (visitorId) {
-      analyticsData.uniqueVisitors.add(visitorId);
-    }
-
-    if (isEmbed || source === 'wix' || source === 'embed') {
-      analyticsData.wixEmbedViews += 1;
-    } else {
-      analyticsData.directVisits += 1;
-    }
-
-    const today = new Date().toISOString().split('T')[0];
-    analyticsData.dailyVisits[today] = (analyticsData.dailyVisits[today] || 0) + 1;
-
-    return res.json({
-      success: true,
-      totalVisits: analyticsData.totalVisits,
-      uniqueVisitors: analyticsData.uniqueVisitors.size,
+    const res = await fetch(KV_URL, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${KV_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(command),
     });
-  } catch (e) {
-    return res.json({ success: true });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data?.result ?? null;
+  } catch {
+    return null;
   }
+};
+
+// Count a visit. Cookieless and non-identifying: the body is ignored entirely,
+// nothing about the visitor is read or stored, only the one integer moves.
+app.post('/api/analytics/track', async (_req, res) => {
+  memory.totalVisits += 1;
+  memory.lastVisitTimestamp = Date.now();
+
+  const durable = await kvCommand(['INCR', VISITS_KEY]);
+  const total = typeof durable === 'number' ? durable : memory.totalVisits;
+
+  return res.json({ success: true, totalVisits: total });
 });
 
-// Fetch analytics for evaluation metrics
-app.get('/api/analytics/stats', (req, res) => {
+// Read the count back, for the internal evaluation view.
+app.get('/api/analytics/stats', async (_req, res) => {
+  const durable = await kvCommand(['GET', VISITS_KEY]);
+  const totalVisits =
+    durable !== null && durable !== undefined ? Number(durable) : memory.totalVisits;
+
   res.json({
-    totalVisits: analyticsData.totalVisits,
-    uniqueVisitors: analyticsData.uniqueVisitors.size,
-    totalTranslations: analyticsData.totalTranslations,
-    voiceTranslations: analyticsData.voiceTranslations,
-    textTranslations: analyticsData.textTranslations,
-    wixEmbedViews: analyticsData.wixEmbedViews,
-    directVisits: analyticsData.directVisits,
-    firstSeenTimestamp: analyticsData.firstSeenTimestamp,
-    lastVisitTimestamp: analyticsData.lastVisitTimestamp,
-    dailyVisits: analyticsData.dailyVisits,
+    totalVisits,
+    durable: kvConfigured,
+    totalTranslations: memory.totalTranslations,
+    voiceTranslations: memory.voiceTranslations,
+    textTranslations: memory.textTranslations,
+    firstSeenTimestamp: memory.firstSeenTimestamp,
+    lastVisitTimestamp: memory.lastVisitTimestamp,
   });
 });
 
@@ -393,8 +423,8 @@ app.post('/api/interpret', async (req, res) => {
       );
 
       const parsed = cleanJsonText(rawResponseText);
-      analyticsData.totalTranslations += 1;
-      analyticsData.voiceTranslations += 1;
+      memory.totalTranslations += 1;
+      memory.voiceTranslations += 1;
       return res.json({
         id: 'interp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
         timestamp: Date.now(),
@@ -413,8 +443,8 @@ app.post('/api/interpret', async (req, res) => {
       );
 
       const parsed = cleanJsonText(rawResponseText);
-      analyticsData.totalTranslations += 1;
-      analyticsData.textTranslations += 1;
+      memory.totalTranslations += 1;
+      memory.textTranslations += 1;
       return res.json({
         id: 'interp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
         timestamp: Date.now(),
@@ -737,8 +767,8 @@ app.post('/api/interpret/audio', async (req, res) => {
     );
 
     const parsed = cleanJsonText(rawResponseText);
-    analyticsData.totalTranslations += 1;
-    analyticsData.voiceTranslations += 1;
+    memory.totalTranslations += 1;
+    memory.voiceTranslations += 1;
     return res.json({
       id: 'interp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
       timestamp: Date.now(),
@@ -770,8 +800,8 @@ app.post('/api/interpret/text', async (req, res) => {
     );
 
     const parsed = cleanJsonText(rawResponseText);
-    analyticsData.totalTranslations += 1;
-    analyticsData.textTranslations += 1;
+    memory.totalTranslations += 1;
+    memory.textTranslations += 1;
     return res.json({
       id: 'interp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
       timestamp: Date.now(),
