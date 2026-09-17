@@ -960,6 +960,37 @@ export default function App() {
                 />
               )}
             </div>
+
+            {/* The rest of Hamyar, on the home screen where it is seen on the
+                first visit rather than only at the foot of the page. Bigger and
+                with a primary stroke so it reads as a real destination, but a
+                bordered card rather than a solid fill, so it invites rather than
+                pulls someone out of a task. Opens in a new tab so nobody
+                halfway through a form loses their place. */}
+            <a
+              id="card-hamyar-site-home"
+              href="https://hamyar.co.uk"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full min-w-0 bg-surface border-2 border-primary rounded-3xl
+                         p-5 sm:p-6 shadow-hamyar hover:bg-page transition
+                         flex items-center justify-between gap-4"
+            >
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-on-primary shrink-0">
+                  <ExternalLink className="w-6 h-6" aria-hidden="true" />
+                </div>
+                <div className="min-w-0 space-y-1">
+                  <h3 dir="rtl" className="font-farsi font-bold text-primary text-lg leading-snug break-words">
+                    ویدیوها و راهنماهای بیشتر همیار
+                  </h3>
+                  <p dir="ltr" className="font-latin text-sm text-ink-muted break-words">
+                    More Hamyar videos and guides · hamyar.co.uk
+                  </p>
+                </div>
+              </div>
+              <ArrowLeft className="w-6 h-6 text-primary shrink-0 rtl:rotate-180" aria-hidden="true" />
+            </a>
           </div>
         )}
 
@@ -1310,19 +1341,19 @@ export default function App() {
               href="https://hamyar.co.uk"
               target="_blank"
               rel="noopener noreferrer"
-              className="min-h-[56px] w-full sm:max-w-md sm:mx-auto px-4 rounded-2xl
-                         bg-page border border-edge hover:bg-surface transition
+              className="min-h-[64px] w-full sm:max-w-lg sm:mx-auto px-5 rounded-2xl
+                         bg-surface border-2 border-primary hover:bg-page transition
                          flex items-center justify-between gap-3"
             >
               <span className="text-start leading-tight">
-                <span dir="rtl" className="block font-farsi font-bold text-base text-ink">
+                <span dir="rtl" className="block font-farsi font-bold text-lg text-primary">
                   ویدیوها و راهنماهای بیشتر همیار
                 </span>
                 <span dir="ltr" className="block font-latin text-sm text-ink-muted">
                   More Hamyar videos and guides
                 </span>
               </span>
-              <ExternalLink className="w-5 h-5 text-primary shrink-0" aria-hidden="true" />
+              <ExternalLink className="w-6 h-6 text-primary shrink-0" aria-hidden="true" />
             </a>
           </div>
 
