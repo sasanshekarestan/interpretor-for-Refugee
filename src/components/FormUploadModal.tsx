@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { X, Upload, Camera, FileText, CheckCircle2, ArrowRight, Sparkles, AlertTriangle, RefreshCw, Trash2, ArrowUp, ArrowDown, ImagePlus, Eye, FileCode } from 'lucide-react';
+import { UploadPrivacyNotice } from './UploadPrivacyNotice';
 import mammoth from 'mammoth';
 
 export interface FormUploadPage {
@@ -16,12 +17,14 @@ interface FormUploadModalProps {
   isOpen: boolean;
   onClose: () => void;
   onStartPresetForm?: (formId?: string, customFormData?: any) => void;
+  onOpenPrivacyPolicy?: () => void;
 }
 
 export const FormUploadModal: React.FC<FormUploadModalProps> = ({
   isOpen,
   onClose,
   onStartPresetForm,
+  onOpenPrivacyPolicy,
 }) => {
   const [pages, setPages] = useState<FormUploadPage[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -389,6 +392,9 @@ export const FormUploadModal: React.FC<FormUploadModalProps> = ({
                   </p>
                 </div>
               </div>
+
+              {/* The Gemini note, right where the form photo is about to be sent. */}
+              <UploadPrivacyNotice onOpenPolicy={onOpenPrivacyPolicy} />
 
               {/* Uploaded Pages List with Reorder & Remove */}
               {pages.length > 0 && (

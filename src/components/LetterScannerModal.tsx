@@ -7,6 +7,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import { LetterAnalysisResult } from '../types';
 import { playSpokenAudio } from '../utils/audioHelper';
+import { UploadPrivacyNotice } from './UploadPrivacyNotice';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -54,6 +55,7 @@ class BilingualError extends Error {
 interface LetterScannerModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onOpenPrivacyPolicy?: () => void;
 }
 
 /** A section that stays folded away until it is wanted. */
@@ -97,7 +99,7 @@ const Section: React.FC<{
   );
 };
 
-export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, onClose }) => {
+export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, onClose, onOpenPrivacyPolicy }) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [typedText, setTypedText] = useState<string>('');
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
@@ -462,6 +464,9 @@ export const LetterScannerModal: React.FC<LetterScannerModalProps> = ({ isOpen, 
                   </div>
                 )}
               </div>
+
+              {/* The Gemini note, right where the photo is about to be sent. */}
+              <UploadPrivacyNotice onOpenPolicy={onOpenPrivacyPolicy} />
 
               {/* Or type the letter out */}
               <div className="space-y-1.5">

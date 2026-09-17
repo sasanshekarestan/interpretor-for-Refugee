@@ -1108,6 +1108,7 @@ export default function App() {
                   PDF | عکس بگیرید" put two reading directions on one line with
                   a bar between them, which reads as neither language. */}
               <button
+                id="btn-open-letter-scanner"
                 onClick={() => setIsLetterScannerOpen(true)}
                 className="min-h-[48px] px-6 py-2 rounded-2xl bg-primary text-on-primary hover:bg-primary-press
                            font-bold transition inline-flex items-center gap-2.5"
@@ -1381,11 +1382,6 @@ export default function App() {
         onClose={() => setIsLexiconOpen(false)}
       />
 
-      <PrivacyPolicyModal
-        isOpen={isPrivacyPolicyOpen}
-        onClose={() => setIsPrivacyPolicyOpen(false)}
-      />
-
       <AnalyticsModal
         isOpen={isAnalyticsOpen}
         onClose={() => setIsAnalyticsOpen(false)}
@@ -1420,17 +1416,26 @@ export default function App() {
       <LetterScannerModal
         isOpen={isLetterScannerOpen}
         onClose={() => setIsLetterScannerOpen(false)}
+        onOpenPrivacyPolicy={() => setIsPrivacyPolicyOpen(true)}
       />
 
       <FormUploadModal
         isOpen={isFormUploadOpen}
         onClose={() => setIsFormUploadOpen(false)}
+        onOpenPrivacyPolicy={() => setIsPrivacyPolicyOpen(true)}
         onStartPresetForm={(formId, customFormData) => {
           setIsFormUploadOpen(false);
           setCustomUploadedForm(customFormData || null);
           setSelectedFormForCompanion(formId || null);
           goToTab('form_companion');
         }}
+      />
+
+      {/* Rendered last so that when it is opened from over the letter scanner
+          or the form upload, it stacks on top of them rather than behind. */}
+      <PrivacyPolicyModal
+        isOpen={isPrivacyPolicyOpen}
+        onClose={() => setIsPrivacyPolicyOpen(false)}
       />
     </div>
   );

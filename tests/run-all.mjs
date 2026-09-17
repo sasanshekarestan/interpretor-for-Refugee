@@ -32,6 +32,7 @@ const ORDER = [
   'design-guard',
   'library-test',
   'cookie-test',
+  'upload-notice-test',
   'back-test',
   'cursor-test',
   'docs-test',
