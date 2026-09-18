@@ -25,9 +25,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-emphasis/70 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-surface rounded-2xl max-w-md w-full shadow-hamyar border border-edge overflow-hidden flex flex-col animate-fade-in">
-        {/* Header */}
-        <div className="p-4 sm:p-5 border-b border-edge bg-page flex items-center justify-between">
+      <div className="bg-surface rounded-2xl max-w-md w-full shadow-hamyar border border-edge overflow-hidden flex flex-col animate-fade-in max-h-[90vh]">
+        {/* Header. Sticky, so the close button stays in reach no matter how far
+            the panel is scrolled. On a small screen the body scrolls under it
+            rather than carrying the X off the top of the view. */}
+        <div className="shrink-0 p-4 sm:p-5 border-b border-edge bg-page flex items-center justify-between">
           <div className="flex items-center gap-2">
             <SlidersHorizontal className="w-4 h-4 text-primary" />
             <h2 className="leading-tight">
@@ -47,7 +49,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         </div>
 
         {/* Settings Body */}
-        <div className="p-5 space-y-5 text-xs sm:text-sm">
+        <div className="overflow-y-auto p-5 space-y-5 text-xs sm:text-sm">
           {/* Text Size Control */}
           <div className="space-y-2">
             <label className="font-bold text-ink flex items-center gap-1.5">
@@ -59,20 +61,21 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </label>
             <div className="grid grid-cols-3 gap-2">
               {[
-                { id: 'normal', label: 'Normal' },
-                { id: 'large', label: 'Large' },
-                { id: 'xlarge', label: 'Extra Large' },
+                { id: 'normal', fa: 'معمولی', en: 'Normal' },
+                { id: 'large', fa: 'بزرگ', en: 'Large' },
+                { id: 'xlarge', fa: 'خیلی بزرگ', en: 'Extra large' },
               ].map((size) => (
                 <button
                   key={size.id}
                   onClick={() => onUpdateSettings({ fontSize: size.id as any })}
-                  className={`py-2 px-3 rounded-xl border text-xs font-semibold transition ${
+                  className={`py-2 px-2 rounded-xl border font-semibold transition leading-tight ${
                     (settings.fontSize || 'normal') === size.id
-                      ? 'bg-primary text-white border-primary shadow-hamyar'
-                      : 'bg-page hover:bg-page text-ink-muted border-edge'
+                      ? 'bg-primary text-on-primary border-primary shadow-hamyar'
+                      : 'bg-page hover:bg-surface text-ink-muted border-edge'
                   }`}
                 >
-                  {size.label}
+                  <span className="block font-farsi text-sm">{size.fa}</span>
+                  <span className="block font-latin text-xs opacity-80">{size.en}</span>
                 </button>
               ))}
             </div>
@@ -117,9 +120,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <div className="leading-tight">
                 <span dir="rtl" className="block font-farsi font-bold text-base text-ink">پخش خودکار صدا</span>
                 <span dir="ltr" className="block font-latin text-sm text-ink-muted">Read translations aloud automatically</span>
-              </div>
-              <div className="text-xs text-ink-muted">
-                Automatically read translations aloud after recording
               </div>
             </div>
             <button
@@ -190,7 +190,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-edge bg-page flex justify-end">
+        <div className="shrink-0 p-4 border-t border-edge bg-page flex justify-end">
           <button
             id="btn-close-settings-done"
             onClick={onClose}
