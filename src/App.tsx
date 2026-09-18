@@ -18,7 +18,6 @@ import { QuickPhrasesDrawer } from './components/QuickPhrasesDrawer';
 import { RefugeeLexiconModal } from './components/RefugeeLexiconModal';
 import { PrivacyPolicyModal } from './components/PrivacyPolicyModal';
 import { SettingsModal } from './components/SettingsModal';
-import { AnalyticsModal } from './components/AnalyticsModal';
 import { SavedPhrasesModal } from './components/SavedPhrasesModal';
 import { ConversationSummaryModal } from './components/ConversationSummaryModal';
 import { PinnedDetailsBar } from './components/PinnedDetailsBar';
@@ -94,7 +93,6 @@ export default function App() {
   const [isQuickPhrasesOpen, setIsQuickPhrasesOpen] = useState<boolean>(false);
   const [isLexiconOpen, setIsLexiconOpen] = useState<boolean>(false);
   const [isPrivacyPolicyOpen, setIsPrivacyPolicyOpen] = useState<boolean>(false);
-  const [isAnalyticsOpen, setIsAnalyticsOpen] = useState<boolean>(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const [isSavedPhrasesOpen, setIsSavedPhrasesOpen] = useState<boolean>(false);
   const [isSummaryOpen, setIsSummaryOpen] = useState<boolean>(false);
@@ -1413,11 +1411,6 @@ export default function App() {
         onClose={() => setIsLexiconOpen(false)}
       />
 
-      <AnalyticsModal
-        isOpen={isAnalyticsOpen}
-        onClose={() => setIsAnalyticsOpen(false)}
-      />
-
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
@@ -1426,7 +1419,6 @@ export default function App() {
         onClearHistory={handleClearHistory}
         historyCount={history.length}
         onOpenLexicon={() => setIsLexiconOpen(true)}
-        onOpenAnalytics={() => setIsAnalyticsOpen(true)}
       />
 
       <SavedPhrasesModal

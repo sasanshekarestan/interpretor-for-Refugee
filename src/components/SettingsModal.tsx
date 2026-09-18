@@ -1,6 +1,6 @@
 import React from 'react';
 import { EmbedSettings } from '../types';
-import { X, SlidersHorizontal, Volume2, Trash2, BookOpen, BarChart3, Type } from 'lucide-react';
+import { X, SlidersHorizontal, Volume2, Trash2, BookOpen, Type } from 'lucide-react';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -10,7 +10,6 @@ interface SettingsModalProps {
   onClearHistory: () => void;
   historyCount: number;
   onOpenLexicon?: () => void;
-  onOpenAnalytics?: () => void;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
@@ -21,7 +20,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onClearHistory,
   historyCount,
   onOpenLexicon,
-  onOpenAnalytics,
 }) => {
   if (!isOpen) return null;
 
@@ -141,14 +139,18 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </button>
           </div>
 
-          {/* Moved Toolbar Tools: UK Terminology & Visitor Stats */}
-          <div className="space-y-2 pt-3 border-t border-edge">
-            <div className="mb-2 leading-tight">
-              <span dir="rtl" className="block font-farsi font-bold text-base text-ink">ابزارها و راهنماها</span>
-              <span dir="ltr" className="block font-latin text-sm text-ink-muted">Tools and reference</span>
-            </div>
-            
-            {onOpenLexicon && (
+          {/* Reference tools. The visitor-and-usage stats panel used to sit
+              here too, but that is an internal evaluation dashboard, not
+              something a person using the app should see, least of all in an
+              app that promises nothing about them is shared. It has been taken
+              out; the numbers are read from the analytics endpoint instead. */}
+          {onOpenLexicon && (
+            <div className="space-y-2 pt-3 border-t border-edge">
+              <div className="mb-2 leading-tight">
+                <span dir="rtl" className="block font-farsi font-bold text-base text-ink">ابزارها و راهنماها</span>
+                <span dir="ltr" className="block font-latin text-sm text-ink-muted">Tools and reference</span>
+              </div>
+
               <button
                 id="btn-settings-uk-lexicon"
                 onClick={() => {
@@ -166,28 +168,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </div>
                 <span className="text-sm font-bold text-primary">Open</span>
               </button>
-            )}
-
-            {onOpenAnalytics && (
-              <button
-                id="btn-settings-analytics"
-                onClick={() => {
-                  onClose();
-                  onOpenAnalytics();
-                }}
-                className="w-full flex items-center justify-between p-3 rounded-xl bg-page hover:bg-page border border-edge transition text-left"
-              >
-                <div className="flex items-center gap-2.5">
-                  <BarChart3 className="w-4 h-4 text-primary" />
-                  <div>
-                    <div className="font-bold text-ink">Visitor & Usage Stats</div>
-                    <div className="text-xs text-ink-muted font-farsi">آمار استفاده و ارزیابی سیستم</div>
-                  </div>
-                </div>
-                <span className="text-sm font-bold text-primary">Open</span>
-              </button>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Clear History */}
           {historyCount > 0 && (
